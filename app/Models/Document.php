@@ -11,10 +11,16 @@ class Document extends Model
 
     protected $fillable = [
         'lease_id',
+        'user_id',
         'name',
         'path',
         'type',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function lease()
     {

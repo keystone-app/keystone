@@ -49,6 +49,26 @@ class User extends Authenticatable
         return $this->hasMany(Lease::class, 'tenant_id');
     }
 
+    public function visits()
+    {
+        return $this->hasMany(Visit::class);
+    }
+
+    public function documents()
+    {
+        return $this->hasMany(Document::class);
+    }
+
+    public function hasIdentityDocument(): bool
+    {
+        return $this->documents()->where('type', 'identity_doc')->exists();
+    }
+
+    public function getIdentityDocument()
+    {
+        return $this->documents()->where('type', 'identity_doc')->first();
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

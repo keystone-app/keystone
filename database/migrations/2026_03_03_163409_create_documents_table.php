@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('lease_id')->constrained('leases')->onDelete('cascade');
+            $table->foreignId('lease_id')->nullable()->constrained('leases')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('name');
             $table->string('path');
-            $table->string('type'); // 'lease_agreement', 'compliance_cert', 'legal_notice'
+            $table->string('type'); // 'lease_agreement', 'compliance_cert', 'legal_notice', 'identity_doc'
             $table->timestamps();
         });
     }

@@ -1,5 +1,5 @@
 <script>
-    import { Search, Home, FileText, Plus, LogIn, Filter } from 'lucide-svelte';
+    import { Search, Home, FileText, Plus, LogIn, Filter, Calendar, Clock, Upload, CheckCircle2 } from 'lucide-svelte';
 
     let role = $state('tenant'); // 'landlord', 'tenant', 'guest'
     let view = $state('listings'); // 'listings', 'dashboard'
@@ -8,6 +8,15 @@
     let searchQuery = $state('');
     let statusFilter = $state('all');
     let selectedProperty = $state(null);
+
+    let isScheduling = $state(false);
+    let showAuthPrompt = $state(false);
+    let hasUploadedIdentityDoc = $state(false);
+    let visitDate = $state('');
+    let visitTime = $state('');
+    let schedulingStep = $state(1); // 1: DateTime, 2: Document
+
+    let myVisits = $state([]);
 
     const properties = $state([
         { 
@@ -78,8 +87,42 @@
 
     function toggleAuth() {
         isLoggedIn = !isLoggedIn;
-        if (!isLoggedIn) view = 'listings';
-        selectedProperty = null;
+        if (!isLoggedIn) {
+            view = 'listings';
+            selectedProperty = null;
+            isScheduling = false;
+            showAuthPrompt = false;
+        }
+    }
+
+    function startScheduling() {
+        if (!isLoggedIn) {
+            showAuthPrompt = true;
+            return;
+        }
+        isScheduling = true;
+        schedulingStep = 1;
+    }
+
+    function handleAuthAndSchedule() {
+        isLoggedIn = true;
+        showAuthPrompt = false;
+        isScheduling = true;
+        schedulingStep = 1;
+    }
+
+    function submitVisit() {
+        const newVisit = {
+            id: myVisits.length + 1,
+            property: selectedProperty,
+            date: visitDate,
+            time: visitTime,
+            status: 'pending'
+        };
+        myVisits = [...myVisits, newVisit];
+        isScheduling = false;
+        hasUploadedIdentityDoc = true; // Once uploaded, it's remembered
+        alert('Visit scheduled! Status: Pending landlord approval.');
     }
 
     function viewDetails(property) {
@@ -220,8 +263,11 @@
                                     </div>
                                 </div>
 
-                                <button class="w-full bg-white text-indigo-600 hover:bg-indigo-50 py-4 rounded-2xl font-black transition-all shadow-lg text-lg">
-                                    Inquire Now
+                                <button 
+                                    class="w-full bg-white text-indigo-600 hover:bg-indigo-50 py-4 rounded-2xl font-black transition-all shadow-lg text-lg"
+                                    on:click={startScheduling}
+                                >
+                                    Schedule a Visit
                                 </button>
                                 <p class="text-center text-xs text-indigo-200 font-bold">Secure through Keystone Legal Framework</p>
                             </div>
@@ -416,10 +462,170 @@
                                 </div>
                                 <span class="text-green-600 font-bold text-[10px] bg-green-50 px-2 py-1 rounded-md uppercase tracking-wider">Verified</span>
                             </div>
+                            {#if hasUploadedIdentityDoc}
+                                <div class="bg-white border border-indigo-200 rounded-2xl p-6 flex items-center justify-between shadow-sm border-l-4 border-l-indigo-600">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
+                                            <CheckCircle2 size={20} />
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-sm text-indigo-900">Legal_ID_Card.png</h4>
+                                            <p class="text-gray-400 text-[10px] font-bold mt-0.5">Primary Identity Document</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-indigo-600 font-bold text-[10px] bg-indigo-50 px-2 py-1 rounded-md uppercase tracking-wider">Verified</span>
+                                </div>
+                            {/if}
                         </div>
                     </section>
+
+                    {#if myVisits.length > 0}
+                        <section class="space-y-4">
+                            <h2 class="text-xl font-bold">Upcoming Visits</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {#each myVisits as visit}
+                                    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex items-center justify-between">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400">
+                                                <Calendar size={24} />
+                                            </div>
+                                            <div>
+                                                <h4 class="font-bold text-lg">{visit.property.name}</h4>
+                                                <div class="flex items-center gap-3 text-sm text-gray-500">
+                                                    <span class="flex items-center gap-1"><Calendar size={14} /> {visit.date}</span>
+                                                    <span class="flex items-center gap-1"><Clock size={14} /> {visit.time}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
+                                            {visit.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}">
+                                            {visit.status}
+                                        </span>
+                                    </div>
+                                {/each}
+                            </div>
+                        </section>
+                    {/if}
                 </div>
             {/if}
+        {/if}
+
+        <!-- Authentication Prompt Modal -->
+        {#if showAuthPrompt}
+            <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+                <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+                    <div class="p-8 text-center space-y-6">
+                        <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto text-indigo-600">
+                            <LogIn size={40} />
+                        </div>
+                        <div class="space-y-2">
+                            <h2 class="text-3xl font-black">Authentication Required</h2>
+                            <p class="text-gray-500">To ensure safety and legal compliance, you must be signed in to schedule a visit.</p>
+                        </div>
+                        <div class="flex flex-col gap-3">
+                            <button 
+                                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black shadow-lg shadow-indigo-200 transition-all"
+                                on:click={handleAuthAndSchedule}
+                            >
+                                Sign In or Create Account
+                            </button>
+                            <button 
+                                class="w-full bg-gray-100 hover:bg-gray-200 text-gray-600 py-4 rounded-2xl font-bold transition-all"
+                                on:click={() => showAuthPrompt = false}
+                            >
+                                Not now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {/if}
+
+        <!-- Scheduling Modal -->
+        {#if isScheduling}
+            <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+                <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+                    <div class="bg-indigo-600 p-6 text-white flex justify-between items-center">
+                        <h2 class="text-xl font-black uppercase tracking-tight">Schedule Your Visit</h2>
+                        <button class="hover:bg-indigo-500 p-1 rounded-lg transition-colors" on:click={() => isScheduling = false}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="p-8 space-y-8">
+                        <!-- Progress Steps -->
+                        <div class="flex items-center gap-4">
+                            <div class="flex-1 h-2 rounded-full {schedulingStep >= 1 ? 'bg-indigo-600' : 'bg-gray-100'}"></div>
+                            <div class="flex-1 h-2 rounded-full {schedulingStep >= 2 || hasUploadedIdentityDoc ? 'bg-indigo-600' : 'bg-gray-100'}"></div>
+                        </div>
+
+                        {#if schedulingStep === 1}
+                            <div class="space-y-6 animate-in slide-in-from-right-4 duration-300">
+                                <div class="space-y-2">
+                                    <h3 class="text-2xl font-black">When would you like to visit?</h3>
+                                    <p class="text-gray-500 text-sm">Select a date and time that works for you.</p>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-black uppercase tracking-widest text-gray-400">Date</label>
+                                        <div class="relative">
+                                            <Calendar class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                            <input type="date" bind:value={visitDate} class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold" />
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-black uppercase tracking-widest text-gray-400">Time</label>
+                                        <div class="relative">
+                                            <Clock class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                                            <input type="time" bind:value={visitTime} class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <button 
+                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                    disabled={!visitDate || !visitTime}
+                                    on:click={() => hasUploadedIdentityDoc ? submitVisit() : schedulingStep = 2}
+                                >
+                                    {hasUploadedIdentityDoc ? 'Confirm Visit' : 'Next: Verify Identity'}
+                                </button>
+                            </div>
+                        {:else}
+                            <div class="space-y-6 animate-in slide-in-from-right-4 duration-300">
+                                <div class="space-y-2">
+                                    <h3 class="text-2xl font-black">Identity Verification</h3>
+                                    <p class="text-gray-500 text-sm">Please upload a valid legal document (Passport or Driver License) to secure your visit.</p>
+                                </div>
+                                
+                                <div class="border-2 border-dashed border-gray-200 rounded-3xl p-10 flex flex-col items-center justify-center text-center gap-4 bg-gray-50/50 hover:border-indigo-300 transition-colors cursor-pointer group">
+                                    <div class="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center text-gray-400 group-hover:text-indigo-600 transition-colors">
+                                        <Upload size={32} />
+                                    </div>
+                                    <div class="space-y-1">
+                                        <p class="font-bold">Click to upload or drag & drop</p>
+                                        <p class="text-xs text-gray-400 font-medium">PNG, JPG or WEBP (max. 10MB)</p>
+                                    </div>
+                                    <input type="file" class="hidden" accept="image/*" />
+                                </div>
+
+                                <div class="flex gap-3">
+                                    <button 
+                                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-4 rounded-2xl font-bold transition-all"
+                                        on:click={() => schedulingStep = 1}
+                                    >
+                                        Back
+                                    </button>
+                                    <button 
+                                        class="flex-[2] bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black shadow-lg transition-all"
+                                        on:click={submitVisit}
+                                    >
+                                        Complete Scheduling
+                                    </button>
+                                </div>
+                            </div>
+                        {/if}
+                    </div>
+                </div>
+            </div>
         {/if}
     </main>
 </div>
