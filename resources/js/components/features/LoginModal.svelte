@@ -40,8 +40,9 @@
 
         <form class="space-y-4" onsubmit={handleSubmit}>
             <div class="space-y-1">
-                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Email Address</label>
+                <label for="login-email" class="text-xs font-black uppercase tracking-widest text-gray-400">Email Address</label>
                 <input 
+                    id="login-email"
                     type="email" 
                     bind:value={email}
                     placeholder="your@email.com"
@@ -50,8 +51,9 @@
                 />
             </div>
             <div class="space-y-1">
-                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Password</label>
+                <label for="login-password" class="text-xs font-black uppercase tracking-widest text-gray-400">Password</label>
                 <input 
+                    id="login-password"
                     type="password" 
                     bind:value={password}
                     placeholder="••••••••"

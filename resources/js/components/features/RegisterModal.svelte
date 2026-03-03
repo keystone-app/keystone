@@ -41,8 +41,9 @@
 
         <form class="space-y-4" onsubmit={handleSubmit}>
             <div class="space-y-1">
-                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Full Name</label>
+                <label for="register-name" class="text-xs font-black uppercase tracking-widest text-gray-400">Full Name</label>
                 <input 
+                    id="register-name"
                     type="text" 
                     bind:value={name}
                     placeholder="John Doe"
@@ -51,8 +52,9 @@
                 />
             </div>
             <div class="space-y-1">
-                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Email Address</label>
+                <label for="register-email" class="text-xs font-black uppercase tracking-widest text-gray-400">Email Address</label>
                 <input 
+                    id="register-email"
                     type="email" 
                     bind:value={email}
                     placeholder="your@email.com"
@@ -61,8 +63,9 @@
                 />
             </div>
             <div class="space-y-1">
-                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Password</label>
+                <label for="register-password" class="text-xs font-black uppercase tracking-widest text-gray-400">Password</label>
                 <input 
+                    id="register-password"
                     type="password" 
                     bind:value={password}
                     placeholder="••••••••"

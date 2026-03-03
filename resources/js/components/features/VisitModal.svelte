@@ -58,17 +58,17 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-2">
-                        <label class="text-xs font-black uppercase tracking-widest text-gray-400">Date</label>
+                        <label for="visit-date" class="text-xs font-black uppercase tracking-widest text-gray-400">Date</label>
                         <div class="relative">
                             <Calendar class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                            <input type="date" bind:value={date} class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold" />
+                            <input id="visit-date" type="date" bind:value={date} class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold" />
                         </div>
                     </div>
                     <div class="space-y-2">
-                        <label class="text-xs font-black uppercase tracking-widest text-gray-400">Time</label>
+                        <label for="visit-time" class="text-xs font-black uppercase tracking-widest text-gray-400">Time</label>
                         <div class="relative">
                             <Clock class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                            <input type="time" bind:value={time} class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold" />
+                            <input id="visit-time" type="time" bind:value={time} class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold" />
                         </div>
                     </div>
                 </div>
@@ -101,7 +101,7 @@
                             </div>
                         </div>
                     {:else}
-                        <label class="border-2 border-dashed border-gray-200 rounded-3xl p-10 flex flex-col items-center justify-center text-center gap-4 bg-gray-50/50 hover:border-indigo-300 transition-colors cursor-pointer group">
+                        <label for="visit-identity-file" class="border-2 border-dashed border-gray-200 rounded-3xl p-10 flex flex-col items-center justify-center text-center gap-4 bg-gray-50/50 hover:border-indigo-300 transition-colors cursor-pointer group">
                             <div class="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center text-gray-400 group-hover:text-indigo-600 transition-colors">
                                 <Upload size={32} />
                             </div>
@@ -109,7 +109,7 @@
                                 <p class="font-bold">Click to upload or drag & drop</p>
                                 <p class="text-xs text-gray-400 font-medium">PNG, JPG or WEBP (max. 10MB)</p>
                             </div>
-                            <input type="file" class="hidden" accept="image/*" onchange={handleFileSelection} />
+                            <input id="visit-identity-file" type="file" class="hidden" accept="image/*" onchange={handleFileSelection} />
                         </label>
                     {/if}
                 </div>
