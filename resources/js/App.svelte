@@ -7,13 +7,64 @@
 
     let searchQuery = $state('');
     let statusFilter = $state('all');
+    let selectedProperty = $state(null);
 
     const properties = $state([
-        { id: 1, name: 'Modern Apartment 101', address: '123 Legal Lane, Suite 101', price: 2500, status: 'available', type: 'Apartment' },
-        { id: 2, name: 'Cozy Studio Downtown', address: '456 Urban Ave, #4B', price: 1800, status: 'rented', type: 'Studio' },
-        { id: 3, name: 'Spacious Family Home', address: '789 Suburban Way', price: 3500, status: 'available', type: 'House' },
-        { id: 4, name: 'Luxury Penthouse', address: '1 Sky High Plaza', price: 5000, status: 'available', type: 'Penthouse' },
-        { id: 5, name: 'Rustic Loft', address: '22 Industrial Dr', price: 2200, status: 'maintenance', type: 'Loft' },
+        { 
+            id: 1, 
+            name: 'Modern Apartment 101', 
+            address: '123 Legal Lane, Suite 101', 
+            price: 2500, 
+            status: 'available', 
+            type: 'Apartment',
+            description: 'A stunning modern apartment featuring floor-to-ceiling windows, an open-concept kitchen, and premium finishes throughout. Located in the heart of the legal district.',
+            features: ['2 Bedrooms', '2 Bathrooms', 'Parking Included', 'Gym Access'],
+            compliance: { gas: 'Verified', fire: 'Verified', electric: 'Pending' }
+        },
+        { 
+            id: 2, 
+            name: 'Cozy Studio Downtown', 
+            address: '456 Urban Ave, #4B', 
+            price: 1800, 
+            status: 'rented', 
+            type: 'Studio',
+            description: 'Efficient and stylish studio apartment perfect for young professionals. Close to public transport and local amenities.',
+            features: ['Studio', '1 Bathroom', 'High Ceilings', 'Pet Friendly'],
+            compliance: { gas: 'Verified', fire: 'Verified', electric: 'Verified' }
+        },
+        { 
+            id: 3, 
+            name: 'Spacious Family Home', 
+            address: '789 Suburban Way', 
+            price: 3500, 
+            status: 'available', 
+            type: 'House',
+            description: 'Large family home with a beautiful garden, modern appliances, and a quiet neighborhood atmosphere.',
+            features: ['4 Bedrooms', '3 Bathrooms', 'Large Garden', 'Double Garage'],
+            compliance: { gas: 'Verified', fire: 'Verified', electric: 'Verified' }
+        },
+        { 
+            id: 4, 
+            name: 'Luxury Penthouse', 
+            address: '1 Sky High Plaza', 
+            price: 5000, 
+            status: 'available', 
+            type: 'Penthouse',
+            description: 'Ultimate luxury living with panoramic city views, private elevator access, and a wraparound terrace.',
+            features: ['3 Bedrooms', '3.5 Bathrooms', 'Private Terrace', 'Smart Home System'],
+            compliance: { gas: 'Verified', fire: 'Verified', electric: 'Verified' }
+        },
+        { 
+            id: 5, 
+            name: 'Rustic Loft', 
+            address: '22 Industrial Dr', 
+            price: 2200, 
+            status: 'maintenance', 
+            type: 'Loft',
+            description: 'Authentic industrial loft with exposed brick, timber beams, and an open layout. Currently undergoing premium renovations.',
+            features: ['1 Bedroom', '1 Bathroom', 'Exposed Brick', 'High Ceilings'],
+            compliance: { gas: 'Expired', fire: 'Verified', electric: 'Verified' }
+        },
     ]);
 
     const filteredProperties = $derived(
@@ -28,21 +79,27 @@
     function toggleAuth() {
         isLoggedIn = !isLoggedIn;
         if (!isLoggedIn) view = 'listings';
+        selectedProperty = null;
+    }
+
+    function viewDetails(property) {
+        selectedProperty = property;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 
 <div class="min-h-screen bg-gray-50 text-gray-900 font-sans antialiased selection:bg-indigo-100">
     <nav class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
         <div class="flex items-center gap-8">
-            <div class="flex items-center gap-2 cursor-pointer" on:click={() => view = 'listings'}>
+            <div class="flex items-center gap-2 cursor-pointer" on:click={() => { view = 'listings'; selectedProperty = null; }}>
                 <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">K</div>
                 <span class="text-xl font-bold tracking-tight">Keystone</span>
             </div>
             
             <div class="hidden md:flex items-center gap-6">
                 <button 
-                    class="text-sm font-semibold {view === 'listings' ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-900'}"
-                    on:click={() => view = 'listings'}
+                    class="text-sm font-semibold {(view === 'listings' && !selectedProperty) ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-900'}"
+                    on:click={() => { view = 'listings'; selectedProperty = null; }}
                 >
                     Browse Properties
                 </button>
@@ -86,93 +143,183 @@
 
     <main class="max-w-7xl mx-auto p-8">
         {#if view === 'listings'}
-            <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <div class="space-y-1">
-                        <h1 class="text-4xl font-extrabold tracking-tight">Available Listings</h1>
-                        <p class="text-gray-500 text-lg">Find your next home with verified legal compliance.</p>
-                    </div>
-                </header>
+            {#if selectedProperty}
+                <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <button 
+                        class="flex items-center gap-2 text-gray-500 hover:text-indigo-600 font-bold transition-colors mb-4"
+                        on:click={() => selectedProperty = null}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                        Back to Listings
+                    </button>
 
-                <!-- Search and Filters -->
-                <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row gap-4 items-center">
-                    <div class="relative flex-1 w-full">
-                        <Search class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                        <input 
-                            type="text" 
-                            bind:value={searchQuery}
-                            placeholder="Search by property name or address..."
-                            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
-                        />
-                    </div>
-                    <div class="flex items-center gap-2 w-full md:w-auto">
-                        <Filter class="text-gray-400" size={20} />
-                        <select 
-                            bind:value={statusFilter}
-                            class="flex-1 md:w-48 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-                        >
-                            <option value="all">All Statuses</option>
-                            <option value="available">Available Now</option>
-                            <option value="rented">Rented</option>
-                            <option value="maintenance">Maintenance</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {#each filteredProperties as property}
-                        <div class="group bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                            <div class="h-56 bg-gray-100 flex items-center justify-center border-b border-gray-100 relative">
-                                <Home class="w-16 h-16 text-gray-300 group-hover:text-indigo-200 transition-colors" />
-                                <div class="absolute top-4 left-4">
-                                    <span class="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold shadow-sm">
-                                        {property.type}
-                                    </span>
-                                </div>
-                                <div class="absolute top-4 right-4">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                        <div class="lg:col-span-2 space-y-8">
+                            <div class="h-[400px] bg-gray-100 rounded-3xl flex items-center justify-center border border-gray-200 shadow-inner">
+                                <Home class="w-32 h-32 text-gray-300" />
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="bg-indigo-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">{selectedProperty.type}</span>
                                     <span class="px-3 py-1 rounded-full text-xs font-bold shadow-sm 
-                                        {property.status === 'available' ? 'bg-green-100 text-green-700' : 
-                                         property.status === 'rented' ? 'bg-indigo-100 text-indigo-700' : 'bg-amber-100 text-amber-700'}">
-                                        {property.status.charAt(0).toUpperCase() + property.status.slice(1)}
+                                        {selectedProperty.status === 'available' ? 'bg-green-100 text-green-700' : 
+                                         selectedProperty.status === 'rented' ? 'bg-indigo-100 text-indigo-700' : 'bg-amber-100 text-amber-700'}">
+                                        {selectedProperty.status.charAt(0).toUpperCase() + selectedProperty.status.slice(1)}
                                     </span>
                                 </div>
-                            </div>
-                            <div class="p-6">
-                                <h3 class="font-extrabold text-xl mb-1 group-hover:text-indigo-600 transition-colors">{property.name}</h3>
-                                <p class="text-gray-500 text-sm mb-6 flex items-center gap-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                                    {property.address}
+                                <h1 class="text-5xl font-black tracking-tight">{selectedProperty.name}</h1>
+                                <p class="text-xl text-gray-500 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    {selectedProperty.address}
                                 </p>
-                                <div class="flex justify-between items-center pt-5 border-t border-gray-100">
-                                    <div>
-                                        <span class="text-2xl font-black text-indigo-600">${property.price.toLocaleString()}</span>
-                                        <span class="text-gray-400 text-sm font-medium">/mo</span>
-                                    </div>
-                                    <button class="bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white px-4 py-2 rounded-xl text-sm font-bold transition-all">
-                                        View Details
-                                    </button>
+                            </div>
+
+                            <div class="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm space-y-6">
+                                <h2 class="text-2xl font-bold">About this property</h2>
+                                <p class="text-gray-600 leading-relaxed text-lg">
+                                    {selectedProperty.description}
+                                </p>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    {#each selectedProperty.features as feature}
+                                        <div class="bg-gray-50 p-4 rounded-2xl flex flex-col items-center text-center gap-2">
+                                            <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Feature</span>
+                                            <span class="font-bold text-sm">{feature}</span>
+                                        </div>
+                                    {/each}
                                 </div>
                             </div>
                         </div>
-                    {/each}
-                </div>
 
-                {#if filteredProperties.length === 0}
-                    <div class="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-                        <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Search class="text-gray-300" size={40} />
+                        <div class="space-y-8">
+                            <div class="bg-indigo-600 p-8 rounded-3xl text-white shadow-xl shadow-indigo-100 space-y-6 sticky top-28">
+                                <div class="space-y-1">
+                                    <p class="text-indigo-200 text-sm font-black uppercase tracking-widest">Monthly Rent</p>
+                                    <div class="flex items-baseline gap-1">
+                                        <span class="text-5xl font-black">${selectedProperty.price.toLocaleString()}</span>
+                                        <span class="text-indigo-200 font-bold">/mo</span>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-4 pt-6 border-t border-indigo-500">
+                                    <h3 class="font-bold text-lg flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                        Legal Compliance
+                                    </h3>
+                                    <div class="space-y-3">
+                                        {#each Object.entries(selectedProperty.compliance) as [cert, status]}
+                                            <div class="flex justify-between items-center bg-indigo-700/50 p-3 rounded-xl">
+                                                <span class="text-sm font-bold capitalize">{cert} Certificate</span>
+                                                <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded-md 
+                                                    {status === 'Verified' ? 'bg-green-400 text-green-900' : 
+                                                     status === 'Pending' ? 'bg-amber-400 text-amber-900' : 'bg-red-400 text-red-900'}">
+                                                    {status}
+                                                </span>
+                                            </div>
+                                        {/each}
+                                    </div>
+                                </div>
+
+                                <button class="w-full bg-white text-indigo-600 hover:bg-indigo-50 py-4 rounded-2xl font-black transition-all shadow-lg text-lg">
+                                    Inquire Now
+                                </button>
+                                <p class="text-center text-xs text-indigo-200 font-bold">Secure through Keystone Legal Framework</p>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900">No properties found</h3>
-                        <p class="text-gray-500 mt-1">Try adjusting your filters or search query.</p>
-                        <button 
-                            class="mt-6 text-indigo-600 font-bold hover:underline"
-                            on:click={() => { searchQuery = ''; statusFilter = 'all'; }}
-                        >
-                            Clear all filters
-                        </button>
                     </div>
-                {/if}
-            </div>
+                </div>
+            {:else}
+                <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div class="space-y-1">
+                            <h1 class="text-4xl font-extrabold tracking-tight">Available Listings</h1>
+                            <p class="text-gray-500 text-lg">Find your next home with verified legal compliance.</p>
+                        </div>
+                    </header>
+
+                    <!-- Search and Filters -->
+                    <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row gap-4 items-center">
+                        <div class="relative flex-1 w-full">
+                            <Search class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                            <input 
+                                type="text" 
+                                bind:value={searchQuery}
+                                placeholder="Search by property name or address..."
+                                class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                            />
+                        </div>
+                        <div class="flex items-center gap-2 w-full md:w-auto">
+                            <Filter class="text-gray-400" size={20} />
+                            <select 
+                                bind:value={statusFilter}
+                                class="flex-1 md:w-48 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                            >
+                                <option value="all">All Statuses</option>
+                                <option value="available">Available Now</option>
+                                <option value="rented">Rented</option>
+                                <option value="maintenance">Maintenance</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {#each filteredProperties as property}
+                            <div class="group bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                <div class="h-56 bg-gray-100 flex items-center justify-center border-b border-gray-100 relative">
+                                    <Home class="w-16 h-16 text-gray-300 group-hover:text-indigo-200 transition-colors" />
+                                    <div class="absolute top-4 left-4">
+                                        <span class="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                                            {property.type}
+                                        </span>
+                                    </div>
+                                    <div class="absolute top-4 right-4">
+                                        <span class="px-3 py-1 rounded-full text-xs font-bold shadow-sm 
+                                            {property.status === 'available' ? 'bg-green-100 text-green-700' : 
+                                             property.status === 'rented' ? 'bg-indigo-100 text-indigo-700' : 'bg-amber-100 text-amber-700'}">
+                                            {property.status.charAt(0).toUpperCase() + property.status.slice(1)}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="p-6">
+                                    <h3 class="font-extrabold text-xl mb-1 group-hover:text-indigo-600 transition-colors">{property.name}</h3>
+                                    <p class="text-gray-500 text-sm mb-6 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                        {property.address}
+                                    </p>
+                                    <div class="flex justify-between items-center pt-5 border-t border-gray-100">
+                                        <div>
+                                            <span class="text-2xl font-black text-indigo-600">${property.price.toLocaleString()}</span>
+                                            <span class="text-gray-400 text-sm font-medium">/mo</span>
+                                        </div>
+                                        <button 
+                                            class="bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white px-4 py-2 rounded-xl text-sm font-bold transition-all"
+                                            on:click={() => viewDetails(property)}
+                                        >
+                                            View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        {/each}
+                    </div>
+
+                    {#if filteredProperties.length === 0}
+                        <div class="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+                            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Search class="text-gray-300" size={40} />
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">No properties found</h3>
+                            <p class="text-gray-500 mt-1">Try adjusting your filters or search query.</p>
+                            <button 
+                                class="mt-6 text-indigo-600 font-bold hover:underline"
+                                on:click={() => { searchQuery = ''; statusFilter = 'all'; }}
+                            >
+                                Clear all filters
+                            </button>
+                        </div>
+                    {/if}
+                </div>
+            {/if}
         {:else if isLoggedIn}
             {#if role === 'landlord'}
                 <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
