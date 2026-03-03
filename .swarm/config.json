@@ -1,0 +1,43 @@
+{
+  "name": "swarm-mission",
+  "created_at": 1772554920.7554061,
+  "leader": "leader",
+  "members": [
+    {
+      "agent_id": "junior@swarm-mission",
+      "name": "Junior",
+      "color": "blue",
+      "model": "auto-gemini-3",
+      "mode": "parallel",
+      "status": "pending"
+    },
+    {
+      "agent_id": "frontend@swarm-mission",
+      "name": "Frontend",
+      "color": "cyan",
+      "model": "auto-gemini-3",
+      "mode": "parallel",
+      "status": "pending"
+    },
+    {
+      "agent_id": "prometheus@swarm-mission",
+      "name": "Prometheus",
+      "color": "yellow",
+      "model": "auto-gemini-3",
+      "mode": "serial",
+      "status": "pending"
+    },
+    {
+      "agent_id": "quality_validator@swarm-mission",
+      "name": "Quality_Validator",
+      "color": "green",
+      "model": "auto-gemini-3",
+      "mode": "validator",
+      "status": "pending"
+    }
+  ],
+  "settings": {
+    "backend": "thread",
+    "poll_interval_ms": 1000
+  }
+}
