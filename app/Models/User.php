@@ -60,6 +60,11 @@ class User extends Authenticatable
         return $this->hasMany(Document::class);
     }
 
+    public function offers()
+    {
+        return $this->hasMany(Offer::class);
+    }
+
     public function identityDocument()
     {
         return $this->belongsTo(Document::class, 'identity_document_id');

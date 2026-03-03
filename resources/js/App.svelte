@@ -4,10 +4,74 @@
 
     let role = $state('guest'); // 'landlord', 'tenant', 'guest'
     let view = $state('listings'); // 'listings', 'dashboard'
-    let landlordView = $state('properties'); // 'properties', 'visits'
+    let landlordView = $state('properties'); // 'properties', 'visits', 'offers'
     let isLoggedIn = $state(false);
     let currentUser = $state(null);
     let landlordVisits = $state([]);
+    let offers = $state([]);
+
+    async function fetchOffers() {
+        try {
+            const res = await fetch('/offers');
+            if (res.ok) {
+                offers = await res.json();
+            }
+        } catch (e) {
+            console.error('Failed to fetch offers', e);
+        }
+    }
+
+    async function submitOffer(visitId, amount, terms) {
+        try {
+            const res = await fetch('/offers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ visit_id: visitId, amount, terms })
+            });
+
+            if (res.ok) {
+                const newOffer = await res.json();
+                offers = [newOffer, ...offers];
+                alert('Offer submitted successfully!');
+                return true;
+            } else {
+                const data = await res.json();
+                alert(data.message || 'Offer submission failed.');
+                return false;
+            }
+        } catch (e) {
+            alert('Connection error.');
+            return false;
+        }
+    }
+
+    async function updateOfferStatus(offerId, status, amount = null, terms = null) {
+        try {
+            const res = await fetch(`/offers/${offerId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ status, amount, terms })
+            });
+
+            if (res.ok) {
+                const updatedOffer = await res.json();
+                offers = offers.map(o => o.id === offerId ? updatedOffer : o);
+                if (status === 'accepted') {
+                    alert('Offer accepted! Lease drafting initiated.');
+                }
+            }
+        } catch (e) {
+            alert('Failed to update offer.');
+        }
+    }
 
     async function fetchLandlordVisits() {
         try {
@@ -70,6 +134,24 @@
     let regName = $state('');
     let loginError = $state('');
     let isSubmitting = $state(false);
+
+    let showOfferModal = $state(false);
+    let offerAmount = $state('');
+    let offerTerms = $state('');
+    let selectedVisitForOffer = $state(null);
+
+    function openOfferModal(visit) {
+        selectedVisitForOffer = visit;
+        offerAmount = visit.property.price;
+        offerTerms = 'Standard legal terms as per Keystone framework.';
+        showOfferModal = true;
+    }
+
+    async function handleOfferSubmission() {
+        if (await submitOffer(selectedVisitForOffer.id, offerAmount, offerTerms)) {
+            showOfferModal = false;
+        }
+    }
 
     let myVisits = $state([]);
 
@@ -154,6 +236,7 @@
                 role = data.role;
                 identityDoc = data.identity_document;
 
+                fetchOffers();
                 if (role === 'landlord') {
                     fetchLandlordVisits();
                 }
@@ -191,6 +274,7 @@
                 showRegisterModal = false;
                 showAuthPrompt = false;
                 
+                fetchOffers();
                 if (role === 'landlord') fetchLandlordVisits();
 
                 if (isScheduling) {
@@ -230,6 +314,7 @@
                 showLoginModal = false;
                 showAuthPrompt = false;
                 
+                fetchOffers();
                 if (role === 'landlord') fetchLandlordVisits();
 
                 if (isScheduling) {
@@ -631,6 +716,17 @@
                                     </span>
                                 {/if}
                             </button>
+                            <button 
+                                class="px-6 py-3 text-sm font-bold border-b-2 transition-all {landlordView === 'offers' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400 hover:text-gray-600'}"
+                                on:click={() => landlordView = 'offers'}
+                            >
+                                Offers
+                                {#if offers.filter(o => o.status === 'pending').length > 0}
+                                    <span class="ml-2 bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full text-[10px]">
+                                        {offers.filter(o => o.status === 'pending').length}
+                                    </span>
+                                {/if}
+                            </button>
                         </div>
                     </header>
 
@@ -726,6 +822,81 @@
                                         <Calendar size={32} />
                                     </div>
                                     <p class="text-gray-500 font-medium">No visit requests at the moment.</p>
+                                </div>
+                            {/if}
+                        </div>
+                    {:else if landlordView === 'offers'}
+                        <div class="bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-sm">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-gray-50 border-b border-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Tenant</th>
+                                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Property</th>
+                                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Offer Amount</th>
+                                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
+                                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-50">
+                                    {#each offers as offer}
+                                        <tr class="hover:bg-gray-50/50 transition-colors">
+                                            <td class="px-6 py-5">
+                                                <div class="flex flex-col">
+                                                    <span class="font-bold text-sm">{offer.user.name}</span>
+                                                    <span class="text-[10px] text-gray-400 font-black uppercase tracking-widest">Verified Identity</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-5 text-sm text-gray-600">{offer.property.name}</td>
+                                            <td class="px-6 py-5">
+                                                <div class="flex flex-col">
+                                                    <span class="text-indigo-600 font-black">${parseFloat(offer.amount).toLocaleString()}/mo</span>
+                                                    <span class="text-[10px] text-gray-400 truncate max-w-[150px]">{offer.terms}</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-5">
+                                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
+                                                    {offer.status === 'pending' ? 'bg-amber-100 text-amber-700' : 
+                                                     offer.status === 'accepted' ? 'bg-green-100 text-green-700' : 
+                                                     'bg-red-100 text-red-700'}">
+                                                    {offer.status}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-5 text-right">
+                                                {#if offer.status === 'pending'}
+                                                    <div class="flex justify-end gap-2">
+                                                        <button 
+                                                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all shadow-sm shadow-indigo-100"
+                                                            on:click={() => updateOfferStatus(offer.id, 'accepted')}
+                                                        >
+                                                            Accept
+                                                        </button>
+                                                        <button 
+                                                            class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all"
+                                                            on:click={() => updateOfferStatus(offer.id, 'countered')}
+                                                        >
+                                                            Counter
+                                                        </button>
+                                                        <button 
+                                                            class="bg-white border border-red-100 hover:bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all"
+                                                            on:click={() => updateOfferStatus(offer.id, 'rejected')}
+                                                        >
+                                                            Reject
+                                                        </button>
+                                                    </div>
+                                                {:else}
+                                                    <span class="text-xs text-gray-400 font-bold italic">Negotiation Ended</span>
+                                                {/if}
+                                            </td>
+                                        </tr>
+                                    {/each}
+                                </tbody>
+                            </table>
+                            {#if offers.length === 0}
+                                <div class="p-20 text-center space-y-4">
+                                    <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-300">
+                                        <FileText size={32} />
+                                    </div>
+                                    <p class="text-gray-500 font-medium">No offers received yet.</p>
                                 </div>
                             {/if}
                         </div>
@@ -831,6 +1002,47 @@
                                             {visit.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}">
                                             {visit.status}
                                         </span>
+                                        {#if visit.status === 'scheduled'}
+                                            <button 
+                                                class="ml-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm shadow-indigo-100"
+                                                on:click={() => openOfferModal(visit)}
+                                            >
+                                                Make Offer
+                                            </button>
+                                        {/if}
+                                    </div>
+                                {/each}
+                            </div>
+                        </section>
+                    {/if}
+
+                    {#if offers.length > 0}
+                        <section class="space-y-4">
+                            <h2 class="text-xl font-bold">My Offers</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {#each offers as offer}
+                                    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <h4 class="font-bold text-lg">{offer.property.name}</h4>
+                                                <p class="text-sm font-black text-indigo-600">${parseFloat(offer.amount).toLocaleString()}/mo</p>
+                                            </div>
+                                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
+                                                {offer.status === 'pending' ? 'bg-amber-100 text-amber-700' : 
+                                                 offer.status === 'accepted' ? 'bg-green-100 text-green-700' : 
+                                                 'bg-red-100 text-red-700'}">
+                                                {offer.status}
+                                            </span>
+                                        </div>
+                                        {#if offer.status === 'accepted'}
+                                            <div class="bg-green-50 p-3 rounded-xl flex items-center gap-3">
+                                                <FileText class="text-green-600" size={20} />
+                                                <div>
+                                                    <p class="text-xs font-bold text-green-800">Lease Drafted</p>
+                                                    <p class="text-[10px] text-green-600">Waiting for signatures</p>
+                                                </div>
+                                            </div>
+                                        {/if}
                                     </div>
                                 {/each}
                             </div>
@@ -1145,6 +1357,57 @@
                         <div class="text-center">
                             <p class="text-sm text-gray-400 font-bold">Already have an account? <button class="text-indigo-600 hover:underline" on:click={() => { showRegisterModal = false; showLoginModal = true; }}>Sign in</button></p>
                         </div>
+                    </div>
+                </div>
+            </div>
+        {/if}
+
+        <!-- Offer Modal -->
+        {#if showOfferModal}
+            <div class="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-md animate-in fade-in duration-300">
+                <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 relative">
+                    <button 
+                        class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                        on:click={() => showOfferModal = false}
+                    >
+                        <X size={20} class="text-gray-400" />
+                    </button>
+
+                    <div class="p-10 space-y-8">
+                        <div class="text-center space-y-2">
+                            <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto text-white shadow-lg shadow-indigo-200 mb-6">
+                                <Plus size={32} />
+                            </div>
+                            <h2 class="text-3xl font-black">Make an Offer</h2>
+                            <p class="text-gray-500">Propose your terms for {selectedVisitForOffer.property.name}</p>
+                        </div>
+
+                        <form class="space-y-4" on:submit|preventDefault={handleOfferSubmission}>
+                            <div class="space-y-1">
+                                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Monthly Rent ($)</label>
+                                <input 
+                                    type="number" 
+                                    bind:value={offerAmount}
+                                    placeholder="2500"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-xl text-indigo-600"
+                                    required
+                                />
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Additional Terms</label>
+                                <textarea 
+                                    bind:value={offerTerms}
+                                    placeholder="Any special requests or conditions..."
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-medium h-32"
+                                ></textarea>
+                            </div>
+                            <button 
+                                type="submit"
+                                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2"
+                            >
+                                Send Offer
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

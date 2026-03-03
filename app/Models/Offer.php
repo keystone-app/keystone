@@ -5,20 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Visit extends Model
+class Offer extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
         'property_id',
-        'document_id',
-        'visit_at',
+        'visit_id',
+        'amount',
+        'terms',
         'status',
-    ];
-
-    protected $casts = [
-        'visit_at' => 'datetime',
     ];
 
     public function user()
@@ -31,13 +28,8 @@ class Visit extends Model
         return $this->belongsTo(Property::class);
     }
 
-    public function document()
+    public function visit()
     {
-        return $this->belongsTo(Document::class);
-    }
-
-    public function offer()
-    {
-        return $this->hasOne(Offer::class);
+        return $this->belongsTo(Visit::class);
     }
 }

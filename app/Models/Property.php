@@ -26,4 +26,9 @@ class Property extends Model
     {
         return $this->hasMany(Lease::class);
     }
+
+    public function offers()
+    {
+        return $this->hasMany(Offer::class);
+    }
 }
