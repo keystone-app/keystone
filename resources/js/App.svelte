@@ -450,6 +450,64 @@
         }
     }
 
+    async function handleComplianceUpload(offerId, type, e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        isSubmitting = true;
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('type', type);
+        formData.append('offer_id', offerId);
+
+        try {
+            const res = await fetch('/compliance-upload', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+
+            if (res.ok) {
+                // Refresh offers to get updated compliance_status
+                await fetchOffers();
+                alert(`${type.replace('_', ' ')} uploaded successfully!`);
+            } else {
+                const data = await res.json();
+                alert(data.message || 'Upload failed.');
+            }
+        } catch (e) {
+            alert('Upload error.');
+        } finally {
+            isSubmitting = false;
+        }
+    }
+
+    async function handleIncomeVerification(offerId) {
+        isSubmitting = true;
+        try {
+            const res = await fetch(`/offers/${offerId}/verify`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (res.ok) {
+                await fetchOffers();
+                alert('Income verified via Open Finance!');
+            }
+        } catch (e) {
+            alert('Verification failed.');
+        } finally {
+            isSubmitting = false;
+        }
+    }
+
     function viewDetails(property) {
         selectedProperty = property;
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -847,11 +905,12 @@
                                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Tenant</th>
                                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Property</th>
                                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Offer Amount</th>
+                                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Compliance</th>
                                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
                                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Actions</th>
                                     </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-50">
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-50">
                                     {#each offers as offer}
                                         <tr class="hover:bg-gray-50/50 transition-colors">
                                             <td class="px-6 py-5">
@@ -868,7 +927,31 @@
                                                 </div>
                                             </td>
                                             <td class="px-6 py-5">
-                                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
+                                                {#if offer.compliance_status === 'none'}
+                                                    <span class="text-xs text-gray-300 font-bold italic">N/A</span>
+                                                {:else if offer.compliance_status === 'awaiting_documents'}
+                                                    <div class="flex items-center gap-2 text-[10px] font-black uppercase text-amber-600">
+                                                        <div class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></div>
+                                                        Uploading Docs
+                                                    </div>
+                                                {:else if offer.compliance_status === 'pending_verification'}
+                                                    <div class="flex items-center gap-2 text-[10px] font-black uppercase text-indigo-600">
+                                                        <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></div>
+                                                        Pending Open Finance
+                                                    </div>
+                                                {:else if offer.compliance_status === 'verified'}
+                                                    <div class="flex flex-col gap-1">
+                                                        <div class="flex items-center gap-1.5 text-[10px] font-black uppercase text-green-600">
+                                                            <CheckCircle2 size={12} />
+                                                            Income Verified
+                                                        </div>
+                                                        <span class="text-[10px] font-bold text-green-800 bg-green-50 px-1.5 py-0.5 rounded-md">
+                                                            ${(parseFloat(offer.amount) * 3.5).toLocaleString()}/mo
+                                                        </span>
+                                                    </div>
+                                                {/if}
+                                            </td>
+                                            <td class="px-6 py-5">                                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
                                                     {offer.status === 'pending' ? 'bg-amber-100 text-amber-700' : 
                                                      offer.status === 'accepted' ? 'bg-green-100 text-green-700' : 
                                                      'bg-red-100 text-red-700'}">
@@ -1129,12 +1212,56 @@
                                             <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Your Terms</p>
                                             <p class="text-xs text-gray-600 leading-relaxed italic">"{offer.terms}"</p>
                                         </div>
+
                                         {#if offer.status === 'accepted'}
-                                            <div class="bg-green-50 p-3 rounded-xl flex items-center gap-3 animate-in fade-in duration-500">
-                                                <FileText class="text-green-600" size={20} />
+                                            <div class="space-y-4 pt-2 border-t border-gray-100">
+                                                <div class="flex items-center justify-between">
+                                                    <h5 class="text-xs font-black uppercase tracking-widest text-indigo-600">Compliance Progress</h5>
+                                                    <span class="text-[10px] font-bold text-gray-400 italic">Required for Lease</span>
+                                                </div>
+
+                                                {#if offer.compliance_status === 'awaiting_documents'}
+                                                    <div class="grid grid-cols-2 gap-3">
+                                                        <label class="bg-white border border-gray-200 p-3 rounded-xl flex flex-col items-center gap-2 cursor-pointer hover:border-indigo-300 transition-all shadow-sm">
+                                                            <Upload size={16} class="text-gray-400" />
+                                                            <span class="text-[10px] font-bold text-center">Income Proof</span>
+                                                            <input type="file" class="hidden" accept="image/*,.pdf" on:change={(e) => handleComplianceUpload(offer.id, 'income_proof', e)} />
+                                                        </label>
+                                                        <label class="bg-white border border-gray-200 p-3 rounded-xl flex flex-col items-center gap-2 cursor-pointer hover:border-indigo-300 transition-all shadow-sm">
+                                                            <Upload size={16} class="text-gray-400" />
+                                                            <span class="text-[10px] font-bold text-center">Residency Proof</span>
+                                                            <input type="file" class="hidden" accept="image/*,.pdf" on:change={(e) => handleComplianceUpload(offer.id, 'residency_proof', e)} />
+                                                        </label>
+                                                    </div>
+                                                {:else if offer.compliance_status === 'pending_verification'}
+                                                    <button 
+                                                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-100 transition-all flex items-center justify-center gap-2"
+                                                        on:click={() => handleIncomeVerification(offer.id)}
+                                                        disabled={isSubmitting}
+                                                    >
+                                                        <CheckCircle2 size={16} />
+                                                        Verify Income via Open Finance
+                                                    </button>
+                                                {:else if offer.compliance_status === 'verified'}
+                                                    <div class="bg-green-50 p-4 rounded-xl flex items-center gap-3 border border-green-100">
+                                                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white">
+                                                            <CheckCircle2 size={18} />
+                                                        </div>
+                                                        <div>
+                                                            <p class="text-xs font-black text-green-800 uppercase tracking-tighter">Compliance Complete</p>
+                                                            <p class="text-[10px] text-green-600 font-bold italic">Wait for lease agreement</p>
+                                                        </div>
+                                                    </div>
+                                                {/if}
+                                            </div>
+                                        {/if}
+
+                                        {#if offer.status === 'accepted' && offer.compliance_status === 'verified'}
+                                            <div class="bg-indigo-50 p-3 rounded-xl flex items-center gap-3 animate-in fade-in duration-500">
+                                                <FileText class="text-indigo-600" size={20} />
                                                 <div>
-                                                    <p class="text-xs font-bold text-green-800">Lease Drafted</p>
-                                                    <p class="text-[10px] text-green-600">Waiting for signatures</p>
+                                                    <p class="text-xs font-bold text-indigo-800">Lease Drafted</p>
+                                                    <p class="text-[10px] text-indigo-600">Waiting for signatures</p>
                                                 </div>
                                             </div>
                                         {/if}

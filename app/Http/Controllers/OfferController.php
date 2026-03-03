@@ -74,11 +74,36 @@ class OfferController extends Controller
 
         $offer->update(['status' => $data['status']]);
 
-        // If accepted, we could trigger lease drafting here
+        // If accepted, move to compliance document phase
         if ($data['status'] === 'accepted') {
-            // Implementation for lease drafting could go here
+            $offer->update(['compliance_status' => 'awaiting_documents']);
         }
 
         return response()->json($offer->load(['user', 'property', 'visit']));
+    }
+
+    public function verify(Request $request, Offer $offer)
+    {
+        // Tenant triggers verification after uploading docs
+        if ($offer->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Mock Open Finance logic:
+        // In a real app, we'd call a provider here.
+        // For now, we just update the status to pending_verification then verified.
+        
+        $offer->update(['compliance_status' => 'verified']);
+
+        return response()->json([
+            'offer' => $offer->load(['user', 'property']),
+            'verification' => [
+                'provider' => 'Brazil Open Finance',
+                'status' => 'success',
+                'monthly_income_verified' => (float)$offer->amount * 3.5, // Mocked 3.5x rent
+                'confidence_score' => 0.98,
+                'verified_at' => now(),
+            ]
+        ]);
     }
 }

@@ -16,7 +16,14 @@ class Offer extends Model
         'amount',
         'terms',
         'status',
+        'compliance_status',
     ];
+
+    public function complianceDocuments()
+    {
+        return $this->hasMany(Document::class, 'user_id', 'user_id')
+            ->whereIn('type', ['income_proof', 'residency_proof']);
+    }
 
     public function user()
     {

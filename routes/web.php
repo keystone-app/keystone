@@ -17,6 +17,7 @@ Route::get('/me', [AuthController::class, 'me']);
 
 Route::middleware('auth')->group(function () {
     Route::post('/identity-upload', [DocumentController::class, 'uploadIdentity']);
+    Route::post('/compliance-upload', [DocumentController::class, 'uploadCompliance']);
     Route::get('/visits', [VisitController::class, 'index']);
     Route::get('/my-visits', [VisitController::class, 'myVisits']);
     Route::post('/visits', [VisitController::class, 'store']);
@@ -25,4 +26,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/offers', [OfferController::class, 'index']);
     Route::post('/offers', [OfferController::class, 'store']);
     Route::patch('/offers/{offer}', [OfferController::class, 'update']);
+    Route::post('/offers/{offer}/verify', [OfferController::class, 'verify']);
 });
