@@ -33,6 +33,7 @@ class AuthController extends Controller
         return response()->json([
             'user' => $user,
             'role' => $user->role,
+            'csrf_token' => csrf_token(),
         ]);
     }
 
@@ -49,6 +50,7 @@ class AuthController extends Controller
             return response()->json([
                 'user' => Auth::user(),
                 'role' => Auth::user()->role,
+                'csrf_token' => csrf_token(),
             ]);
         }
 
@@ -69,9 +71,12 @@ class AuthController extends Controller
 
     public function me()
     {
+        $user = Auth::user();
+        
         return response()->json([
-            'user' => Auth::user(),
-            'role' => Auth::user()?->role,
+            'user' => $user,
+            'role' => $user?->role,
+            'identity_document' => $user?->getIdentityDocument(),
         ]);
     }
 }

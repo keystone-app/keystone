@@ -28,7 +28,8 @@
     let showAuthPrompt = $state(false);
     let showLoginModal = $state(false);
     let showRegisterModal = $state(false);
-    let hasUploadedIdentityDoc = $state(false);
+    let identityDoc = $state(null);
+    let hasUploadedIdentityDoc = $derived(!!identityDoc);
     let visitDate = $state('');
     let visitTime = $state('');
     let schedulingStep = $state(1); // 1: DateTime, 2: Document
@@ -120,10 +121,16 @@
                 isLoggedIn = true;
                 currentUser = data.user;
                 role = data.role;
+                identityDoc = data.identity_document;
             }
         } catch (e) {
             console.error('Auth check failed', e);
         }
+    }
+
+    function updateCsrfToken(newToken) {
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        if (meta) meta.content = newToken;
     }
 
     async function register() {
@@ -145,6 +152,7 @@
                 isLoggedIn = true;
                 currentUser = data.user;
                 role = data.role;
+                updateCsrfToken(data.csrf_token);
                 showRegisterModal = false;
                 showAuthPrompt = false;
                 
@@ -181,6 +189,7 @@
                 isLoggedIn = true;
                 currentUser = data.user;
                 role = data.role;
+                updateCsrfToken(data.csrf_token);
                 showLoginModal = false;
                 showAuthPrompt = false;
                 
@@ -207,38 +216,88 @@
                     'Accept': 'application/json'
                 }
             });
-            isLoggedIn = false;
-            currentUser = null;
-            role = 'guest';
-            view = 'listings';
-            selectedProperty = null;
-            isScheduling = false;
+            window.location.reload();
         } catch (e) {
             console.error('Logout failed', e);
         }
     }
 
     function startScheduling() {
-        if (!isLoggedIn) {
-            showAuthPrompt = true;
-            return;
-        }
         isScheduling = true;
         schedulingStep = 1;
+        if (!isLoggedIn) {
+            showAuthPrompt = true;
+        }
     }
 
-    function submitVisit() {
-        const newVisit = {
-            id: myVisits.length + 1,
-            property: selectedProperty,
-            date: visitDate,
-            time: visitTime,
-            status: 'pending'
-        };
-        myVisits = [...myVisits, newVisit];
-        isScheduling = false;
-        hasUploadedIdentityDoc = true; // Once uploaded, it's remembered
-        alert('Visit scheduled! Status: Pending landlord approval.');
+    async function handleFileUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        isSubmitting = true;
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await fetch('/identity-upload', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+
+            if (res.ok) {
+                identityDoc = await res.json();
+                alert('Identity document uploaded successfully!');
+            } else {
+                const data = await res.json();
+                alert(data.message || 'Upload failed.');
+            }
+        } catch (e) {
+            alert('Upload error. Please try again.');
+        } finally {
+            isSubmitting = false;
+        }
+    }
+
+    async function submitVisit() {
+        if (!identityDoc) {
+            alert('Please upload your identity document first.');
+            return;
+        }
+
+        isSubmitting = true;
+        try {
+            const res = await fetch('/visits', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    property_id: selectedProperty.id,
+                    document_id: identityDoc.id,
+                    visit_at: `${visitDate} ${visitTime}`
+                })
+            });
+
+            if (res.ok) {
+                const newVisit = await res.json();
+                myVisits = [...myVisits, { ...newVisit, property: selectedProperty }];
+                isScheduling = false;
+                alert('Visit scheduled! Status: Pending landlord approval.');
+            } else {
+                const data = await res.json();
+                alert(data.message || 'Scheduling failed.');
+            }
+        } catch (e) {
+            alert('Connection error. Please try again.');
+        } finally {
+            isSubmitting = false;
+        }
     }
 
     function viewDetails(property) {
@@ -729,7 +788,7 @@
 
         <!-- Authentication Prompt Modal -->
         {#if showAuthPrompt}
-            <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+            <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-300">
                 <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
                     <div class="p-8 text-center space-y-6">
                         <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto text-indigo-600">
@@ -748,7 +807,7 @@
                             </button>
                             <button 
                                 class="w-full bg-gray-100 hover:bg-gray-200 text-gray-600 py-4 rounded-2xl font-bold transition-all"
-                                on:click={() => showAuthPrompt = false}
+                                on:click={() => { showAuthPrompt = false; isScheduling = false; }}
                             >
                                 Not now
                             </button>
@@ -813,16 +872,30 @@
                                     <p class="text-gray-500 text-sm">Please upload a valid legal document (Passport or Driver License) to secure your visit.</p>
                                 </div>
                                 
-                                <div class="border-2 border-dashed border-gray-200 rounded-3xl p-10 flex flex-col items-center justify-center text-center gap-4 bg-gray-50/50 hover:border-indigo-300 transition-colors cursor-pointer group">
+                                <label class="border-2 border-dashed border-gray-200 rounded-3xl p-10 flex flex-col items-center justify-center text-center gap-4 bg-gray-50/50 hover:border-indigo-300 transition-colors cursor-pointer group">
                                     <div class="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center text-gray-400 group-hover:text-indigo-600 transition-colors">
-                                        <Upload size={32} />
+                                        {#if isSubmitting}
+                                            <svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                        {:else if identityDoc}
+                                            <CheckCircle2 size={32} class="text-green-500" />
+                                        {:else}
+                                            <Upload size={32} />
+                                        {/if}
                                     </div>
                                     <div class="space-y-1">
-                                        <p class="font-bold">Click to upload or drag & drop</p>
-                                        <p class="text-xs text-gray-400 font-medium">PNG, JPG or WEBP (max. 10MB)</p>
+                                        {#if identityDoc}
+                                            <p class="font-bold text-green-600">Uploaded: {identityDoc.name}</p>
+                                            <p class="text-xs text-gray-400 font-medium">Click to replace</p>
+                                        {:else}
+                                            <p class="font-bold">Click to upload or drag & drop</p>
+                                            <p class="text-xs text-gray-400 font-medium">PNG, JPG or WEBP (max. 10MB)</p>
+                                        {/if}
                                     </div>
-                                    <input type="file" class="hidden" accept="image/*" />
-                                </div>
+                                    <input type="file" class="hidden" accept="image/*" on:change={handleFileUpload} />
+                                </label>
 
                                 <div class="flex gap-3">
                                     <button 
@@ -847,7 +920,7 @@
 
         <!-- Login Modal -->
         {#if showLoginModal}
-            <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-md animate-in fade-in duration-300">
+            <div class="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-md animate-in fade-in duration-300">
                 <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 relative">
                     <button 
                         class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -920,7 +993,7 @@
 
         <!-- Register Modal -->
         {#if showRegisterModal}
-            <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-md animate-in fade-in duration-300">
+            <div class="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-md animate-in fade-in duration-300">
                 <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 relative">
                     <button 
                         class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
