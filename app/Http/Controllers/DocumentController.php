@@ -22,6 +22,10 @@ class DocumentController extends Controller
             'type' => 'identity_doc',
         ]);
 
+        auth()->user()->update([
+            'identity_document_id' => $document->id,
+        ]);
+
         return response()->json($document);
     }
 }

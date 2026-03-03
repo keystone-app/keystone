@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'identity_document_id',
     ];
 
     public function isLandlord(): bool
@@ -59,14 +60,19 @@ class User extends Authenticatable
         return $this->hasMany(Document::class);
     }
 
+    public function identityDocument()
+    {
+        return $this->belongsTo(Document::class, 'identity_document_id');
+    }
+
     public function hasIdentityDocument(): bool
     {
-        return $this->documents()->where('type', 'identity_doc')->exists();
+        return !is_null($this->identity_document_id);
     }
 
     public function getIdentityDocument()
     {
-        return $this->documents()->where('type', 'identity_doc')->first();
+        return $this->identityDocument;
     }
 
     /**
