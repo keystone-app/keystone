@@ -13,7 +13,7 @@ class KeystoneTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_create_a_landlord_with_properties()
     {
         $landlord = User::create([
@@ -36,7 +36,7 @@ class KeystoneTest extends TestCase
         $this->assertEquals($property->id, $landlord->properties->first()->id);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_manage_leases_between_landlord_and_tenant()
     {
         $landlord = User::create([
@@ -76,7 +76,7 @@ class KeystoneTest extends TestCase
         $this->assertEquals($tenant->id, $lease->tenant->id);
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_attach_documents_to_a_lease()
     {
         $landlord = User::create([

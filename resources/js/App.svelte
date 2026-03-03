@@ -4,20 +4,49 @@
 
     let role = $state('guest'); // 'landlord', 'tenant', 'guest'
     let view = $state('listings'); // 'listings', 'dashboard'
+    let landlordView = $state('properties'); // 'properties', 'visits'
     let isLoggedIn = $state(false);
     let currentUser = $state(null);
-    let landlordView = $state('properties'); // 'properties', 'visits'
-    let landlordVisits = $state([
-        { id: 101, tenant: 'Bob Tenant', property: 'Modern Apartment 101', date: '2026-03-10', time: '14:00', status: 'pending', doc: 'ID_Bob.png' },
-        { id: 102, tenant: 'Charlie Renter', property: 'Cozy Studio Downtown', date: '2026-03-12', time: '10:30', status: 'pending', doc: 'ID_Charlie.jpg' },
-    ]);
+    let landlordVisits = $state([]);
+
+    async function fetchLandlordVisits() {
+        try {
+            const res = await fetch('/visits');
+            if (res.ok) {
+                landlordVisits = await res.json();
+            }
+        } catch (e) {
+            console.error('Failed to fetch landlord visits', e);
+        }
+    }
+
+    async function updateVisitStatus(visitId, newStatus) {
+        try {
+            const res = await fetch(`/visits/${visitId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+
+            if (res.ok) {
+                const updatedVisit = await res.json();
+                landlordVisits = landlordVisits.map(v => v.id === visitId ? updatedVisit : v);
+            }
+        } catch (e) {
+            alert('Failed to update visit status.');
+        }
+    }
 
     function approveVisit(id) {
-        landlordVisits = landlordVisits.map(v => v.id === id ? { ...v, status: 'scheduled' } : v);
+        updateVisitStatus(id, 'scheduled');
     }
 
     function rejectVisit(id) {
-        landlordVisits = landlordVisits.map(v => v.id === id ? { ...v, status: 'rejected' } : v);
+        updateVisitStatus(id, 'rejected');
     }
 
     let searchQuery = $state('');
@@ -124,6 +153,10 @@
                 currentUser = data.user;
                 role = data.role;
                 identityDoc = data.identity_document;
+
+                if (role === 'landlord') {
+                    fetchLandlordVisits();
+                }
             }
         } catch (e) {
             console.error('Auth check failed', e);
@@ -158,6 +191,8 @@
                 showRegisterModal = false;
                 showAuthPrompt = false;
                 
+                if (role === 'landlord') fetchLandlordVisits();
+
                 if (isScheduling) {
                     schedulingStep = 1;
                 }
@@ -195,6 +230,8 @@
                 showLoginModal = false;
                 showAuthPrompt = false;
                 
+                if (role === 'landlord') fetchLandlordVisits();
+
                 if (isScheduling) {
                     schedulingStep = 1;
                 }
@@ -634,16 +671,19 @@
                                 <tbody class="divide-y divide-gray-50">
                                     {#each landlordVisits as visit}
                                         <tr class="hover:bg-gray-50/50 transition-colors">
-                                            <td class="px-6 py-5 font-bold text-sm">{visit.tenant}</td>
-                                            <td class="px-6 py-5 text-sm text-gray-600">{visit.property}</td>
+                                            <td class="px-6 py-5 font-bold text-sm">{visit.user.name}</td>
+                                            <td class="px-6 py-5 text-sm text-gray-600">{visit.property.name}</td>
                                             <td class="px-6 py-5 text-sm">
                                                 <div class="flex flex-col">
-                                                    <span class="font-bold">{visit.date}</span>
-                                                    <span class="text-xs text-gray-400 font-medium">{visit.time}</span>
+                                                    <span class="font-bold">{new Date(visit.visit_at).toLocaleDateString()}</span>
+                                                    <span class="text-xs text-gray-400 font-medium">{new Date(visit.visit_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                                 </div>
                                             </td>
                                             <td class="px-6 py-5">
-                                                <button class="text-indigo-600 hover:text-indigo-800 text-xs font-bold flex items-center gap-1 group">
+                                                <button 
+                                                    class="text-indigo-600 hover:text-indigo-800 text-xs font-bold flex items-center gap-1 group"
+                                                    on:click={() => alert('Viewing document: ' + visit.document.name)}
+                                                >
                                                     <FileText size={14} class="text-indigo-400 group-hover:text-indigo-600" />
                                                     View ID
                                                 </button>

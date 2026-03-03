@@ -7,6 +7,21 @@ use Illuminate\Http\Request;
 
 class VisitController extends Controller
 {
+    public function index()
+    {
+        $user = auth()->user();
+
+        // Get visits for properties owned by this landlord
+        $visits = Visit::whereHas('property', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+        ->with(['user', 'property', 'document'])
+        ->latest()
+        ->get();
+
+        return response()->json($visits);
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -30,6 +45,22 @@ class VisitController extends Controller
             'status' => 'pending',
         ]);
 
-        return response()->json($visit);
+        return response()->json($visit->load(['user', 'property', 'document']));
+    }
+
+    public function update(Request $request, Visit $visit)
+    {
+        // Ensure the visit belongs to a property owned by the authenticated user
+        if ($visit->property->user_id !== auth()->id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $data = $request->validate([
+            'status' => 'required|in:scheduled,cancelled,rejected',
+        ]);
+
+        $visit->update(['status' => $data['status']]);
+
+        return response()->json($visit->load(['user', 'property', 'document']));
     }
 }
