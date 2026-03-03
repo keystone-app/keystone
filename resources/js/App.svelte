@@ -5,10 +5,23 @@
     let role = $state('guest'); // 'landlord', 'tenant', 'guest'
     let view = $state('listings'); // 'listings', 'dashboard'
     let landlordView = $state('properties'); // 'properties', 'visits', 'offers'
+    let tenantView = $state('visits'); // 'visits', 'offers', 'leases'
     let isLoggedIn = $state(false);
     let currentUser = $state(null);
     let landlordVisits = $state([]);
+    let myVisits = $state([]);
     let offers = $state([]);
+
+    async function fetchMyVisits() {
+        try {
+            const res = await fetch('/my-visits'); // We'll need to add this route
+            if (res.ok) {
+                myVisits = await res.json();
+            }
+        } catch (e) {
+            console.error('Failed to fetch my visits', e);
+        }
+    }
 
     async function fetchOffers() {
         try {
@@ -153,8 +166,6 @@
         }
     }
 
-    let myVisits = $state([]);
-
     const properties = $state([
         { 
             id: 1, 
@@ -237,6 +248,7 @@
                 identityDoc = data.identity_document;
 
                 fetchOffers();
+                fetchMyVisits();
                 if (role === 'landlord') {
                     fetchLandlordVisits();
                 }
@@ -275,6 +287,7 @@
                 showAuthPrompt = false;
                 
                 fetchOffers();
+                fetchMyVisits();
                 if (role === 'landlord') fetchLandlordVisits();
 
                 if (isScheduling) {
@@ -315,6 +328,7 @@
                 showAuthPrompt = false;
                 
                 fetchOffers();
+                fetchMyVisits();
                 if (role === 'landlord') fetchLandlordVisits();
 
                 if (isScheduling) {
@@ -904,122 +918,199 @@
                 </div>
             {:else}
                 <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <header>
-                        <h1 class="text-3xl font-black">My Leases</h1>
-                        <p class="text-gray-500 mt-1">Review and manage your current rentals</p>
+                    <header class="flex flex-col gap-6">
+                        <div class="space-y-1">
+                            <h1 class="text-3xl font-black">
+                                {#if tenantView === 'visits'}My Scheduled Visits
+                                {:else}My Dashboard
+                                {/if}
+                            </h1>
+                            <p class="text-gray-500 mt-1">
+                                {#if tenantView === 'visits'}Track and manage your upcoming property visits
+                                {:else if tenantView === 'offers'}Negotiate and track your property offers
+                                {:else}Manage your active lease agreements
+                                {/if}
+                            </p>
+                        </div>
+
+                        <!-- Tenant/Guest Menu -->
+                        <div class="flex border-b border-gray-200">
+                            <button 
+                                class="px-6 py-3 text-sm font-bold border-b-2 transition-all {tenantView === 'visits' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400 hover:text-gray-600'}"
+                                on:click={() => tenantView = 'visits'}
+                            >
+                                Scheduled Visits
+                                {#if myVisits.length > 0}
+                                    <span class="ml-2 bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full text-[10px]">
+                                        {myVisits.length}
+                                    </span>
+                                {/if}
+                            </button>
+                            <button 
+                                class="px-6 py-3 text-sm font-bold border-b-2 transition-all {tenantView === 'offers' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400 hover:text-gray-600'}"
+                                on:click={() => tenantView = 'offers'}
+                            >
+                                Negotiations
+                                {#if offers.length > 0}
+                                    <span class="ml-2 bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full text-[10px]">
+                                        {offers.length}
+                                    </span>
+                                {/if}
+                            </button>
+                            <button 
+                                class="px-6 py-3 text-sm font-bold border-b-2 transition-all {tenantView === 'leases' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400 hover:text-gray-600'}"
+                                on:click={() => tenantView = 'leases'}
+                            >
+                                My Leases
+                            </button>
+                        </div>
                     </header>
 
-                    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                        <div class="p-6 border-b border-gray-50 flex justify-between items-center">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
-                                    <FileText size={24} />
-                                </div>
-                                <div>
-                                    <h2 class="font-bold text-lg">Active Lease: Modern Loft A</h2>
-                                    <p class="text-gray-500 text-sm font-medium">Expires: Dec 31, 2026</p>
-                                </div>
-                            </div>
-                            <button class="bg-white border border-gray-200 hover:bg-gray-50 px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all">Download PDF</button>
-                        </div>
-                        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div>
-                                <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Rent Status</p>
-                                <div class="flex items-center gap-2">
-                                    <div class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div>
-                                    <span class="font-bold">Paid for March</span>
-                                </div>
-                            </div>
-                            <div>
-                                <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Next Payment</p>
-                                <span class="font-bold">$1,850 due on April 1st</span>
-                            </div>
-                            <div>
-                                <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Landlord</p>
-                                <span class="font-bold">Apex Realty Group</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <section class="space-y-4">
-                        <h2 class="text-xl font-bold">Documents</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="border-2 border-dashed border-gray-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center hover:border-indigo-300 transition-colors cursor-pointer group bg-white/50">
-                                <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-50 transition-colors">
-                                    <Plus class="text-gray-400 group-hover:text-indigo-600" size={24} />
-                                </div>
-                                <h3 class="font-bold">Upload Document</h3>
-                                <p class="text-gray-500 text-sm mt-1">Insurance, ID, or income verification</p>
-                            </div>
-                            <div class="bg-white border border-gray-200 rounded-2xl p-6 flex items-center justify-between shadow-sm">
+                    {#if tenantView === 'leases'}
+                        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                            <div class="p-6 border-b border-gray-50 flex justify-between items-center">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
-                                        <FileText size={20} />
+                                    <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+                                        <FileText size={24} />
                                     </div>
                                     <div>
-                                        <h4 class="font-bold text-sm">Income_Verification.pdf</h4>
-                                        <p class="text-gray-400 text-[10px] font-bold mt-0.5">Uploaded 2 days ago</p>
+                                        <h2 class="font-bold text-lg">Active Lease: Modern Loft A</h2>
+                                        <p class="text-gray-500 text-sm font-medium">Expires: Dec 31, 2026</p>
                                     </div>
                                 </div>
-                                <span class="text-green-600 font-bold text-[10px] bg-green-50 px-2 py-1 rounded-md uppercase tracking-wider">Verified</span>
+                                <button class="bg-white border border-gray-200 hover:bg-gray-50 px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition-all">Download PDF</button>
                             </div>
-                            {#if hasUploadedIdentityDoc}
-                                <div class="bg-white border border-indigo-200 rounded-2xl p-6 flex items-center justify-between shadow-sm border-l-4 border-l-indigo-600">
+                            <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div>
+                                    <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Rent Status</p>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div>
+                                        <span class="font-bold">Paid for March</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Next Payment</p>
+                                    <span class="font-bold">$1,850 due on April 1st</span>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Landlord</p>
+                                    <span class="font-bold">Apex Realty Group</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <section class="space-y-4">
+                            <h2 class="text-xl font-bold">Documents</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="border-2 border-dashed border-gray-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center hover:border-indigo-300 transition-colors cursor-pointer group bg-white/50">
+                                    <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-50 transition-colors">
+                                        <Plus class="text-gray-400 group-hover:text-indigo-600" size={24} />
+                                    </div>
+                                    <h3 class="font-bold">Upload Document</h3>
+                                    <p class="text-gray-500 text-sm mt-1">Insurance, ID, or income verification</p>
+                                </div>
+                                <div class="bg-white border border-gray-200 rounded-2xl p-6 flex items-center justify-between shadow-sm">
                                     <div class="flex items-center gap-4">
                                         <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
-                                            <CheckCircle2 size={20} />
+                                            <FileText size={20} />
                                         </div>
                                         <div>
-                                            <h4 class="font-bold text-sm text-indigo-900">Legal_ID_Card.png</h4>
-                                            <p class="text-gray-400 text-[10px] font-bold mt-0.5">Primary Identity Document</p>
+                                            <h4 class="font-bold text-sm">Income_Verification.pdf</h4>
+                                            <p class="text-gray-400 text-[10px] font-bold mt-0.5">Uploaded 2 days ago</p>
                                         </div>
                                     </div>
-                                    <span class="text-indigo-600 font-bold text-[10px] bg-indigo-50 px-2 py-1 rounded-md uppercase tracking-wider">Verified</span>
+                                    <span class="text-green-600 font-bold text-[10px] bg-green-50 px-2 py-1 rounded-md uppercase tracking-wider">Verified</span>
                                 </div>
-                            {/if}
-                        </div>
-                    </section>
-
-                    {#if myVisits.length > 0}
-                        <section class="space-y-4">
-                            <h2 class="text-xl font-bold">Upcoming Visits</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {#each myVisits as visit}
-                                    <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex items-center justify-between">
+                                {#if hasUploadedIdentityDoc}
+                                    <div class="bg-white border border-indigo-200 rounded-2xl p-6 flex items-center justify-between shadow-sm border-l-4 border-l-indigo-600">
                                         <div class="flex items-center gap-4">
-                                            <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400">
-                                                <Calendar size={24} />
+                                            <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
+                                                <CheckCircle2 size={20} />
                                             </div>
                                             <div>
-                                                <h4 class="font-bold text-lg">{visit.property.name}</h4>
-                                                <div class="flex items-center gap-3 text-sm text-gray-500">
-                                                    <span class="flex items-center gap-1"><Calendar size={14} /> {visit.date}</span>
-                                                    <span class="flex items-center gap-1"><Clock size={14} /> {visit.time}</span>
-                                                </div>
+                                                <h4 class="font-bold text-sm text-indigo-900">Legal_ID_Card.png</h4>
+                                                <p class="text-gray-400 text-[10px] font-bold mt-0.5">Primary Identity Document</p>
                                             </div>
                                         </div>
-                                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
-                                            {visit.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}">
-                                            {visit.status}
-                                        </span>
-                                        {#if visit.status === 'scheduled'}
-                                            <button 
-                                                class="ml-4 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm shadow-indigo-100"
-                                                on:click={() => openOfferModal(visit)}
-                                            >
-                                                Make Offer
-                                            </button>
-                                        {/if}
+                                        <span class="text-indigo-600 font-bold text-[10px] bg-indigo-50 px-2 py-1 rounded-md uppercase tracking-wider">Verified</span>
                                     </div>
-                                {/each}
+                                {/if}
                             </div>
                         </section>
-                    {/if}
-
-                    {#if offers.length > 0}
-                        <section class="space-y-4">
-                            <h2 class="text-xl font-bold">My Offers</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {:else if tenantView === 'visits'}
+                        {#if myVisits.length > 0}
+                            <div class="bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-sm">
+                                <table class="w-full text-left border-collapse">
+                                    <thead class="bg-gray-50 border-b border-gray-100">
+                                        <tr>
+                                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Property</th>
+                                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Schedule</th>
+                                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">ID Verification</th>
+                                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
+                                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-50">
+                                        {#each myVisits as visit}
+                                            <tr class="hover:bg-gray-50/50 transition-colors">
+                                                <td class="px-6 py-5">
+                                                    <div class="flex items-center gap-3">
+                                                        <div class="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+                                                            <Home size={20} />
+                                                        </div>
+                                                        <span class="font-bold text-sm">{visit.property.name}</span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-5 text-sm">
+                                                    <div class="flex flex-col">
+                                                        <span class="font-bold">{new Date(visit.visit_at).toLocaleDateString()}</span>
+                                                        <span class="text-xs text-gray-400 font-medium">{new Date(visit.visit_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-5">
+                                                    <div class="flex items-center gap-2 text-xs text-green-600 font-bold">
+                                                        <CheckCircle2 size={14} />
+                                                        Verified for Visit
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-5">
+                                                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
+                                                        {visit.status === 'pending' ? 'bg-amber-100 text-amber-700' : 
+                                                         visit.status === 'scheduled' ? 'bg-green-100 text-green-700' : 
+                                                         'bg-red-100 text-red-700'}">
+                                                        {visit.status}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-5 text-right">
+                                                    {#if visit.status === 'scheduled'}
+                                                        <button 
+                                                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm shadow-indigo-100"
+                                                            on:click={() => openOfferModal(visit)}
+                                                        >
+                                                            Make Offer
+                                                        </button>
+                                                    {:else}
+                                                        <span class="text-xs text-gray-400 font-bold italic">Wait for approval</span>
+                                                    {/if}
+                                                </td>
+                                            </tr>
+                                        {/each}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {:else}
+                            <div class="p-20 text-center bg-white rounded-3xl border border-dashed border-gray-200">
+                                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                                    <Calendar size={32} />
+                                </div>
+                                <h3 class="text-xl font-bold">No visits scheduled</h3>
+                                <p class="text-gray-500 mt-1">Browse our property directory to book your first visit.</p>
+                                <button class="mt-6 text-indigo-600 font-bold hover:underline" on:click={() => view = 'listings'}>Browse Properties</button>
+                            </div>
+                        {/if}
+                    {:else if tenantView === 'offers'}
+                        {#if offers.length > 0}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {#each offers as offer}
                                     <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col gap-4">
                                         <div class="flex justify-between items-start">
@@ -1034,8 +1125,12 @@
                                                 {offer.status}
                                             </span>
                                         </div>
+                                        <div class="bg-gray-50 p-3 rounded-xl">
+                                            <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Your Terms</p>
+                                            <p class="text-xs text-gray-600 leading-relaxed italic">"{offer.terms}"</p>
+                                        </div>
                                         {#if offer.status === 'accepted'}
-                                            <div class="bg-green-50 p-3 rounded-xl flex items-center gap-3">
+                                            <div class="bg-green-50 p-3 rounded-xl flex items-center gap-3 animate-in fade-in duration-500">
                                                 <FileText class="text-green-600" size={20} />
                                                 <div>
                                                     <p class="text-xs font-bold text-green-800">Lease Drafted</p>
@@ -1046,7 +1141,15 @@
                                     </div>
                                 {/each}
                             </div>
-                        </section>
+                        {:else}
+                            <div class="p-20 text-center bg-white rounded-3xl border border-dashed border-gray-200">
+                                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                                    <FileText size={32} />
+                                </div>
+                                <h3 class="text-xl font-bold">No active negotiations</h3>
+                                <p class="text-gray-500 mt-1">Complete a property visit to start making offers.</p>
+                            </div>
+                        {/if}
                     {/if}
                 </div>
             {/if}

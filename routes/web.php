@@ -18,6 +18,7 @@ Route::get('/me', [AuthController::class, 'me']);
 Route::middleware('auth')->group(function () {
     Route::post('/identity-upload', [DocumentController::class, 'uploadIdentity']);
     Route::get('/visits', [VisitController::class, 'index']);
+    Route::get('/my-visits', [VisitController::class, 'myVisits']);
     Route::post('/visits', [VisitController::class, 'store']);
     Route::patch('/visits/{visit}', [VisitController::class, 'update']);
     

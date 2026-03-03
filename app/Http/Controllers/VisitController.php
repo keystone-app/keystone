@@ -22,6 +22,16 @@ class VisitController extends Controller
         return response()->json($visits);
     }
 
+    public function myVisits()
+    {
+        $visits = Visit::where('user_id', auth()->id())
+            ->with(['property', 'document'])
+            ->latest()
+            ->get();
+
+        return response()->json($visits);
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
