@@ -29,7 +29,9 @@
     let showLoginModal = $state(false);
     let showRegisterModal = $state(false);
     let identityDoc = $state(null);
-    let hasUploadedIdentityDoc = $derived(!!identityDoc);
+    let selectedFile = $state(null);
+    let filePreviewUrl = $state('');
+    let hasUploadedIdentityDoc = $derived(!!identityDoc || !!selectedFile);
     let visitDate = $state('');
     let visitTime = $state('');
     let schedulingStep = $state(1); // 1: DateTime, 2: Document
@@ -230,47 +232,59 @@
         }
     }
 
-    async function handleFileUpload(e) {
+    function handleFileSelection(e) {
         const file = e.target.files[0];
         if (!file) return;
 
-        isSubmitting = true;
-        const formData = new FormData();
-        formData.append('file', file);
+        if (filePreviewUrl) URL.revokeObjectURL(filePreviewUrl);
+        
+        selectedFile = file;
+        filePreviewUrl = URL.createObjectURL(file);
+    }
 
-        try {
-            const res = await fetch('/identity-upload', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                },
-                body: formData
-            });
-
-            if (res.ok) {
-                identityDoc = await res.json();
-                alert('Identity document uploaded successfully!');
-            } else {
-                const data = await res.json();
-                alert(data.message || 'Upload failed.');
-            }
-        } catch (e) {
-            alert('Upload error. Please try again.');
-        } finally {
-            isSubmitting = false;
-        }
+    function removeFile() {
+        if (filePreviewUrl) URL.revokeObjectURL(filePreviewUrl);
+        selectedFile = null;
+        filePreviewUrl = '';
     }
 
     async function submitVisit() {
-        if (!identityDoc) {
-            alert('Please upload your identity document first.');
+        if (!selectedFile && !identityDoc) {
+            alert('Please select an identity document.');
             return;
         }
 
         isSubmitting = true;
         try {
-            const res = await fetch('/visits', {
+            let docId = identityDoc?.id;
+
+            // If a new file is selected, upload it first
+            if (selectedFile) {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+
+                const uploadRes = await fetch('/identity-upload', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                if (uploadRes.ok) {
+                    const uploadedDoc = await uploadRes.json();
+                    docId = uploadedDoc.id;
+                    identityDoc = uploadedDoc; // Save for future visits
+                    removeFile(); // Clear preview
+                } else {
+                    const data = await uploadRes.json();
+                    throw new Error(data.message || 'Identity upload failed.');
+                }
+            }
+
+            // Create the visit request
+            const visitRes = await fetch('/visits', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -279,22 +293,22 @@
                 },
                 body: JSON.stringify({
                     property_id: selectedProperty.id,
-                    document_id: identityDoc.id,
+                    document_id: docId,
                     visit_at: `${visitDate} ${visitTime}`
                 })
             });
 
-            if (res.ok) {
-                const newVisit = await res.json();
+            if (visitRes.ok) {
+                const newVisit = await visitRes.json();
                 myVisits = [...myVisits, { ...newVisit, property: selectedProperty }];
                 isScheduling = false;
                 alert('Visit scheduled! Status: Pending landlord approval.');
             } else {
-                const data = await res.json();
+                const data = await visitRes.json();
                 alert(data.message || 'Scheduling failed.');
             }
         } catch (e) {
-            alert('Connection error. Please try again.');
+            alert(e.message || 'Connection error. Please try again.');
         } finally {
             isSubmitting = false;
         }
@@ -872,30 +886,42 @@
                                     <p class="text-gray-500 text-sm">Please upload a valid legal document (Passport or Driver License) to secure your visit.</p>
                                 </div>
                                 
-                                <label class="border-2 border-dashed border-gray-200 rounded-3xl p-10 flex flex-col items-center justify-center text-center gap-4 bg-gray-50/50 hover:border-indigo-300 transition-colors cursor-pointer group">
-                                    <div class="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center text-gray-400 group-hover:text-indigo-600 transition-colors">
-                                        {#if isSubmitting}
-                                            <svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                        {:else if identityDoc}
-                                            <CheckCircle2 size={32} class="text-green-500" />
-                                        {:else}
-                                            <Upload size={32} />
-                                        {/if}
-                                    </div>
-                                    <div class="space-y-1">
-                                        {#if identityDoc}
-                                            <p class="font-bold text-green-600">Uploaded: {identityDoc.name}</p>
-                                            <p class="text-xs text-gray-400 font-medium">Click to replace</p>
-                                        {:else}
-                                            <p class="font-bold">Click to upload or drag & drop</p>
-                                            <p class="text-xs text-gray-400 font-medium">PNG, JPG or WEBP (max. 10MB)</p>
-                                        {/if}
-                                    </div>
-                                    <input type="file" class="hidden" accept="image/*" on:change={handleFileUpload} />
-                                </label>
+                                <div class="relative group">
+                                    {#if filePreviewUrl}
+                                        <div class="relative rounded-3xl overflow-hidden border-2 border-indigo-600 shadow-xl animate-in zoom-in-95 duration-300">
+                                            <img src={filePreviewUrl} alt="Preview" class="w-full h-64 object-cover" />
+                                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <button 
+                                                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg"
+                                                    on:click|preventDefault={removeFile}
+                                                >
+                                                    <X size={18} />
+                                                    Remove Image
+                                                </button>
+                                            </div>
+                                        </div>
+                                    {:else}
+                                        <label class="border-2 border-dashed border-gray-200 rounded-3xl p-10 flex flex-col items-center justify-center text-center gap-4 bg-gray-50/50 hover:border-indigo-300 transition-colors cursor-pointer group">
+                                            <div class="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center text-gray-400 group-hover:text-indigo-600 transition-colors">
+                                                {#if identityDoc}
+                                                    <CheckCircle2 size={32} class="text-green-500" />
+                                                {:else}
+                                                    <Upload size={32} />
+                                                {/if}
+                                            </div>
+                                            <div class="space-y-1">
+                                                {#if identityDoc}
+                                                    <p class="font-bold text-green-600">Verified ID on file: {identityDoc.name}</p>
+                                                    <p class="text-xs text-gray-400 font-medium">Click to upload a new one</p>
+                                                {:else}
+                                                    <p class="font-bold">Click to upload or drag & drop</p>
+                                                    <p class="text-xs text-gray-400 font-medium">PNG, JPG or WEBP (max. 10MB)</p>
+                                                {/if}
+                                            </div>
+                                            <input type="file" class="hidden" accept="image/*" on:change={handleFileSelection} />
+                                        </label>
+                                    {/if}
+                                </div>
 
                                 <div class="flex gap-3">
                                     <button 
@@ -905,10 +931,19 @@
                                         Back
                                     </button>
                                     <button 
-                                        class="flex-[2] bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black shadow-lg transition-all"
+                                        class="flex-[2] bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                                         on:click={submitVisit}
+                                        disabled={!hasUploadedIdentityDoc || isSubmitting}
                                     >
-                                        Complete Scheduling
+                                        {#if isSubmitting}
+                                            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Processing...
+                                        {:else}
+                                            Complete Scheduling
+                                        {/if}
                                     </button>
                                 </div>
                             </div>
