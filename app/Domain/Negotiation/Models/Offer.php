@@ -1,7 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Domain\Negotiation\Models;
 
+use App\Domain\Identity\Models\User;
+use App\Domain\Legal\Models\Document;
+use App\Domain\Property\Models\Property;
+use App\Domain\Scheduling\Models\Visit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,5 +42,10 @@ class Offer extends Model
     public function visit()
     {
         return $this->belongsTo(Visit::class);
+    }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\OfferFactory::new();
     }
 }

@@ -7,12 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
-use App\Models\User;
+use App\Domain\Identity\Models\User;
 use Illuminate\Support\Facades\Hash;
+
+use App\Domain\Identity\Actions\RegisterGuestAction;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(Request $request, RegisterGuestAction $action)
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -20,14 +22,7 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8'],
         ]);
 
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role' => 'guest',
-        ]);
-
-        Auth::login($user);
+        $user = $action->execute($data);
         $request->session()->regenerate();
 
         return response()->json([

@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Domain\Legal\Models;
 
+use App\Domain\Identity\Models\User;
+use App\Domain\Property\Models\Property;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,5 +39,10 @@ class Lease extends Model
     public function documents()
     {
         return $this->hasMany(Document::class);
+    }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\LeaseFactory::new();
     }
 }

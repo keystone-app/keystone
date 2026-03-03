@@ -2,16 +2,18 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
-use App\Models\Property;
-use App\Models\Visit;
+use App\Domain\Identity\Models\User;
+use App\Domain\Negotiation\Models\Offer;
+use App\Domain\Property\Models\Property;
+use App\Domain\Scheduling\Models\Visit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Offer>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Negotiation\Models\Offer>
  */
 class OfferFactory extends Factory
 {
+    protected $model = Offer::class;
     /**
      * Define the model's default state.
      *

@@ -2,14 +2,16 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
+use App\Domain\Identity\Models\User;
+use App\Domain\Legal\Models\Document;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Document>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Legal\Models\Document>
  */
 class DocumentFactory extends Factory
 {
+    protected $model = Document::class;
     /**
      * Define the model's default state.
      *

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Domain\Legal\Models;
 
+use App\Domain\Identity\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,5 +26,10 @@ class Document extends Model
     public function lease()
     {
         return $this->belongsTo(Lease::class);
+    }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\DocumentFactory::new();
     }
 }

@@ -2,16 +2,18 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
-use App\Models\Property;
-use App\Models\Document;
+use App\Domain\Identity\Models\User;
+use App\Domain\Legal\Models\Document;
+use App\Domain\Property\Models\Property;
+use App\Domain\Scheduling\Models\Visit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Visit>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Scheduling\Models\Visit>
  */
 class VisitFactory extends Factory
 {
+    protected $model = Visit::class;
     /**
      * Define the model's default state.
      *

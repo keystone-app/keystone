@@ -1,8 +1,13 @@
 <?php
 
-namespace App\Models;
+namespace App\Domain\Identity\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Domain\Legal\Models\Document;
+use App\Domain\Legal\Models\Lease;
+use App\Domain\Negotiation\Models\Offer;
+use App\Domain\Property\Models\Property;
+use App\Domain\Scheduling\Models\Visit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -68,6 +73,11 @@ class User extends Authenticatable
     public function identityDocument()
     {
         return $this->belongsTo(Document::class, 'identity_document_id');
+    }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\UserFactory::new();
     }
 
     public function hasIdentityDocument(): bool

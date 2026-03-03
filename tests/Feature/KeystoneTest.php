@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use App\Models\Property;
-use App\Models\Lease;
-use App\Models\Document;
+use App\Domain\Identity\Models\User;
+use App\Domain\Property\Models\Property;
+use App\Domain\Legal\Models\Lease;
+use App\Domain\Legal\Models\Document;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 

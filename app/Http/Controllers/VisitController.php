@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Visit;
+use App\Domain\Scheduling\Models\Visit;
+use App\Domain\Scheduling\Actions\ScheduleVisitAction;
 use Illuminate\Http\Request;
 
 class VisitController extends Controller
@@ -32,7 +33,7 @@ class VisitController extends Controller
         return response()->json($visits);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, ScheduleVisitAction $action)
     {
         $data = $request->validate([
             'property_id' => 'required|exists:properties,id',
@@ -40,22 +41,12 @@ class VisitController extends Controller
             'visit_at' => 'required|date',
         ]);
 
-        $user = auth()->user();
-        $docId = $data['document_id'] ?? $user->identity_document_id;
-
-        if (!$docId) {
-            return response()->json(['message' => 'Identity document required.'], 422);
+        try {
+            $visit = $action->execute($data);
+            return response()->json($visit->load(['user', 'property', 'document']));
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
         }
-
-        $visit = Visit::create([
-            'user_id' => $user->id,
-            'property_id' => $data['property_id'],
-            'document_id' => $docId,
-            'visit_at' => $data['visit_at'],
-            'status' => 'pending',
-        ]);
-
-        return response()->json($visit->load(['user', 'property', 'document']));
     }
 
     public function update(Request $request, Visit $visit)

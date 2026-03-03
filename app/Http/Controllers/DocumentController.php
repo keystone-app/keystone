@@ -2,36 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Document;
+use App\Domain\Legal\Models\Document;
+use App\Domain\Negotiation\Models\Offer;
+use App\Domain\Legal\Actions\UploadComplianceDocumentAction;
 use Illuminate\Http\Request;
 
-use App\Models\Offer;
+use App\Domain\Legal\Actions\UploadIdentityDocumentAction;
 
 class DocumentController extends Controller
 {
-    public function uploadIdentity(Request $request)
+    public function uploadIdentity(Request $request, UploadIdentityDocumentAction $action)
     {
         $request->validate([
             'file' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
         ]);
 
-        $path = $request->file('file')->store('identity_docs', 'public');
-
-        $document = Document::create([
-            'user_id' => auth()->id(),
-            'name' => $request->file('file')->getClientOriginalName(),
-            'path' => $path,
-            'type' => 'identity_doc',
-        ]);
-
-        auth()->user()->update([
-            'identity_document_id' => $document->id,
-        ]);
-
-        return response()->json($document);
+        try {
+            $document = $action->execute($request->file('file'));
+            return response()->json($document);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
-    public function uploadCompliance(Request $request)
+    public function uploadCompliance(Request $request, UploadComplianceDocumentAction $action)
     {
         $request->validate([
             'file' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
@@ -39,29 +33,12 @@ class DocumentController extends Controller
             'offer_id' => 'required|exists:offers,id',
         ]);
 
-        $offer = Offer::findOrFail($request->offer_id);
-
-        if ($offer->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        try {
+            $offer = Offer::findOrFail($request->offer_id);
+            $document = $action->execute($offer, $request->type, $request->file('file'));
+            return response()->json($document);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
         }
-
-        $path = $request->file('file')->store('compliance_docs', 'public');
-
-        $document = Document::create([
-            'user_id' => auth()->id(),
-            'name' => $request->file('file')->getClientOriginalName(),
-            'path' => $path,
-            'type' => $request->type,
-        ]);
-
-        // Check if both docs are now present to update offer status
-        $hasIncome = Document::where('user_id', auth()->id())->where('type', 'income_proof')->exists();
-        $hasResidency = Document::where('user_id', auth()->id())->where('type', 'residency_proof')->exists();
-
-        if ($hasIncome && $hasResidency && $offer->compliance_status === 'awaiting_documents') {
-            $offer->update(['compliance_status' => 'pending_verification']);
-        }
-
-        return response()->json($document);
     }
 }

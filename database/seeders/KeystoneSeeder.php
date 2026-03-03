@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\User;
-use App\Models\Property;
-use App\Models\Lease;
-use App\Models\Document;
+use App\Domain\Identity\Models\User;
+use App\Domain\Property\Models\Property;
+use App\Domain\Legal\Models\Lease;
+use App\Domain\Legal\Models\Document;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
