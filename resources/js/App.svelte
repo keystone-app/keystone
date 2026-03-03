@@ -1,9 +1,24 @@
 <script>
-    import { Search, Home, FileText, Plus, LogIn, Filter, Calendar, Clock, Upload, CheckCircle2 } from 'lucide-svelte';
+    import { onMount } from 'svelte';
+    import { Search, Home, FileText, Plus, LogIn, Filter, Calendar, Clock, Upload, CheckCircle2, X } from 'lucide-svelte';
 
-    let role = $state('tenant'); // 'landlord', 'tenant', 'guest'
+    let role = $state('guest'); // 'landlord', 'tenant', 'guest'
     let view = $state('listings'); // 'listings', 'dashboard'
     let isLoggedIn = $state(false);
+    let currentUser = $state(null);
+    let landlordView = $state('properties'); // 'properties', 'visits'
+    let landlordVisits = $state([
+        { id: 101, tenant: 'Bob Tenant', property: 'Modern Apartment 101', date: '2026-03-10', time: '14:00', status: 'pending', doc: 'ID_Bob.png' },
+        { id: 102, tenant: 'Charlie Renter', property: 'Cozy Studio Downtown', date: '2026-03-12', time: '10:30', status: 'pending', doc: 'ID_Charlie.jpg' },
+    ]);
+
+    function approveVisit(id) {
+        landlordVisits = landlordVisits.map(v => v.id === id ? { ...v, status: 'scheduled' } : v);
+    }
+
+    function rejectVisit(id) {
+        landlordVisits = landlordVisits.map(v => v.id === id ? { ...v, status: 'rejected' } : v);
+    }
 
     let searchQuery = $state('');
     let statusFilter = $state('all');
@@ -11,10 +26,16 @@
 
     let isScheduling = $state(false);
     let showAuthPrompt = $state(false);
+    let showLoginModal = $state(false);
     let hasUploadedIdentityDoc = $state(false);
     let visitDate = $state('');
     let visitTime = $state('');
     let schedulingStep = $state(1); // 1: DateTime, 2: Document
+
+    let email = $state('alice@landlord.com'); // Default for quick testing
+    let password = $state('password');
+    let loginError = $state('');
+    let isSubmitting = $state(false);
 
     let myVisits = $state([]);
 
@@ -85,13 +106,77 @@
         })
     );
 
-    function toggleAuth() {
-        isLoggedIn = !isLoggedIn;
-        if (!isLoggedIn) {
+    onMount(async () => {
+        await checkAuth();
+    });
+
+    async function checkAuth() {
+        try {
+            const res = await fetch('/me');
+            const data = await res.json();
+            if (data.user) {
+                isLoggedIn = true;
+                currentUser = data.user;
+                role = data.role;
+            }
+        } catch (e) {
+            console.error('Auth check failed', e);
+        }
+    }
+
+    async function login() {
+        loginError = '';
+        isSubmitting = true;
+        try {
+            const res = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                isLoggedIn = true;
+                currentUser = data.user;
+                role = data.role;
+                showLoginModal = false;
+                showAuthPrompt = false;
+                
+                if (isScheduling) {
+                    schedulingStep = 1;
+                }
+            } else {
+                const data = await res.json();
+                loginError = data.message || 'Login failed. Please check your credentials.';
+            }
+        } catch (e) {
+            loginError = 'Connection error. Please try again.';
+        } finally {
+            isSubmitting = false;
+        }
+    }
+
+    async function logout() {
+        try {
+            await fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            });
+            isLoggedIn = false;
+            currentUser = null;
+            role = 'guest';
             view = 'listings';
             selectedProperty = null;
             isScheduling = false;
-            showAuthPrompt = false;
+        } catch (e) {
+            console.error('Logout failed', e);
         }
     }
 
@@ -100,13 +185,6 @@
             showAuthPrompt = true;
             return;
         }
-        isScheduling = true;
-        schedulingStep = 1;
-    }
-
-    function handleAuthAndSchedule() {
-        isLoggedIn = true;
-        showAuthPrompt = false;
         isScheduling = true;
         schedulingStep = 1;
     }
@@ -159,6 +237,7 @@
 
         <div class="flex items-center gap-6">
             {#if isLoggedIn}
+                <span class="text-sm font-bold text-gray-500">Hi, {currentUser.name}</span>
                 <div class="flex bg-gray-100 p-1 rounded-md">
                     <button 
                         class="px-4 py-1.5 text-sm font-medium rounded {role === 'landlord' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'}"
@@ -174,9 +253,9 @@
                     </button>
                 </div>
                 <div class="h-8 w-px bg-gray-200"></div>
-                <button class="text-gray-500 hover:text-gray-700 font-medium" on:click={toggleAuth}>Log Out</button>
+                <button class="text-gray-500 hover:text-gray-700 font-medium" on:click={logout}>Log Out</button>
             {:else}
-                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors" on:click={toggleAuth}>
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-colors" on:click={() => showLoginModal = true}>
                     <LogIn size={18} />
                     Sign In
                 </button>
@@ -369,37 +448,137 @@
         {:else if isLoggedIn}
             {#if role === 'landlord'}
                 <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <header class="flex justify-between items-end">
-                        <div>
-                            <h1 class="text-3xl font-black">Properties</h1>
-                            <p class="text-gray-500 mt-1">Manage your real estate portfolio</p>
+                    <header class="flex flex-col gap-6">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <h1 class="text-3xl font-black">{landlordView === 'properties' ? 'Properties' : 'Visit Requests'}</h1>
+                                <p class="text-gray-500 mt-1">
+                                    {landlordView === 'properties' ? 'Manage your real estate portfolio' : 'Review and approve tenant visits'}
+                                </p>
+                            </div>
+                            {#if landlordView === 'properties'}
+                                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-indigo-200">
+                                    <Plus size={20} />
+                                    Add Property
+                                </button>
+                            {/if}
                         </div>
-                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-indigo-200">
-                            <Plus size={20} />
-                            Add Property
-                        </button>
+
+                        <!-- Landlord Menu -->
+                        <div class="flex border-b border-gray-200">
+                            <button 
+                                class="px-6 py-3 text-sm font-bold border-b-2 transition-all {landlordView === 'properties' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400 hover:text-gray-600'}"
+                                on:click={() => landlordView = 'properties'}
+                            >
+                                My Portfolio
+                            </button>
+                            <button 
+                                class="px-6 py-3 text-sm font-bold border-b-2 transition-all {landlordView === 'visits' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400 hover:text-gray-600'}"
+                                on:click={() => landlordView = 'visits'}
+                            >
+                                Visit Requests
+                                {#if landlordVisits.filter(v => v.status === 'pending').length > 0}
+                                    <span class="ml-2 bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full text-[10px]">
+                                        {landlordVisits.filter(v => v.status === 'pending').length}
+                                    </span>
+                                {/if}
+                            </button>
+                        </div>
                     </header>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {#each properties.filter(p => p.id <= 3) as property}
-                            <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                <div class="h-48 bg-gray-50 flex items-center justify-center border-b border-gray-50">
-                                    <Home class="w-12 h-12 text-gray-200" />
-                                </div>
-                                <div class="p-5">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <h3 class="font-bold text-lg">{property.name}</h3>
-                                        <span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">Occupied</span>
+                    {#if landlordView === 'properties'}
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {#each properties.filter(p => p.id <= 3) as property}
+                                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                    <div class="h-48 bg-gray-50 flex items-center justify-center border-b border-gray-50">
+                                        <Home class="w-12 h-12 text-gray-200" />
                                     </div>
-                                    <p class="text-gray-500 text-sm mb-4">{property.address}</p>
-                                    <div class="flex justify-between items-center pt-4 border-t border-gray-50">
-                                        <span class="font-black text-indigo-600">${property.price.toLocaleString()}/mo</span>
-                                        <button class="text-indigo-600 hover:text-indigo-800 text-sm font-bold">Manage</button>
+                                    <div class="p-5">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <h3 class="font-bold text-lg">{property.name}</h3>
+                                            <span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">Occupied</span>
+                                        </div>
+                                        <p class="text-gray-500 text-sm mb-4">{property.address}</p>
+                                        <div class="flex justify-between items-center pt-4 border-t border-gray-50">
+                                            <span class="font-black text-indigo-600">${property.price.toLocaleString()}/mo</span>
+                                            <button class="text-indigo-600 hover:text-indigo-800 text-sm font-bold">Manage</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        {/each}
-                    </div>
+                            {/each}
+                        </div>
+                    {:else}
+                        <div class="bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-sm">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-gray-50 border-b border-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Tenant</th>
+                                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Property</th>
+                                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Schedule</th>
+                                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Identity</th>
+                                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Status</th>
+                                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-50">
+                                    {#each landlordVisits as visit}
+                                        <tr class="hover:bg-gray-50/50 transition-colors">
+                                            <td class="px-6 py-5 font-bold text-sm">{visit.tenant}</td>
+                                            <td class="px-6 py-5 text-sm text-gray-600">{visit.property}</td>
+                                            <td class="px-6 py-5 text-sm">
+                                                <div class="flex flex-col">
+                                                    <span class="font-bold">{visit.date}</span>
+                                                    <span class="text-xs text-gray-400 font-medium">{visit.time}</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-5">
+                                                <button class="text-indigo-600 hover:text-indigo-800 text-xs font-bold flex items-center gap-1 group">
+                                                    <FileText size={14} class="text-indigo-400 group-hover:text-indigo-600" />
+                                                    View ID
+                                                </button>
+                                            </td>
+                                            <td class="px-6 py-5">
+                                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
+                                                    {visit.status === 'pending' ? 'bg-amber-100 text-amber-700' : 
+                                                     visit.status === 'scheduled' ? 'bg-green-100 text-green-700' : 
+                                                     'bg-red-100 text-red-700'}">
+                                                    {visit.status}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-5 text-right">
+                                                {#if visit.status === 'pending'}
+                                                    <div class="flex justify-end gap-2">
+                                                        <button 
+                                                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all shadow-sm shadow-indigo-100"
+                                                            on:click={() => approveVisit(visit.id)}
+                                                        >
+                                                            Approve
+                                                        </button>
+                                                        <button 
+                                                            class="bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all"
+                                                            on:click={() => rejectVisit(visit.id)}
+                                                        >
+                                                            Reject
+                                                        </button>
+                                                    </div>
+                                                {:else}
+                                                    <span class="text-xs text-gray-400 font-bold italic">Resolved</span>
+                                                {/if}
+                                            </td>
+                                        </tr>
+                                    {/each}
+                                </tbody>
+                            </table>
+                            {#if landlordVisits.length === 0}
+                                <div class="p-20 text-center space-y-4">
+                                    <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-300">
+                                        <Calendar size={32} />
+                                    </div>
+                                    <p class="text-gray-500 font-medium">No visit requests at the moment.</p>
+                                </div>
+                            {/if}
+                        </div>
+                    {/if}
                 </div>
             {:else}
                 <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -525,7 +704,7 @@
                         <div class="flex flex-col gap-3">
                             <button 
                                 class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black shadow-lg shadow-indigo-200 transition-all"
-                                on:click={handleAuthAndSchedule}
+                                on:click={() => { showAuthPrompt = false; showLoginModal = true; }}
                             >
                                 Sign In or Create Account
                             </button>
@@ -623,6 +802,79 @@
                                 </div>
                             </div>
                         {/if}
+                    </div>
+                </div>
+            </div>
+        {/if}
+
+        <!-- Login Modal -->
+        {#if showLoginModal}
+            <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-md animate-in fade-in duration-300">
+                <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 relative">
+                    <button 
+                        class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                        on:click={() => { showLoginModal = false; loginError = ''; }}
+                    >
+                        <X size={20} class="text-gray-400" />
+                    </button>
+
+                    <div class="p-10 space-y-8">
+                        <div class="text-center space-y-2">
+                            <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto text-white shadow-lg shadow-indigo-200 mb-6">
+                                <LogIn size={32} />
+                            </div>
+                            <h2 class="text-3xl font-black">Welcome back</h2>
+                            <p class="text-gray-500">Sign in to access your Keystone dashboard</p>
+                        </div>
+
+                        {#if loginError}
+                            <div class="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center gap-3 animate-in shake-in duration-300">
+                                <X size={20} class="text-red-600" />
+                                <p class="text-sm font-bold text-red-700">{loginError}</p>
+                            </div>
+                        {/if}
+
+                        <form class="space-y-4" on:submit|preventDefault={login}>
+                            <div class="space-y-1">
+                                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Email Address</label>
+                                <input 
+                                    type="email" 
+                                    bind:value={email}
+                                    placeholder="your@email.com"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold"
+                                    required
+                                />
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Password</label>
+                                <input 
+                                    type="password" 
+                                    bind:value={password}
+                                    placeholder="••••••••"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold"
+                                    required
+                                />
+                            </div>
+                            <button 
+                                type="submit"
+                                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2"
+                                disabled={isSubmitting}
+                            >
+                                {#if isSubmitting}
+                                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Signing in...
+                                {:else}
+                                    Sign In
+                                {/if}
+                            </button>
+                        </form>
+
+                        <div class="text-center">
+                            <p class="text-sm text-gray-400 font-bold">Don't have an account? <a href="#" class="text-indigo-600 hover:underline">Create one</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
