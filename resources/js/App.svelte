@@ -27,6 +27,7 @@
     let isScheduling = $state(false);
     let showAuthPrompt = $state(false);
     let showLoginModal = $state(false);
+    let showRegisterModal = $state(false);
     let hasUploadedIdentityDoc = $state(false);
     let visitDate = $state('');
     let visitTime = $state('');
@@ -34,6 +35,7 @@
 
     let email = $state('alice@landlord.com'); // Default for quick testing
     let password = $state('password');
+    let regName = $state('');
     let loginError = $state('');
     let isSubmitting = $state(false);
 
@@ -121,6 +123,42 @@
             }
         } catch (e) {
             console.error('Auth check failed', e);
+        }
+    }
+
+    async function register() {
+        loginError = '';
+        isSubmitting = true;
+        try {
+            const res = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ name: regName, email, password })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                isLoggedIn = true;
+                currentUser = data.user;
+                role = data.role;
+                showRegisterModal = false;
+                showAuthPrompt = false;
+                
+                if (isScheduling) {
+                    schedulingStep = 1;
+                }
+            } else {
+                const data = await res.json();
+                loginError = data.message || 'Registration failed.';
+            }
+        } catch (e) {
+            loginError = 'Connection error. Please try again.';
+        } finally {
+            isSubmitting = false;
         }
     }
 
@@ -873,7 +911,91 @@
                         </form>
 
                         <div class="text-center">
-                            <p class="text-sm text-gray-400 font-bold">Don't have an account? <a href="#" class="text-indigo-600 hover:underline">Create one</a></p>
+                            <p class="text-sm text-gray-400 font-bold">Don't have an account? <button class="text-indigo-600 hover:underline" on:click={() => { showLoginModal = false; showRegisterModal = true; }}>Create one</button></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {/if}
+
+        <!-- Register Modal -->
+        {#if showRegisterModal}
+            <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-md animate-in fade-in duration-300">
+                <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 relative">
+                    <button 
+                        class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                        on:click={() => { showRegisterModal = false; loginError = ''; }}
+                    >
+                        <X size={20} class="text-gray-400" />
+                    </button>
+
+                    <div class="p-10 space-y-8">
+                        <div class="text-center space-y-2">
+                            <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto text-white shadow-lg shadow-indigo-200 mb-6">
+                                <Plus size={32} />
+                            </div>
+                            <h2 class="text-3xl font-black">Create Account</h2>
+                            <p class="text-gray-500">Join Keystone to schedule your visits</p>
+                        </div>
+
+                        {#if loginError}
+                            <div class="bg-red-50 border border-red-100 p-4 rounded-xl flex items-center gap-3 animate-in shake-in duration-300">
+                                <X size={20} class="text-red-600" />
+                                <p class="text-sm font-bold text-red-700">{loginError}</p>
+                            </div>
+                        {/if}
+
+                        <form class="space-y-4" on:submit|preventDefault={register}>
+                            <div class="space-y-1">
+                                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Full Name</label>
+                                <input 
+                                    type="text" 
+                                    bind:value={regName}
+                                    placeholder="John Doe"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold"
+                                    required
+                                />
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Email Address</label>
+                                <input 
+                                    type="email" 
+                                    bind:value={email}
+                                    placeholder="your@email.com"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold"
+                                    required
+                                />
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-black uppercase tracking-widest text-gray-400">Password</label>
+                                <input 
+                                    type="password" 
+                                    bind:value={password}
+                                    placeholder="••••••••"
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold"
+                                    required
+                                    minlength="8"
+                                />
+                            </div>
+                            <button 
+                                type="submit"
+                                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2"
+                                disabled={isSubmitting}
+                            >
+                                {#if isSubmitting}
+                                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Creating account...
+                                {:else}
+                                    Create Account
+                                {/if}
+                            </button>
+                        </form>
+
+                        <div class="text-center">
+                            <p class="text-sm text-gray-400 font-bold">Already have an account? <button class="text-indigo-600 hover:underline" on:click={() => { showRegisterModal = false; showLoginModal = true; }}>Sign in</button></p>
                         </div>
                     </div>
                 </div>
