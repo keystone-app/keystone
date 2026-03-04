@@ -33,7 +33,7 @@
         >
             {#if showClose}
                 <Dialog.Close
-                    class="absolute right-4 top-4 rounded-full p-2 text-gray-400 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 z-10"
+                    class="absolute right-4 top-4 rounded-full p-2 text-gray-400 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-action z-10"
                 >
                     <X size={20} />
                     <span class="sr-only">Close</span>
@@ -41,7 +41,7 @@
             {/if}
 
             {#if title}
-                <div class="bg-indigo-600 p-6 text-white">
+                <div class="bg-brand-action p-6 text-white">
                     <Dialog.Title class="text-xl font-black uppercase tracking-tight">
                         {title}
                     </Dialog.Title>

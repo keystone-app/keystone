@@ -21,6 +21,6 @@ describe('Badge', () => {
             type: 'success'
         });
         const badge = getByText('Success').parentElement;
-        expect(badge.classList.contains('bg-green-100')).toBe(true);
+        expect(badge.classList.contains('bg-brand-success/10')).toBe(true);
     });
 });

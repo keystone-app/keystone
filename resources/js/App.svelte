@@ -1,8 +1,9 @@
 <script>
     import { onMount } from 'svelte';
-    import { Search, Home, FileText, Plus, LogIn, Filter, Calendar, Clock, Upload, CheckCircle2, X } from 'lucide-svelte';
+    import { LogIn, FileText, Plus, CheckCircle2, X } from 'lucide-svelte';
     import Button from './components/ui/Button.svelte';
     import Badge from './components/ui/Badge.svelte';
+    import Sidebar from './components/features/Sidebar.svelte';
     import PropertyCard from './components/features/PropertyCard.svelte';
     import VisitTable from './components/features/VisitTable.svelte';
     import OfferTable from './components/features/OfferTable.svelte';
@@ -231,7 +232,6 @@
     );
 
     onMount(async () => {
-        console.log('App mounted, checking auth...');
         await checkAuth();
     });
 
@@ -239,7 +239,6 @@
         try {
             const res = await fetch('/me');
             const data = await res.json();
-            console.log('Auth check response:', data);
             if (data.user) {
                 isLoggedIn = true;
                 currentUser = data.user;
@@ -345,20 +344,17 @@
     }
 
     async function logout() {
-        console.log('Logout initiated...');
         try {
-            const res = await fetch('/logout', {
+            await fetch('/logout', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
                 }
             });
-            console.log('Logout response status:', res.status);
             window.location.reload();
         } catch (e) {
             console.error('Logout failed', e);
-            // Fallback: reload anyway to clear state
             window.location.reload();
         }
     }
@@ -493,450 +489,414 @@
     }
 </script>
 
-<div class="min-h-screen bg-gray-50 text-gray-900 font-sans antialiased selection:bg-indigo-100">
-    <nav class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-        <div class="flex items-center gap-8">
-            <div class="flex items-center gap-2 cursor-pointer" onclick={() => { view = 'listings'; selectedProperty = null; }}>
-                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">K</div>
-                <span class="text-xl font-bold tracking-tight">Keystone</span>
-            </div>
-            
-            <div class="hidden md:flex items-center gap-6">
-                <button 
-                    class="text-sm font-semibold {(view === 'listings' && !selectedProperty) ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-900'}"
-                    onclick={() => { view = 'listings'; selectedProperty = null; }}
-                >
-                    Browse Properties
-                </button>
-                {#if isLoggedIn}
-                    <button 
-                        class="text-sm font-semibold {view === 'dashboard' ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-900'}"
-                        onclick={() => view = 'dashboard'}
-                    >
-                        My Dashboard
-                    </button>
+<div class="flex min-h-screen bg-brand-bg text-brand-primary font-sans antialiased selection:bg-brand-action selection:text-white">
+    <Sidebar 
+        role={role} 
+        currentView={view} 
+        currentUser={currentUser}
+        onViewChange={(newView) => { view = newView; selectedProperty = null; }} 
+    />
+
+    <main class="flex-1 flex flex-col min-w-0">
+        <header class="h-16 bg-white border-b border-gray-200 sticky top-0 z-30 flex items-center justify-between px-8 lg:px-12">
+            <div class="flex items-center gap-2 text-sm font-medium">
+                <span class="text-gray-400 capitalize">{view}</span>
+                {#if selectedProperty}
+                    <span class="material-symbols-outlined text-gray-300 text-sm">chevron_right</span>
+                    <span class="truncate max-w-[200px]">{selectedProperty.name}</span>
                 {/if}
             </div>
-        </div>
 
-        <div class="flex items-center gap-6">
-            {#if isLoggedIn && currentUser}
-                <span class="text-sm font-bold text-gray-500">Hi, {currentUser.name}</span>
-                <div class="flex bg-gray-100 p-1 rounded-md">
-                    <button 
-                        class="px-4 py-1.5 text-sm font-medium rounded {role === 'landlord' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'}"
-                        onclick={() => role = 'landlord'}
-                    >
-                        Landlord
-                    </button>
-                    <button 
-                        class="px-4 py-1.5 text-sm font-medium rounded {role === 'tenant' ? 'bg-white shadow-sm text-indigo-600' : 'text-gray-500 hover:text-gray-700'}"
-                        onclick={() => role = 'tenant'}
-                    >
-                        Tenant
-                    </button>
-                </div>
-                <div class="h-8 w-px bg-gray-200"></div>
-                <button 
-                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition-all shadow-lg shadow-red-100" 
-                    onclick={logout}
-                >
-                    Log Out
-                </button>
-            {:else}
-                <Button variant="primary" size="md" onclick={() => showLoginModal = true}>
-                    <LogIn size={18} />
-                    Sign In
-                </Button>
-            {/if}
-        </div>
-    </nav>
-
-    <main class="max-w-7xl mx-auto p-8">
-        {#if view === 'listings'}
-            {#if selectedProperty}
-                <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <button 
-                        class="flex items-center gap-2 text-gray-500 hover:text-indigo-600 font-bold transition-colors mb-4"
-                        onclick={() => selectedProperty = null}
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                        Back to Listings
-                    </button>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                        <div class="lg:col-span-2 space-y-8">
-                            <div class="h-[400px] bg-gray-100 rounded-3xl flex items-center justify-center border border-gray-200 shadow-inner">
-                                <Home class="w-32 h-32 text-gray-300" />
-                            </div>
-                            
-                            <div class="space-y-4">
-                                <div class="flex items-center gap-3">
-                                    <Badge type="primary">{selectedProperty.type}</Badge>
-                                    <Badge type={selectedProperty.status === 'available' ? 'success' : selectedProperty.status === 'rented' ? 'info' : 'warning'}>
-                                        {selectedProperty.status}
-                                    </Badge>
-                                </div>
-                                <h1 class="text-5xl font-black tracking-tight">{selectedProperty.name}</h1>
-                                <p class="text-xl text-gray-500 flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                                    {selectedProperty.address}
-                                </p>
-                            </div>
-
-                            <div class="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm space-y-6">
-                                <h2 class="text-2xl font-bold">About this property</h2>
-                                <p class="text-gray-600 leading-relaxed text-lg">
-                                    {selectedProperty.description}
-                                </p>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    {#each selectedProperty.features as feature}
-                                        <div class="bg-gray-50 p-4 rounded-2xl flex flex-col items-center text-center gap-2">
-                                            <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Feature</span>
-                                            <span class="font-bold text-sm">{feature}</span>
-                                        </div>
-                                    {/each}
-                                </div>
-                            </div>
+            <div class="flex items-center gap-6">
+                {#if isLoggedIn && currentUser}
+                    <div class="flex items-center bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 gap-3">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase">Role</span>
+                        <div class="flex gap-2">
+                            <button 
+                                class="text-xs font-bold transition-colors {role === 'landlord' ? 'text-brand-action' : 'text-gray-400 hover:text-gray-600'}"
+                                onclick={() => role = 'landlord'}
+                            >
+                                Landlord
+                            </button>
+                            <div class="w-px h-3 bg-gray-300"></div>
+                            <button 
+                                class="text-xs font-bold transition-colors {role === 'tenant' || role === 'guest' ? 'text-brand-action' : 'text-gray-400 hover:text-gray-600'}"
+                                onclick={() => role = 'tenant'}
+                            >
+                                Tenant
+                            </button>
                         </div>
+                    </div>
+                    <div class="h-8 w-px bg-gray-200"></div>
+                    <button 
+                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 font-bold transition-all shadow-lg shadow-red-100 text-xs" 
+                        onclick={logout}
+                    >
+                        Log Out
+                    </button>
+                {:else}
+                    <Button variant="primary" size="sm" onclick={() => showLoginModal = true}>
+                        <LogIn size={16} />
+                        Sign In
+                    </Button>
+                {/if}
+            </div>
+        </header>
 
-                        <div class="space-y-8">
-                            <div class="bg-indigo-600 p-8 rounded-3xl text-white shadow-xl shadow-indigo-100 space-y-6 sticky top-28">
-                                <div class="space-y-1">
-                                    <p class="text-indigo-200 text-sm font-black uppercase tracking-widest">Monthly Rent</p>
-                                    <div class="flex items-baseline gap-1">
-                                        <span class="text-5xl font-black">${selectedProperty.price.toLocaleString()}</span>
-                                        <span class="text-indigo-200 font-bold">/mo</span>
+        <div class="p-8 lg:p-12 max-w-6xl mx-auto w-full">
+            {#if view === 'listings'}
+                {#if selectedProperty}
+                    <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <button 
+                            class="flex items-center gap-2 text-brand-primary/50 hover:text-brand-action font-bold transition-colors mb-4"
+                            onclick={() => selectedProperty = null}
+                        >
+                            <span class="material-symbols-outlined">arrow_back</span>
+                            Back to Listings
+                        </button>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                            <div class="lg:col-span-2 space-y-8">
+                                <div class="h-[400px] bg-white rounded-xl flex items-center justify-center border border-gray-200 shadow-sm overflow-hidden">
+                                    <span class="material-symbols-outlined text-gray-100 text-9xl">image</span>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex items-center gap-3">
+                                        <Badge type="primary">{selectedProperty.type}</Badge>
+                                        <Badge type={selectedProperty.status === 'available' ? 'success' : 'warning'}>
+                                            {selectedProperty.status}
+                                        </Badge>
                                     </div>
+                                    <h1 class="text-4xl font-extrabold tracking-tight text-brand-primary">{selectedProperty.name}</h1>
+                                    <p class="text-xl text-gray-500 flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-brand-action">location_on</span>
+                                        {selectedProperty.address}
+                                    </p>
                                 </div>
 
-                                <div class="space-y-4 pt-6 border-t border-indigo-500">
-                                    <h3 class="font-bold text-lg flex items-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                        Legal Compliance
-                                    </h3>
-                                    <div class="space-y-3">
-                                        {#each Object.entries(selectedProperty.compliance) as [cert, status]}
-                                            <div class="flex justify-between items-center bg-indigo-700/50 p-3 rounded-xl">
-                                                <span class="text-sm font-bold capitalize">{cert} Certificate</span>
-                                                <Badge type={status === 'Verified' ? 'success' : status === 'Pending' ? 'warning' : 'error'}>
-                                                    {status}
-                                                </Badge>
+                                <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm space-y-6">
+                                    <h2 class="text-2xl font-bold">About this property</h2>
+                                    <p class="text-gray-600 leading-relaxed text-lg">
+                                        {selectedProperty.description}
+                                    </p>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        {#each selectedProperty.features as feature}
+                                            <div class="bg-gray-50 p-4 flex flex-col items-center text-center gap-2">
+                                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Feature</span>
+                                                <span class="font-bold text-sm">{feature}</span>
                                             </div>
                                         {/each}
                                     </div>
                                 </div>
-
-                                <Button variant="secondary" size="xl" class="w-full bg-white text-indigo-600 hover:bg-indigo-50" onclick={startScheduling}>
-                                    Schedule a Visit
-                                </Button>
-                                <p class="text-center text-xs text-indigo-200 font-bold">Secure through Keystone Legal Framework</p>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            {:else}
-                <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <header class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                        <div class="space-y-1">
-                            <h1 class="text-4xl font-extrabold tracking-tight">Available Listings</h1>
-                            <p class="text-gray-500 text-lg">Find your next home with verified legal compliance.</p>
-                        </div>
-                    </header>
 
-                    <!-- Search and Filters -->
-                    <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row gap-4 items-center">
-                        <div class="relative flex-1 w-full">
-                            <Search class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                            <input 
-                                type="text" 
-                                bind:value={searchQuery}
-                                placeholder="Search by property name or address..."
-                                class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
-                            />
-                        </div>
-                        <div class="flex items-center gap-2 w-full md:w-auto">
-                            <Filter class="text-gray-400" size={20} />
-                            <select 
-                                bind:value={statusFilter}
-                                class="flex-1 md:w-48 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-                            >
-                                <option value="all">All Statuses</option>
-                                <option value="available">Available Now</option>
-                                <option value="rented">Rented</option>
-                                <option value="maintenance">Maintenance</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {#each filteredProperties as property}
-                            <PropertyCard {property} onViewDetails={viewDetails} />
-                        {/each}
-                    </div>
-
-                    {#if filteredProperties.length === 0}
-                        <div class="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
-                            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <Search class="text-gray-300" size={40} />
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-900">No properties found</h3>
-                            <p class="text-gray-500 mt-1">Try adjusting your filters or search query.</p>
-                            <Button variant="ghost" class="mt-6 text-indigo-600 font-bold hover:underline" onclick={() => { searchQuery = ''; statusFilter = 'all'; }}>
-                                Clear all filters
-                            </Button>
-                        </div>
-                    {/if}
-                </div>
-            {/if}
-        {:else if isLoggedIn}
-            {#if role === 'landlord'}
-                <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <header class="flex flex-col gap-6">
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <h1 class="text-3xl font-black">{landlordView === 'properties' ? 'Properties' : 'Visit Requests'}</h1>
-                                <p class="text-gray-500 mt-1">
-                                    {landlordView === 'properties' ? 'Manage your real estate portfolio' : 'Review and approve tenant visits'}
-                                </p>
-                            </div>
-                            {#if landlordView === 'properties'}
-                                <Button variant="primary" size="lg" class="shadow-lg shadow-indigo-200">
-                                    <Plus size={20} />
-                                    Add Property
-                                </Button>
-                            {/if}
-                        </div>
-
-                        <!-- Landlord Menu -->
-                        <div class="flex border-b border-gray-200">
-                            <Button variant="tab" class={landlordView === 'properties' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400'} onclick={() => landlordView = 'properties'}>
-                                My Portfolio
-                            </Button>
-                            <Button variant="tab" class={landlordView === 'visits' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400'} onclick={() => landlordView = 'visits'}>
-                                Visit Requests
-                                {#if landlordVisits.filter(v => v.status === 'pending').length > 0}
-                                    <Badge type="info" class="ml-2 px-2 py-0.5">
-                                        {landlordVisits.filter(v => v.status === 'pending').length}
-                                    </Badge>
-                                {/if}
-                            </Button>
-                            <Button variant="tab" class={landlordView === 'offers' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400'} onclick={() => landlordView = 'offers'}>
-                                Offers
-                                {#if offers.filter(o => o.status === 'pending').length > 0}
-                                    <Badge type="info" class="ml-2 px-2 py-0.5">
-                                        {offers.filter(o => o.status === 'pending').length}
-                                    </Badge>
-                                {/if}
-                            </Button>
-                        </div>
-                    </header>
-
-                    {#if landlordView === 'properties'}
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {#each properties.filter(p => p.id <= 3) as property}
-                                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                                    <div class="h-48 bg-gray-50 flex items-center justify-center border-b border-gray-50">
-                                        <Home class="w-12 h-12 text-gray-200" />
-                                    </div>
-                                    <div class="p-5">
-                                        <div class="flex justify-between items-start mb-2">
-                                            <h3 class="font-bold text-lg">{property.name}</h3>
-                                            <Badge type="success">Occupied</Badge>
-                                        </div>
-                                        <p class="text-gray-500 text-sm mb-4">{property.address}</p>
-                                        <div class="flex justify-between items-center pt-4 border-t border-gray-50">
-                                            <span class="font-black text-indigo-600">${property.price.toLocaleString()}/mo</span>
-                                            <Button variant="ghost" class="text-indigo-600 hover:text-indigo-800 text-sm font-bold">Manage</Button>
+                            <div class="space-y-8">
+                                <div class="bg-brand-action p-8 text-white shadow-xl shadow-brand-action/20 space-y-6 sticky top-28 rounded-xl">
+                                    <div class="space-y-1">
+                                        <p class="text-white/60 text-sm font-black uppercase tracking-widest">Monthly Rent</p>
+                                        <div class="flex items-baseline gap-1">
+                                            <span class="text-5xl font-black">${selectedProperty.price.toLocaleString()}</span>
+                                            <span class="text-white/60 font-bold">/mo</span>
                                         </div>
                                     </div>
+
+                                    <div class="space-y-4 pt-6 border-t border-white/10">
+                                        <h3 class="font-bold text-lg flex items-center gap-2">
+                                            <span class="material-symbols-outlined">gavel</span>
+                                            Legal Compliance
+                                        </h3>
+                                        <div class="space-y-3">
+                                            {#each Object.entries(selectedProperty.compliance) as [cert, status]}
+                                                <div class="flex justify-between items-center bg-white/10 p-3 rounded-lg">
+                                                    <span class="text-sm font-bold capitalize">{cert} Certificate</span>
+                                                    <Badge type={status === 'Verified' ? 'success' : status === 'Pending' ? 'warning' : 'error'}>
+                                                        {status}
+                                                    </Badge>
+                                                </div>
+                                            {/each}
+                                        </div>
+                                    </div>
+
+                                    <Button variant="secondary" size="xl" class="w-full bg-white text-brand-action hover:bg-brand-bg border-none" onclick={startScheduling}>
+                                        Schedule a Visit
+                                    </Button>
+                                    <p class="text-center text-[10px] text-white/60 font-bold uppercase tracking-widest">Secure through Keystone Legal Framework</p>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                {:else}
+                    <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <header>
+                            <h1 class="text-4xl font-extrabold text-brand-primary tracking-tight">Available Listings</h1>
+                            <p class="text-lg text-gray-500 mt-2">Find your next home with verified legal compliance.</p>
+                        </header>
+
+                        <!-- Search and Filters -->
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row gap-4 items-center">
+                            <div class="relative flex-1 w-full">
+                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                                <input 
+                                    type="text" 
+                                    bind:value={searchQuery}
+                                    placeholder="Search by property name or address..."
+                                    class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-action focus:border-brand-action transition-all outline-none"
+                                />
+                            </div>
+                            <div class="flex items-center gap-2 w-full md:w-auto">
+                                <span class="material-symbols-outlined text-gray-400">filter_list</span>
+                                <select 
+                                    bind:value={statusFilter}
+                                    class="flex-1 md:w-48 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-action focus:border-brand-action outline-none font-semibold text-sm"
+                                >
+                                    <option value="all">All Statuses</option>
+                                    <option value="available">Available Now</option>
+                                    <option value="rented">Rented</option>
+                                    <option value="maintenance">Maintenance</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {#each filteredProperties as property}
+                                <PropertyCard {property} onViewDetails={viewDetails} />
                             {/each}
                         </div>
-                    {:else if landlordView === 'visits'}
-                        <VisitTable visits={landlordVisits} role="landlord" onApprove={approveVisit} onReject={rejectVisit} onViewId={(v) => alert('Viewing ID: ' + v.document.name)} />
-                    {:else if landlordView === 'offers'}
-                        <OfferTable offers={offers} role="landlord" onUpdateStatus={updateOfferStatus} />
-                    {/if}
-                </div>
-            {:else}
-                <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <header class="flex flex-col gap-6">
-                        <div class="space-y-1">
-                            <h1 class="text-3xl font-black">
-                                {#if tenantView === 'visits'}My Scheduled Visits
-                                {:else}My Dashboard
-                                {/if}
-                            </h1>
-                            <p class="text-gray-500 mt-1">
-                                {#if tenantView === 'visits'}Track and manage your upcoming property visits
-                                {:else if tenantView === 'offers'}Negotiate and track your property offers
-                                {:else}Manage your active lease agreements
-                                {/if}
-                            </p>
-                        </div>
 
-                        <!-- Tenant/Guest Menu -->
-                        <div class="flex border-b border-gray-200">
-                            <Button variant="tab" class={tenantView === 'visits' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400'} onclick={() => tenantView = 'visits'}>
-                                Scheduled Visits
-                                {#if myVisits.length > 0}
-                                    <Badge type="info" class="ml-2 px-2 py-0.5">{myVisits.length}</Badge>
-                                {/if}
-                            </Button>
-                            <Button variant="tab" class={tenantView === 'offers' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400'} onclick={() => tenantView = 'offers'}>
-                                Negotiations
-                                {#if offers.length > 0}
-                                    <Badge type="info" class="ml-2 px-2 py-0.5">{offers.length}</Badge>
-                                {/if}
-                            </Button>
-                            <Button variant="tab" class={tenantView === 'leases' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400'} onclick={() => tenantView = 'leases'}>
-                                My Leases
-                            </Button>
-                        </div>
-                    </header>
-
-                    {#if tenantView === 'leases'}
-                        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                            <div class="p-6 border-b border-gray-50 flex justify-between items-center">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
-                                        <FileText size={24} />
-                                    </div>
-                                    <div>
-                                        <h2 class="font-bold text-lg">Active Lease: Modern Loft A</h2>
-                                        <p class="text-gray-500 text-sm font-medium">Expires: Dec 31, 2026</p>
-                                    </div>
-                                </div>
-                                <Button variant="secondary" size="sm">Download PDF</Button>
+                        {#if filteredProperties.length === 0}
+                            <div class="text-center py-20 bg-white rounded-xl border border-dashed border-gray-200">
+                                <span class="material-symbols-outlined text-gray-200 text-6xl mb-4">search_off</span>
+                                <h3 class="text-xl font-bold text-brand-primary">No properties found</h3>
+                                <p class="text-gray-500 mt-1">Try adjusting your filters or search query.</p>
+                                <Button variant="ghost" class="mt-6 text-brand-action font-bold" onclick={() => { searchQuery = ''; statusFilter = 'all'; }}>
+                                    Clear all filters
+                                </Button>
                             </div>
-                            <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {/if}
+                    </div>
+                {/if}
+            {:else if isLoggedIn}
+                {#if role === 'landlord'}
+                    <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <header class="flex flex-col gap-6">
+                            <div class="flex justify-between items-end">
                                 <div>
-                                    <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Rent Status</p>
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div>
-                                        <span class="font-bold">Paid for March</span>
-                                    </div>
+                                    <h1 class="text-3xl font-black text-brand-primary">{landlordView === 'properties' ? 'Properties' : landlordView === 'visits' ? 'Visit Requests' : 'Offer Negotiations'}</h1>
+                                    <p class="text-gray-500 mt-1">
+                                        {#if landlordView === 'properties'}Manage your real estate portfolio
+                                        {:else if landlordView === 'visits'}Review and approve tenant visits
+                                        {:else}Manage deal closures and compliance
+                                        {/if}
+                                    </p>
                                 </div>
-                                <div>
-                                    <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Next Payment</p>
-                                    <span class="font-bold">$1,850 due on April 1st</span>
-                                </div>
-                                <div>
-                                    <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Landlord</p>
-                                    <span class="font-bold">Apex Realty Group</span>
-                                </div>
+                                {#if landlordView === 'properties'}
+                                    <Button variant="primary" size="lg">
+                                        <Plus size={20} />
+                                        Add Property
+                                    </Button>
+                                {/if}
                             </div>
-                        </div>
 
-                        <section class="space-y-4">
-                            <h2 class="text-xl font-bold">Documents</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="border-2 border-dashed border-gray-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center hover:border-indigo-300 transition-colors cursor-pointer group bg-white/50">
-                                    <div class="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-indigo-50 transition-colors">
-                                        <Plus class="text-gray-400 group-hover:text-indigo-600" size={24} />
+                            <div class="flex border-b border-gray-200">
+                                <Button variant="tab" class={landlordView === 'properties' ? 'border-brand-action text-brand-action' : 'border-transparent text-gray-400'} onclick={() => landlordView = 'properties'}>
+                                    My Portfolio
+                                </Button>
+                                <Button variant="tab" class={landlordView === 'visits' ? 'border-brand-action text-brand-action' : 'border-transparent text-gray-400'} onclick={() => landlordView = 'visits'}>
+                                    Visit Requests
+                                    {#if landlordVisits.filter(v => v.status === 'pending').length > 0}
+                                        <Badge type="info" class="ml-2">{landlordVisits.filter(v => v.status === 'pending').length}</Badge>
+                                    {/if}
+                                </Button>
+                                <Button variant="tab" class={landlordView === 'offers' ? 'border-brand-action text-brand-action' : 'border-transparent text-gray-400'} onclick={() => landlordView = 'offers'}>
+                                    Offers
+                                    {#if offers.filter(o => o.status === 'pending').length > 0}
+                                        <Badge type="info" class="ml-2">{offers.filter(o => o.status === 'pending').length}</Badge>
+                                    {/if}
+                                </Button>
+                            </div>
+                        </header>
+
+                        {#if landlordView === 'properties'}
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {#each properties.filter(p => p.id <= 3) as property}
+                                    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                        <div class="h-48 bg-gray-50 flex items-center justify-center border-b border-gray-50">
+                                            <span class="material-symbols-outlined text-gray-200 text-5xl">home</span>
+                                        </div>
+                                        <div class="p-5">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h3 class="font-bold text-lg text-brand-primary">{property.name}</h3>
+                                                <Badge type="success">Occupied</Badge>
+                                            </div>
+                                            <p class="text-gray-500 text-sm mb-4">{property.address}</p>
+                                            <div class="flex justify-between items-center pt-4 border-t border-gray-50">
+                                                <span class="font-black text-brand-action">${property.price.toLocaleString()}/mo</span>
+                                                <Button variant="ghost" class="text-brand-action text-xs font-bold">Manage</Button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <h3 class="font-bold">Upload Document</h3>
-                                    <p class="text-gray-500 text-sm mt-1">Insurance, ID, or income verification</p>
-                                </div>
-                                <div class="bg-white border border-gray-200 rounded-2xl p-6 flex items-center justify-between shadow-sm">
+                                {/each}
+                            </div>
+                        {:else if landlordView === 'visits'}
+                            <VisitTable visits={landlordVisits} role="landlord" onApprove={approveVisit} onReject={rejectVisit} onViewId={(v) => alert('Viewing ID: ' + v.document.name)} />
+                        {:else if landlordView === 'offers'}
+                            <OfferTable offers={offers} role="landlord" onUpdateStatus={updateOfferStatus} />
+                        {/if}
+                    </div>
+                {:else}
+                    <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <header class="flex flex-col gap-6">
+                            <div class="space-y-1">
+                                <h1 class="text-3xl font-black text-brand-primary">
+                                    {#if tenantView === 'visits'}My Scheduled Visits
+                                    {:else if tenantView === 'offers'}Negotiations
+                                    {:else}My Leases
+                                    {/if}
+                                </h1>
+                                <p class="text-gray-500 mt-1">
+                                    {#if tenantView === 'visits'}Track and manage your upcoming property visits
+                                    {:else if tenantView === 'offers'}Negotiate and track your property offers
+                                    {:else}Manage your active lease agreements
+                                    {/if}
+                                </p>
+                            </div>
+
+                            <div class="flex border-b border-gray-200">
+                                <Button variant="tab" class={tenantView === 'visits' ? 'border-brand-action text-brand-action' : 'border-transparent text-gray-400'} onclick={() => tenantView = 'visits'}>
+                                    Scheduled Visits
+                                    {#if myVisits.length > 0}
+                                        <Badge type="info" class="ml-2">{myVisits.length}</Badge>
+                                    {/if}
+                                </Button>
+                                <Button variant="tab" class={tenantView === 'offers' ? 'border-brand-action text-brand-action' : 'border-transparent text-gray-400'} onclick={() => tenantView = 'offers'}>
+                                    Negotiations
+                                    {#if offers.length > 0}
+                                        <Badge type="info" class="ml-2">{offers.length}</Badge>
+                                    {/if}
+                                </Button>
+                                <Button variant="tab" class={tenantView === 'leases' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400'} onclick={() => tenantView = 'leases'}>
+                                    My Leases
+                                </Button>
+                            </div>
+                        </header>
+
+                        {#if tenantView === 'leases'}
+                            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                                <div class="p-6 border-b border-gray-100 flex justify-between items-center">
                                     <div class="flex items-center gap-4">
-                                        <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
-                                            <FileText size={20} />
+                                        <div class="w-12 h-12 bg-brand-action/10 rounded-lg flex items-center justify-center text-brand-action">
+                                            <span class="material-symbols-outlined">description</span>
                                         </div>
                                         <div>
-                                            <h4 class="font-bold text-sm">Income_Verification.pdf</h4>
-                                            <p class="text-gray-400 text-[10px] font-bold mt-0.5">Uploaded 2 days ago</p>
+                                            <h2 class="font-bold text-lg text-brand-primary">Active Lease: Modern Loft A</h2>
+                                            <p class="text-gray-500 text-sm font-medium">Expires: Dec 31, 2026</p>
                                         </div>
                                     </div>
-                                    <Badge type="success">Verified</Badge>
+                                    <Button variant="secondary" size="sm">Download PDF</Button>
                                 </div>
-                                {#if identityDoc}
-                                    <div class="bg-white border border-indigo-200 rounded-2xl p-6 flex items-center justify-between shadow-sm border-l-4 border-l-indigo-600">
-                                        <div class="flex items-center gap-4">
-                                            <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
-                                                <CheckCircle2 size={20} />
-                                            </div>
-                                            <div>
-                                                <h4 class="font-bold text-sm text-indigo-900">{identityDoc.name}</h4>
-                                                <p class="text-gray-400 text-[10px] font-bold mt-0.5">Primary Identity Document</p>
-                                            </div>
+                                <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+                                    <div>
+                                        <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Rent Status</p>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-2.5 h-2.5 bg-brand-success rounded-full animate-pulse"></div>
+                                            <span class="font-bold">Paid for March</span>
                                         </div>
-                                        <Badge type="info">Verified</Badge>
                                     </div>
-                                {/if}
+                                    <div>
+                                        <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Next Payment</p>
+                                        <span class="font-bold">$1,850 due on April 1st</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Landlord</p>
+                                        <span class="font-bold">Apex Realty Group</span>
+                                    </div>
+                                </div>
                             </div>
-                        </section>
-                    {:else if tenantView === 'visits'}
-                        <VisitTable visits={myVisits} onMakeOffer={openOfferModal} />
-                    {:else if tenantView === 'offers'}
-                        <OfferTable offers={offers} onUploadCompliance={handleComplianceUpload} onVerifyIncome={handleIncomeVerification} />
-                    {/if}
-                </div>
+                        {:else if tenantView === 'visits'}
+                            <VisitTable visits={myVisits} onMakeOffer={openOfferModal} />
+                        {:else if tenantView === 'offers'}
+                            <OfferTable offers={offers} onUploadCompliance={handleComplianceUpload} onVerifyIncome={handleIncomeVerification} />
+                        {/if}
+                    </div>
+                {/if}
             {/if}
-        {/if}
+        </div>
 
-        <VisitModal 
-            isOpen={isScheduling} 
-            onClose={() => { isScheduling = false; showAuthPrompt = false; }}
-            property={selectedProperty}
-            identityDoc={identityDoc}
-            onSubmit={submitVisit}
-            isSubmitting={isSubmitting}
-        />
+        <footer class="mt-auto border-t border-gray-200 bg-white py-8 px-12">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-gray-400">© 2026 CondoClear. Built for Compliance and Clarity.</p>
+                <div class="flex gap-6">
+                    <button class="text-sm font-bold text-brand-action hover:underline">Reference</button>
+                    <button class="text-sm font-bold text-brand-action hover:underline">Changelog</button>
+                </div>
+            </div>
+        </footer>
+    </main>
 
-        <LoginModal 
-            isOpen={showLoginModal} 
-            onClose={() => showLoginModal = false}
-            onLogin={login}
-            onToggleRegister={() => { showLoginModal = false; showRegisterModal = true; }}
-            isSubmitting={isSubmitting}
-            error={loginError}
-        />
+    <VisitModal 
+        isOpen={isScheduling} 
+        onClose={() => { isScheduling = false; showAuthPrompt = false; }}
+        property={selectedProperty}
+        identityDoc={identityDoc}
+        onSubmit={submitVisit}
+        isSubmitting={isSubmitting}
+    />
 
-        <RegisterModal 
-            isOpen={showRegisterModal} 
-            onClose={() => showRegisterModal = false}
-            onRegister={register}
-            onToggleLogin={() => { showRegisterModal = false; showLoginModal = true; }}
-            isSubmitting={isSubmitting}
-            error={loginError}
-        />
+    <LoginModal 
+        isOpen={showLoginModal} 
+        onClose={() => showLoginModal = false}
+        onLogin={login}
+        onToggleRegister={() => { showLoginModal = false; showRegisterModal = true; }}
+        isSubmitting={isSubmitting}
+        error={loginError}
+    />
 
-        <OfferModal 
-            isOpen={showOfferModal} 
-            onClose={() => showOfferModal = false}
-            property={selectedVisitForOffer?.property}
-            onSubmit={handleOfferSubmission}
-            isSubmitting={isSubmitting}
-        />
+    <RegisterModal 
+        isOpen={showRegisterModal} 
+        onClose={() => showRegisterModal = false}
+        onRegister={register}
+        onToggleLogin={() => { showRegisterModal = false; showLoginModal = true; }}
+        isSubmitting={isSubmitting}
+        error={loginError}
+    />
 
-        <!-- Authentication Prompt Modal -->
-        {#if showAuthPrompt}
-            <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-                <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-                    <div class="p-8 text-center space-y-6">
-                        <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto text-indigo-600">
-                            <LogIn size={40} />
-                        </div>
-                        <div class="space-y-2">
-                            <h2 class="text-3xl font-black">Authentication Required</h2>
-                            <p class="text-gray-500">To ensure safety and legal compliance, you must be signed in to schedule a visit.</p>
-                        </div>
-                        <div class="flex flex-col gap-3">
-                            <Button variant="primary" size="xl" onclick={() => { showAuthPrompt = false; showLoginModal = true; }}>
-                                Sign In or Create Account
-                            </Button>
-                            <Button variant="secondary" size="xl" onclick={() => { showAuthPrompt = false; isScheduling = false; }}>
-                                Not now
-                            </Button>
-                        </div>
+    <OfferModal 
+        isOpen={showOfferModal} 
+        onClose={() => showOfferModal = false}
+        property={selectedVisitForOffer?.property}
+        onSubmit={handleOfferSubmission}
+        isSubmitting={isSubmitting}
+    />
+
+    {#if showAuthPrompt}
+        <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+            <div class="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+                <div class="p-8 text-center space-y-6">
+                    <div class="w-20 h-20 bg-brand-primary/5 rounded-full flex items-center justify-center mx-auto text-brand-action">
+                        <span class="material-symbols-outlined text-4xl">lock</span>
+                    </div>
+                    <div class="space-y-2">
+                        <h2 class="text-3xl font-black text-brand-primary">Authentication Required</h2>
+                        <p class="text-gray-500">To ensure safety and legal compliance, you must be signed in to schedule a visit.</p>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <Button variant="primary" size="xl" onclick={() => { showAuthPrompt = false; showLoginModal = true; }}>
+                            Sign In or Create Account
+                        </Button>
+                        <Button variant="secondary" size="xl" onclick={() => { showAuthPrompt = false; isScheduling = false; }}>
+                            Not now
+                        </Button>
                     </div>
                 </div>
             </div>
-        {/if}
-    </main>
+        </div>
+    {/if}
 </div>
 
 <style>
+    :global(.material-symbols-outlined) {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        vertical-align: middle;
+    }
 </style>

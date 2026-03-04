@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CondoClear Design System &amp; Implementation Rules</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Manrope & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#101022', // Deep Navy (Brand Primary)
+              action: '#1034F2',  // Action Blue
+              bg: '#F0EEE9',      // Cloud Dancer Background
+              success: '#22c55e', 
+              accent: {
+                purple: '#8B5CF6',
+                mint: '#34D399'
+              }
+            },
+          },
+          fontFamily: {
+            sans: ['Manrope', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-typography">
+    body {
+      font-family: 'Manrope', sans-serif;
+      background-color: #F0EEE9;
+      color: #101022;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+<style data-purpose="layout-components">
+    .sidebar-item-active {
+      background-color: rgba(16, 52, 242, 0.15);
+      border-left: 4px solid #1034F2;
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+    .code-block {
+      background: #101022;
+      color: #F0EEE9;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-family: monospace;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body class="flex min-h-screen">
+<!-- BEGIN: NavigationSidebar -->
+<aside class="w-64 text-white flex-shrink-0 sticky top-0 h-screen hidden lg:flex flex-col border-r border-white/10 bg-[#101022]" data-purpose="main-navigation">
+<div class="p-6">
+<div class="flex items-center gap-2 mb-10">
+<div class="w-8 h-8 bg-brand-action rounded-lg flex items-center justify-center"><span class="material-symbols-outlined text-white text-xl">account_balance_wallet</span></div>
+<span class="font-extrabold text-xl tracking-tight">CondoClear</span>
+</div>
+<nav class="space-y-1">
+<p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 px-3">Documentation</p>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg hover:bg-white/5 transition-all" href="#visual-identity">
+<span class="material-symbols-outlined text-gray-400">palette</span>
+          Visual Identity
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg hover:bg-white/5 transition-all" href="#layout-principles">
+<span class="material-symbols-outlined text-gray-400">dashboard</span>
+          Layout &amp; Navigation
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg hover:bg-white/5 transition-all" href="#component-standards">
+<span class="material-symbols-outlined text-gray-400">category</span>
+          Components
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg hover:bg-white/5 transition-all" href="#persona-adaptation">
+<span class="material-symbols-outlined text-gray-400">group</span>
+          Personas
+        </a>
+<div class="pt-4 pb-2 px-3 text-xs font-bold text-gray-500 uppercase tracking-widest">New in V3.0</div><a class="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg hover:bg-white/5 transition-all" href="#advanced-viz"><span class="material-symbols-outlined text-gray-400">monitoring</span>Advanced Viz</a><a class="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg hover:bg-white/5 transition-all" href="#legal-compliance"><span class="material-symbols-outlined text-gray-400">gavel</span>Compliance</a><a class="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg hover:bg-white/5 transition-all" href="#complex-forms"><span class="material-symbols-outlined text-gray-400">edit_note</span>Forms</a><a class="flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-lg hover:bg-white/5 transition-all" href="#status-systems"><span class="material-symbols-outlined text-gray-400">history</span>Feedback</a></nav>
+</div>
+<div class="mt-auto p-6 border-t border-white/10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-brand-action/20 flex items-center justify-center border border-brand-action/40">
+<span class="material-symbols-outlined text-brand-action">person</span>
+</div>
+<div>
+<p class="text-sm font-semibold">Dev Portal</p>
+<p class="text-xs text-gray-400 tracking-tight">System Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- END: NavigationSidebar -->
+<!-- BEGIN: MainContentWrapper -->
+<main class="flex-1 flex flex-col min-w-0 bg-[#F0EEE9]">
+<!-- BEGIN: TopHeader -->
+<header class="h-16 bg-white border-b border-gray-200 sticky top-0 z-30 flex items-center justify-between px-8 px-12" data-purpose="top-header">
+<div class="flex items-center gap-2 text-sm font-medium">
+<span class="text-gray-400">Documentation</span>
+<span class="material-symbols-outlined text-gray-300 text-sm">chevron_right</span>
+<span>Design System &amp; Implementation Rules</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined text-gray-400 cursor-pointer hover:text-brand-primary transition-colors">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+</div>
+<div class="flex items-center bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 gap-2"><span class="text-[10px] font-bold text-gray-400 uppercase">Role</span><select class="bg-transparent border-none text-xs font-bold text-brand-action focus:ring-0 p-0 cursor-pointer"><option>Agency Admin</option><option>Landlord</option><option>Tenant</option></select></div><div class="h-8 w-px bg-gray-200"></div>
+<div class="flex items-center gap-3">
+<span class="text-sm font-semibold text-gray-700">v1.2.0</span>
+<div class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-gray-500 text-lg">settings</span>
+</div>
+</div>
+</div>
+</header>
+<!-- END: TopHeader -->
+<!-- BEGIN: PageContent -->
+<div class="p-8 lg:p-12 max-w-6xl mx-auto w-full">
+<div class="mb-12">
+<h1 class="text-4xl font-extrabold text-[#101022] mb-4 tracking-tight">CondoClear Design System V3.0</h1>
+<p class="text-lg text-gray-600 max-w-2xl leading-relaxed">
+          The following guidelines define the visual language and structural principles for the CondoClear platform, ensuring consistency across Tenant, Landlord, and Agency portals.
+        </p>
+</div>
+<!-- BEGIN: Section1 - Visual Identity -->
+<section class="doc-section mb-16 space-y-8" id="visual-identity">
+<div class="flex items-center gap-3 mb-6 border-b border-gray-200 pb-2">
+<span class="material-symbols-outlined text-brand-action">palette</span>
+<h2 class="text-2xl font-bold tracking-tight">01. Core Visual Identity</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+<div class="w-full h-24 bg-[#101022] rounded-lg mb-3"></div>
+<p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Primary Brand (Deep Navy)</p>
+<p class="material-symbols-outlined text-brand-action"><span class="font-mono font-bold text-brand-primary">#101022</span></p>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+<div class="w-full h-24 bg-[#1034F2] rounded-lg mb-3"></div>
+<p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Action Blue</p>
+<p class="material-symbols-outlined text-brand-action"><span class="font-mono font-bold text-brand-action">#1034F2</span></p>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+<div class="w-full h-24 bg-[#F0EEE9] rounded-lg mb-3 border border-gray-100"></div>
+<p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Cloud Dancer</p>
+<p class="material-symbols-outlined text-brand-action"><span class="font-mono font-bold text-gray-500">#F0EEE9</span></p>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+<div class="w-full h-24 bg-gradient-to-r from-purple-400 to-mint-400 rounded-lg mb-3"></div>
+<p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Northern Lights</p>
+<p class="material-symbols-outlined text-brand-action"><span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-emerald-500">Soft Purple / Mint</span></p>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-gray-200">
+<h3 class="font-bold mb-4 text-brand-navy">Typography: Manrope</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-4">
+<p class="text-4xl font-extrabold">The quick brown fox</p>
+<p class="text-2xl font-semibold"><span class="font-mono font-bold text-brand-primary">#101022</span></p>
+<p class="text-base">The quick brown fox jumps over the lazy dog.</p>
+</div>
+<div class="text-sm text-gray-500 leading-relaxed border-l border-gray-100 pl-8">
+              Designed for high legibility in financial contexts. Use <strong>SemiBold (600)</strong> for headings and <strong>Regular (400)</strong> for body text. Proportional tracking should be slightly tightened for large headers.
+            </div>
+</div>
+</div>
+</section>
+<!-- END: Section1 -->
+<!-- BEGIN: Section2 - Layout Principles -->
+<section class="doc-section mb-16 space-y-8" id="layout-principles">
+<div class="flex items-center gap-3 mb-6 border-b border-gray-200 pb-2">
+<span class="material-symbols-outlined text-brand-action">dashboard</span>
+<h2 class="text-2xl font-bold tracking-tight">02. Layout &amp; Navigation</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+<div class="space-y-6">
+<div class="p-5 bg-white rounded-xl border-l-4 border-brand-action shadow-sm">
+<h4 class="font-bold text-brand-navy mb-2">Vertical Navigation</h4>
+<p class="text-sm text-gray-600">The primary navigation always resides on the left in a 256px fixed sidebar (#101022). High-contrast active states using Royal Blue.</p>
+</div>
+<div class="p-5 bg-white rounded-xl border-l-4 border-brand-action shadow-sm">
+<h4 class="font-bold text-brand-navy mb-2">The 'Drawer' Pattern</h4>
+<p class="text-sm text-gray-600">Secondary tasks like <strong>Document Uploads</strong> or <strong>Payment Details</strong> must never leave the current page context. Use Right Sidebar Drawers (overlays) to maintain focus.</p>
+</div>
+</div>
+<!-- Drawer Mockup Representation -->
+<div class="relative bg-gray-200 rounded-lg aspect-video overflow-hidden border border-gray-300 shadow-inner" data-purpose="mock-layout-preview">
+<div class="absolute left-0 top-0 bottom-0 w-12"></div>
+<div class="absolute top-0 right-0 left-12 h-4 bg-white border-b border-gray-300"></div>
+<!-- Mock Drawer Overlay -->
+<div class="absolute top-0 right-0 bottom-0 w-1/3 bg-white shadow-2xl border-l border-gray-300 p-3">
+<div class="flex justify-between items-center mb-4">
+<div class="h-2 w-12 bg-gray-200 rounded"></div>
+<span class="material-symbols-outlined text-xs">close</span>
+</div>
+<div class="space-y-2">
+<div class="h-10 bg-gray-50 rounded"></div>
+<div class="h-10 bg-gray-50 rounded"></div>
+<div class="h-10 bg-brand-action rounded"><span class="material-symbols-outlined text-white text-xl">account_balance_wallet</span></div>
+</div>
+</div>
+<div class="p-8 pt-10">
+<div class="h-3 w-1/2 bg-gray-400 rounded mb-4"></div>
+<div class="grid grid-cols-2 gap-2">
+<div class="h-12 bg-white rounded"></div>
+<div class="h-12 bg-white rounded"></div>
+</div>
+</div>
+<div class="absolute bottom-2 left-16 right-4 text-[8px] font-bold text-gray-400 italic">Example: Right Sidebar Drawer Overlay Interaction</div>
+</div>
+</div>
+</section>
+<!-- END: Section2 -->
+<!-- BEGIN: Section3 - Component Standards -->
+<section class="doc-section mb-16 space-y-8" id="component-standards">
+<div class="flex items-center gap-3 mb-6 border-b border-gray-200 pb-2">
+<span class="material-symbols-outlined text-brand-action">category</span>
+<h2 class="text-2xl font-bold tracking-tight">03. Component Standards</h2>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- Data Tables & Badges -->
+<div class="space-y-6">
+<h3 class="text-lg font-bold text-brand-navy flex items-center gap-2">
+<span class="material-symbols-outlined text-gray-400">table_rows</span>
+              High-Density Data Tables
+            </h3>
+<div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+<table class="w-full text-left text-sm">
+<thead class="bg-gray-50 border-b border-gray-200">
+<tr>
+<th class="px-4 py-3 font-bold text-gray-500">Ref.</th>
+<th class="px-4 py-3 font-bold text-gray-500">Expense Type</th>
+<th class="px-4 py-3 font-bold text-gray-500">Status</th>
+<th class="px-4 py-3 font-bold text-gray-500">Amount</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-100">
+<tr>
+<td class="px-4 py-3 font-mono text-xs">#992-B</td>
+<td class="px-4 py-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-brand-action">house</span>
+                      Ordinary
+                    </td>
+<td class="px-4 py-3">
+<span class="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider">Approved</span>
+</td>
+<td class="px-4 py-3 font-bold">R$ 450,00</td>
+</tr>
+<tr>
+<td class="px-4 py-3 font-mono text-xs">#994-C</td>
+<td class="px-4 py-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-orange-500 text-lg">construction</span>
+                      Extraordinary
+                    </td>
+<td class="px-4 py-3">
+<span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold uppercase tracking-wider">Pending</span>
+</td>
+<td class="px-4 py-3 font-bold text-gray-400">R$ 1.200,00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="text-xs text-gray-500 italic">Note: Use specific icons for 'Ordinary' (Tenant) vs 'Extraordinary' (Landlord) expenses as per Law 8.245/91.</p>
+</div>
+<!-- KPI Cards & Audit -->
+<div class="space-y-6">
+<h3 class="text-lg font-bold text-brand-navy flex items-center gap-2">
+<span class="material-symbols-outlined text-gray-400">verified</span>
+              Financial Metrics &amp; Audit
+            </h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm relative overflow-hidden p-6">
+<p class="text-xs font-bold text-gray-400 uppercase mb-1">Monthly Yield</p>
+<p class="text-2xl font-extrabold text-brand-navy">R$ 15.420,00</p>
+<div class="mt-3 flex items-center gap-1 text-[10px] font-bold text-brand-success">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                  +2.4% vs last mo
+                </div>
+<!-- Audit Badge -->
+<div class="absolute top-0 right-0 p-2">
+<div class="flex items-center gap-1 bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase border border-gray-200" title="Audited under Law 8.245/91">
+<span class="material-symbols-outlined text-[10px]">gavel</span>
+                    Law 8.245
+                  </div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm border-t-4 border-t-brand-action p-6">
+<p class="text-xs font-bold text-gray-400 uppercase mb-1">Avg Occupancy</p>
+<p class="text-2xl font-extrabold text-brand-navy">94.2%</p>
+<div class="mt-3 h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+<div class="h-full bg-brand-action w-[94.2%]"><span class="material-symbols-outlined text-white text-xl">account_balance_wallet</span></div>
+</div>
+</div>
+</div>
+<div class="code-block bg-brand-primary p-6 rounded-xl font-mono text-sm leading-relaxed overflow-x-auto">
+              // Audit Badge Rule Implementation
+              &lt;span class="audit-badge" data-context="Law 8.245/91"&gt;
+                Verified Calc
+              &lt;/span&gt;
+            </div>
+</div>
+</div>
+</section>
+<!-- END: Section3 -->
+<!-- BEGIN: Section4 - Personas -->
+<section class="doc-section mb-16 space-y-8" id="persona-adaptation">
+<div class="flex items-center gap-3 mb-6 border-b border-gray-200 pb-2">
+<span class="material-symbols-outlined text-brand-action">group</span>
+<h2 class="text-2xl font-bold tracking-tight">04. Personas &amp; Adaptation</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="group bg-white p-6 rounded-2xl border border-gray-200 hover:border-brand-primary transition-all duration-300 p-8">
+<div class="w-12 h-12 rounded-full bg-brand-bg flex items-center justify-center mb-4 group-hover:bg-brand-primary/10 transition-colors">
+<span class="material-symbols-outlined text-brand-navy group-hover:text-brand-primary">person</span>
+</div>
+<h4 class="font-extrabold text-brand-navy mb-2">Tenant Portal</h4>
+<p class="text-sm text-gray-500 leading-relaxed">Focus on <strong>simplicity and toasts</strong>. Clear visual confirmation of payment and "Ordinary" expense breakdowns.</p>
+</div>
+<div class="group bg-white p-6 rounded-2xl border border-gray-200 hover:border-brand-primary transition-all duration-300 p-8">
+<div class="w-12 h-12 rounded-full bg-brand-bg flex items-center justify-center mb-4 group-hover:bg-brand-primary/10 transition-colors">
+<span class="material-symbols-outlined text-brand-navy group-hover:text-brand-primary">real_estate_agent</span>
+</div>
+<h4 class="font-extrabold text-brand-navy mb-2">Landlord Portal</h4>
+<p class="text-sm text-gray-500 leading-relaxed">Focus on <strong>payouts and equity</strong>. Monthly yield curves and "Extraordinary" investment tracking.</p>
+</div>
+<div class="group bg-white p-6 rounded-2xl border border-gray-200 hover:border-brand-primary transition-all duration-300 p-8">
+<div class="w-12 h-12 rounded-full bg-brand-bg flex items-center justify-center mb-4 group-hover:bg-brand-primary/10 transition-colors">
+<span class="material-symbols-outlined text-brand-navy group-hover:text-brand-primary">business_center</span>
+</div>
+<h4 class="font-extrabold text-brand-navy mb-2">Agency Admin</h4>
+<p class="text-sm text-gray-500 leading-relaxed">Focus on <strong>high-density batch processing</strong>. Audit trail filtering and mass reconciliation tools.</p>
+</div>
+</div>
+</section><section class="doc-section mb-16 space-y-8" id="advanced-viz"><div class="flex items-center gap-3 mb-6 border-b border-gray-200 pb-2"><span class="material-symbols-outlined text-brand-action">monitoring</span><h2 class="text-2xl font-bold tracking-tight">05. Advanced Data Visualization</h2></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-8"><div><h4 class="font-bold mb-4 text-sm uppercase text-gray-400 tracking-wider">Portfolio Yield Heatmap</h4><div class="bg-white p-6 rounded-xl border border-gray-200 p-8"><div class="grid grid-cols-7 gap-1"><script>for(let i=0; i<28; i++) { const op = Math.random(); document.write(`<div class='aspect-square rounded-sm' style='background-color: rgba(16, 52, 242, ${op})' title='Yield Index: ${op.toFixed(2)}'></div>`); }</script></div><div class="flex justify-between mt-2 text-[10px] font-bold text-gray-400 uppercase"><span>Low Yield</span><span>Target Achieved</span></div></div></div><div><h4 class="font-bold mb-4 text-sm uppercase text-gray-400 tracking-wider">Legal Distribution (Expense Split)</h4><div class="bg-white p-6 rounded-xl border border-gray-200 flex items-center justify-center h-[180px] p-8"><div class="relative w-32 h-32 rounded-full border-[16px] border-brand-action" style="border-right-color: #8B5CF6;"><div class="absolute inset-0 flex flex-col items-center justify-center"><span class="text-lg font-bold">72%</span><span class="text-[8px] uppercase text-gray-400 font-bold">Ordinary</span></div></div><div class="ml-8 space-y-2"><div class="flex items-center gap-2"><span class="w-3 h-3 bg-brand-action rounded-full"></span><span class="text-xs font-medium">Ordinary (Tenant)</span></div><div class="flex items-center gap-2"><span class="w-3 h-3 bg-brand-accent-purple rounded-full"></span><span class="text-xs font-medium">Extraordinary (LL)</span></div></div></div></div></div></section><section class="doc-section mb-16 space-y-8" id="legal-compliance"><div class="flex items-center gap-3 mb-6 border-b border-gray-200 pb-2"><span class="material-symbols-outlined text-brand-action">gavel</span><h2 class="text-2xl font-bold tracking-tight">06. Specialized Legal &amp; Compliance</h2></div><div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"> <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200"><h4 class="font-bold mb-4 text-brand-navy">Law 8.245/91 Article Snippet</h4><div class="bg-brand-bg p-4 rounded-lg border-l-4 border-brand-action italic text-sm text-gray-700 leading-relaxed">"Art. 22. O locador é obrigado a: ... X - pagar as despesas extraordinárias de condomínio. Parágrafo único. Por despesas extraordinárias de condomínio se entendem aquelas que não se refiram aos gastos rotineiros..."</div></div><div class="bg-brand-primary text-white p-6 rounded-xl flex flex-col items-center justify-center text-center"><span class="material-symbols-outlined text-4xl mb-2 text-brand-accent-mint">verified_user</span><h4 class="font-bold">Immutability Seal</h4><p class="text-[10px] text-gray-400 uppercase tracking-widest mt-1">Ledger Verified</p><div class="mt-4 px-3 py-1 bg-white/10 rounded text-xs font-mono">#hash_f0e8...221b</div></div></div><h4 class="font-bold mb-4 text-sm uppercase text-gray-400 tracking-wider">Conflict Resolution UI Pattern</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-0 border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm"><div class="p-6 border-r border-gray-100"><div class="flex items-center gap-2 mb-4 text-red-600"><span class="material-symbols-outlined">person</span><span class="text-xs font-bold uppercase">Tenant Claim</span></div><p class="text-sm text-gray-600 font-medium">"Wall painting should be considered extraordinary maintenance as it is a structural improvement.”</p></div><div class="p-6 bg-gray-50"><div class="flex items-center gap-2 mb-4 text-brand-action"><span class="material-symbols-outlined">business_center</span><span class="text-xs font-bold uppercase">Agency Resolution</span></div><p class="text-sm text-gray-600 font-medium">As per Clause 4.2, internal aesthetics are the responsibility of the current occupant. Reclassified as <strong>Ordinary</strong>.</p></div></div></section><section class="doc-section mb-16 space-y-8" id="complex-forms"><div class="flex items-center gap-3 mb-6 border-b border-gray-200 pb-2"><span class="material-symbols-outlined text-brand-action">edit_note</span><h2 class="text-2xl font-bold tracking-tight">07. Complex Form Controls</h2></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-10"><div class="space-y-6"><div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm"><label class="block text-xs font-bold text-gray-400 uppercase mb-2">Multi-Select Property Picker</label><div class="relative"><span class="material-symbols-outlined absolute left-3 top-2.5 text-gray-400">search</span><input class="w-full pl-10 pr-4 py-2 bg-gray-50 border-gray-200 rounded-lg text-sm focus:ring-brand-action focus:border-brand-action" placeholder="Search by address or ID..." type="text"/><div class="mt-3 flex flex-wrap gap-2"><span class="flex items-center gap-1 px-2 py-1 bg-brand-action/10 text-brand-action rounded text-xs font-bold">Condo Alpha #402 <span class="material-symbols-outlined text-xs cursor-pointer">close</span></span><span class="flex items-center gap-1 px-2 py-1 bg-brand-action/10 text-brand-action rounded text-xs font-bold">Villa Green #12 <span class="material-symbols-outlined text-xs cursor-pointer">close</span></span></div></div></div><div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm"><label class="block text-xs font-bold text-gray-400 uppercase mb-6">Financial Slider (Partial Refund %)</label><input class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-action" max="100" min="0" type="range" value="25"/><div class="flex justify-between mt-2 text-sm font-extrabold text-brand-navy"><span>0%</span><span>25% Selected</span><span>100%</span></div></div></div><div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm"><h4 class="text-xs font-bold text-gray-400 uppercase mb-6">Document Verification Progress</h4><div class="space-y-6 relative before:absolute before:left-3.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100"><div class="flex items-start gap-4 relative"><div class="w-7 h-7 rounded-full bg-brand-success text-white flex items-center justify-center shrink-0 z-10"><span class="material-symbols-outlined text-sm">check</span></div><div><p class="text-sm font-bold">Identity Verified</p><p class="text-xs text-gray-400">Automatic KYC passed</p></div></div><div class="flex items-start gap-4 relative"><div class="w-7 h-7 rounded-full bg-brand-action text-white flex items-center justify-center shrink-0 z-10"><span class="material-symbols-outlined text-sm">hourglass_top</span></div><div><p class="text-sm font-bold">Lease Agreement Analysis</p><p class="text-xs text-brand-action font-semibold italic">OCR Processing...</p></div></div><div class="flex items-start gap-4 relative"><div class="w-7 h-7 rounded-full bg-gray-200 text-gray-400 flex items-center justify-center shrink-0 z-10"><span class="material-symbols-outlined text-sm">lock</span></div><div><p class="text-sm font-bold text-gray-400">Signature Verification</p></div></div></div></div></div></section><section class="doc-section mb-16 space-y-8" id="status-systems"><div class="flex items-center gap-3 mb-6 border-b border-gray-200 pb-2"><span class="material-symbols-outlined text-brand-action">history</span><h2 class="text-2xl font-bold tracking-tight">08. Feedback &amp; Status System</h2></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-10"><div><h4 class="font-bold mb-4 text-sm uppercase text-gray-400 tracking-wider">Audit Trail Vertical Timeline</h4><div class="bg-white p-6 rounded-xl border border-gray-200 space-y-4"><div class="flex gap-4"><div class="text-right w-20 shrink-0"><p class="text-[10px] font-bold text-gray-400">OCT 24, 09:12</p></div><div class="relative before:absolute before:left-[-17px] before:top-1.5 before:w-2 before:h-2 before:bg-brand-action before:rounded-full"><p class="text-xs font-bold">Reconciliation Auto-Triggered</p><p class="text-xs text-gray-500">System matched voucher #292 with bank entry.</p></div></div><div class="flex gap-4"><div class="text-right w-20 shrink-0"><p class="text-[10px] font-bold text-gray-400">OCT 23, 15:45</p></div><div class="relative before:absolute before:left-[-17px] before:top-1.5 before:w-2 before:h-2 before:bg-red-500 before:rounded-full"><p class="text-xs font-bold">Dispute Raised by Tenant</p><p class="text-xs text-gray-500">Reason: Incorrect expense classification.</p></div></div></div></div><div><h4 class="font-bold mb-4 text-sm uppercase text-gray-400 tracking-wider">Expanded Status Badge Library</h4><div class="bg-white p-8 rounded-xl border border-gray-200 flex flex-wrap gap-3"><span class="px-2 py-1 rounded bg-red-100 text-red-700 text-[10px] font-extrabold uppercase tracking-widest border border-red-200">Disputed</span><span class="px-2 py-1 rounded bg-amber-100 text-amber-700 text-[10px] font-extrabold uppercase tracking-widest border border-amber-200">Partially Reconciled</span><span class="px-2 py-1 rounded bg-brand-primary text-brand-accent-mint text-[10px] font-extrabold uppercase tracking-widest">Verified by Ledger</span><span class="px-2 py-1 rounded bg-gray-100 text-gray-600 text-[10px] font-extrabold uppercase tracking-widest border border-gray-200">Pending Signature</span></div><div class="mt-8"><h4 class="font-bold mb-4 text-sm uppercase text-gray-400 tracking-wider italic">Breadcrumb Variations</h4><div class="flex items-center gap-2 text-xs font-medium text-gray-500 bg-gray-50 p-3 rounded-lg border border-dashed border-gray-300"><span>Portfolio</span><span class="material-symbols-outlined text-[10px]">chevron_right</span><span class="text-brand-action">Rio de Janeiro</span><span class="material-symbols-outlined text-[10px]">chevron_right</span><span class="bg-white px-2 py-0.5 rounded shadow-sm text-brand-navy font-bold">Ipanema Heights #902</span></div></div></div></div></section>
+<!-- END: Section4 -->
+</div>
+<!-- END: PageContent -->
+<!-- BEGIN: Footer -->
+<footer class="mt-auto border-t border-gray-200 bg-white py-8 px-12" data-purpose="documentation-footer">
+<div class="flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-sm text-gray-400">© 2024 CondoClear Design Systems. Built for Compliance and Clarity.</p>
+<div class="flex gap-6"><a class="text-sm font-bold text-brand-action hover:underline" href="#">Changelog</a><a class="text-sm font-bold text-brand-action hover:underline" href="#">Reference</a><a class="text-sm font-bold text-brand-action hover:underline" href="#">Storybook</a></div>
+</div>
+</footer>
+<!-- END: Footer -->
+</main>
+<!-- END: MainContentWrapper -->
+<!-- BEGIN: InteractiveElementsScripts -->
+<script data-purpose="smooth-scrolling">
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+        
+        // Update active class in sidebar (visual only for this demo)
+        document.querySelectorAll('aside nav a').forEach(a => a.classList.remove('sidebar-item-active', 'text-brand-primary'));
+        this.classList.add('sidebar-item-active', 'text-white');
+      });
+    });
+  </script>
+<!-- END: InteractiveElementsScripts -->
+</body></html>
