@@ -57,3 +57,23 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Deployment
+
+Keystone uses **Laravel Envoy** for zero-downtime deployments. The process is automated via GitHub Actions when a new release is created.
+
+### Required GitHub Secrets
+
+To enable deployments, add the following secrets to your GitHub repository:
+
+- `DEPLOY_SSH_KEY`: The private SSH key for the server.
+- `DEPLOY_IP`: The server's public IP address.
+- `DEPLOY_USER`: The SSH username (e.g., `forge` or `ubuntu`).
+- `DEPLOY_PATH`: The absolute path where the application should be deployed (e.g., `/var/www/keystone.app`).
+
+### Server Preparation
+
+Ensure the server has:
+1.  A directory at `DEPLOY_PATH` with a `storage/` folder and a `.env` file.
+2.  PHP, Composer, and Node.js installed.
+3.  The public SSH key (corresponding to `DEPLOY_SSH_KEY`) added to `~/.ssh/authorized_keys`.
