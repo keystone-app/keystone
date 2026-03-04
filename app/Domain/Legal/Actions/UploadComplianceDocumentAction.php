@@ -20,6 +20,8 @@ class UploadComplianceDocumentAction
 
         $document = Document::create([
             'user_id' => Auth::id(),
+            'documentable_type' => Offer::class,
+            'documentable_id' => $offer->id,
             'name' => $file->getClientOriginalName(),
             'path' => $path,
             'type' => $type,

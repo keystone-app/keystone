@@ -13,10 +13,17 @@ class Document extends Model
     protected $fillable = [
         'lease_id',
         'user_id',
+        'documentable_type',
+        'documentable_id',
         'name',
         'path',
         'type',
     ];
+
+    public function documentable()
+    {
+        return $this->morphTo();
+    }
 
     public function user()
     {
