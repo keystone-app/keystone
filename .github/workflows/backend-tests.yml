@@ -46,4 +46,4 @@ jobs:
       env:
         DB_CONNECTION: sqlite
         DB_DATABASE: ":memory:" # Faster than file-based sqlite
-      run: php artisan test --parallel # Runs tests in parallel processes
+      run: php artisan test
