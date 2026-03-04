@@ -48,23 +48,17 @@ The frontend uses Svelte 5's **Runes** for high-performance reactivity and a mod
 - **Headless UI:** Uses `bits-ui` for accessible, unstyled components (Modals, Popovers).
 - **Utility Styling:** Uses a `cn()` helper (clsx + tailwind-merge) for predictable class merging.
 
-## 6. AI-Assisted Development (The Swarm)
-The project incorporates a unique multi-agent agentic layer located in `.swarm/`. 
-- **Roles:** `Prometheus` (Architect), `Junior` (Feature Implementation), `Frontend` (UI/UX).
-- **Orchestration:** Agents communicate via `mailboxes/` using a mission-based task system.
-- **Context:** Agent configurations and sub-agent hierarchies are defined in `subagents.yaml`.
-
-## 7. Database Strategy
+## 6. Database Strategy
 - **Integrity:** Strict data types (e.g., `decimal` for rent/price) and cascade deletes for core relationships.
 - **Compliance:** `offers` table includes a `compliance_status` column to gate lease generation.
 - **Identities:** `users` table is linked to `documents` via `identity_document_id` for KYC-grade security.
 
-## 8. Testing Mandates
+## 7. Testing Mandates
 - **Backend:** Feature tests in `tests/Feature/` must cover all Action outcomes and State transitions.
 - **Frontend:** Unit tests in `resources/js/tests/` using Vitest for component rendering and state logic.
 - **Validation:** Every commit is gated by a pre-commit hook running `sail pint --dirty`.
 
-## 9. Design System (CondoClear V3.0)
+## 8. Design System (CondoClear V3.0)
 - **Primary:** `#101022` (Deep Navy) | **Action:** `#1034F2` (Action Blue) | **Background:** `#F0EEE9` (Cloud Dancer)
 - **Aesthetic:** High density, 0px border-radius, Manrope typography.
 - **Interactions:** CSRF tokens are synced via `updateCsrfToken()` after session changes.
