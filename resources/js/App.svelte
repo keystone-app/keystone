@@ -490,12 +490,14 @@
 </script>
 
 <div class="flex min-h-screen bg-brand-bg text-brand-primary font-sans antialiased selection:bg-brand-action selection:text-white">
-    <Sidebar 
-        role={role} 
-        currentView={view} 
-        currentUser={currentUser}
-        onViewChange={(newView) => { view = newView; selectedProperty = null; }} 
-    />
+    {#if isLoggedIn && currentUser}
+        <Sidebar 
+            role={role} 
+            currentView={view} 
+            currentUser={currentUser}
+            onViewChange={(newView) => { view = newView; selectedProperty = null; }} 
+        />
+    {/if}
 
     <main class="flex-1 flex flex-col min-w-0">
         <header class="h-16 bg-white border-b border-gray-200 sticky top-0 z-30 flex items-center justify-between px-8 lg:px-12">
