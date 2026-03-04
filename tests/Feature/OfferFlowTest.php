@@ -18,7 +18,7 @@ class OfferFlowTest extends TestCase
     use RefreshDatabase;
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_tenant_can_view_their_sent_offers()
+    public function a_tenant_can_view_their_sent_offers(): void
     {
         $tenant = User::factory()->tenant()->create();
         $offer = Offer::factory()->create(['user_id' => $tenant->id]);
@@ -30,12 +30,12 @@ class OfferFlowTest extends TestCase
         $response->assertJsonCount(1);
         $response->assertJsonFragment(['id' => $offer->id]);
 
-        $ids = collect($response->json())->pluck('id');
+        $ids = collect((array) $response->json())->pluck('id');
         $this->assertNotContains($otherOffer->id, $ids);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_landlord_can_view_offers_for_their_properties()
+    public function a_landlord_can_view_offers_for_their_properties(): void
     {
         $landlord = User::factory()->landlord()->create();
         $property = Property::factory()->create(['user_id' => $landlord->id]);
@@ -50,12 +50,12 @@ class OfferFlowTest extends TestCase
         $response->assertJsonCount(1);
         $response->assertJsonFragment(['id' => $offer->id]);
 
-        $ids = collect($response->json())->pluck('id');
+        $ids = collect((array) $response->json())->pluck('id');
         $this->assertNotContains($otherOffer->id, $ids);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_tenant_can_make_an_offer_after_a_scheduled_visit()
+    public function a_tenant_can_make_an_offer_after_a_scheduled_visit(): void
     {
         $tenant = User::factory()->tenant()->create();
         $visit = Visit::factory()->create([
@@ -81,7 +81,7 @@ class OfferFlowTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_tenant_cannot_make_an_offer_for_a_visit_that_is_not_scheduled()
+    public function a_tenant_cannot_make_an_offer_for_a_visit_that_is_not_scheduled(): void
     {
         $tenant = User::factory()->tenant()->create();
         $visit = Visit::factory()->create([
@@ -101,7 +101,7 @@ class OfferFlowTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_landlord_can_accept_an_offer()
+    public function a_landlord_can_accept_an_offer(): void
     {
         $landlord = User::factory()->landlord()->create();
         $property = Property::factory()->create(['user_id' => $landlord->id]);
@@ -116,11 +116,13 @@ class OfferFlowTest extends TestCase
 
         $response->assertStatus(200);
         // It should be awaiting_documents because we auto-transition in RespondToOfferAction
-        $this->assertInstanceOf(AwaitingDocuments::class, $offer->fresh()->status);
+        /** @var Offer $refreshedOffer */
+        $refreshedOffer = $offer->fresh();
+        $this->assertInstanceOf(AwaitingDocuments::class, $refreshedOffer->status);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_landlord_can_counter_an_offer()
+    public function a_landlord_can_counter_an_offer(): void
     {
         $landlord = User::factory()->landlord()->create();
         $property = Property::factory()->create(['user_id' => $landlord->id]);
@@ -136,11 +138,13 @@ class OfferFlowTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $this->assertInstanceOf(Countered::class, $offer->fresh()->status);
+        /** @var Offer $refreshedOffer */
+        $refreshedOffer = $offer->fresh();
+        $this->assertInstanceOf(Countered::class, $refreshedOffer->status);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_landlord_cannot_respond_to_an_offer_for_someone_elses_property()
+    public function a_landlord_cannot_respond_to_an_offer_for_someone_elses_property(): void
     {
         $landlord = User::factory()->landlord()->create();
         $otherLandlord = User::factory()->landlord()->create();
@@ -155,6 +159,8 @@ class OfferFlowTest extends TestCase
         ]);
 
         $response->assertStatus(403);
-        $this->assertInstanceOf(Pending::class, $offer->fresh()->status);
+        /** @var Offer $refreshedOffer */
+        $refreshedOffer = $offer->fresh();
+        $this->assertInstanceOf(Pending::class, $refreshedOffer->status);
     }
 }

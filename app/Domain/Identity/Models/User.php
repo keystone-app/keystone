@@ -12,6 +12,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $role
+ * @property int|null $identity_document_id
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Property> $properties
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Lease> $landlordLeases
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Lease> $tenantLeases
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Visit> $visits
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Document> $documents
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Offer> $offers
+ * @property-read Document|null $identityDocument
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -40,42 +54,63 @@ class User extends Authenticatable
         return $this->role === 'tenant';
     }
 
-    public function properties()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Domain\Property\Models\Property, $this>
+     */
+    public function properties(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Property::class);
     }
 
-    public function landlordLeases()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Domain\Legal\Models\Lease, $this>
+     */
+    public function landlordLeases(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Lease::class, 'landlord_id');
     }
 
-    public function tenantLeases()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Domain\Legal\Models\Lease, $this>
+     */
+    public function tenantLeases(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Lease::class, 'tenant_id');
     }
 
-    public function visits()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Domain\Scheduling\Models\Visit, $this>
+     */
+    public function visits(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Visit::class);
     }
 
-    public function documents()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Domain\Legal\Models\Document, $this>
+     */
+    public function documents(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Document::class);
     }
 
-    public function offers()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Domain\Negotiation\Models\Offer, $this>
+     */
+    public function offers(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Offer::class);
     }
 
-    public function identityDocument()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Domain\Legal\Models\Document, $this>
+     */
+    public function identityDocument(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Document::class, 'identity_document_id');
     }
 
-    protected static function newFactory()
+    protected static function newFactory(): \Database\Factories\UserFactory
     {
         return \Database\Factories\UserFactory::new();
     }
@@ -85,7 +120,7 @@ class User extends Authenticatable
         return ! is_null($this->identity_document_id);
     }
 
-    public function getIdentityDocument()
+    public function getIdentityDocument(): ?Document
     {
         return $this->identityDocument;
     }

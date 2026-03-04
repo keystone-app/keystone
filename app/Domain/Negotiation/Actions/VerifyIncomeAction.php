@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Auth;
 
 class VerifyIncomeAction
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function execute(Offer $offer): array
     {
         // Authorization: Tenant triggers verification

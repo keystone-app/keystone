@@ -4,5 +4,5 @@ namespace App\Domain\Scheduling\States;
 
 class Pending extends VisitStatus
 {
-    public static $name = 'pending';
+    public static string $name = 'pending';
 }

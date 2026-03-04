@@ -11,8 +11,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\ModelStates\HasStates;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $property_id
+ * @property int|null $document_id
+ * @property \Illuminate\Support\Carbon $visit_at
+ * @property VisitStatus $status
+ * @property-read User $user
+ * @property-read Property $property
+ * @property-read Document|null $document
+ * @property-read Offer|null $offer
+ */
 class Visit extends Model
 {
+    /** @use HasFactory<\Database\Factories\VisitFactory> */
     use HasFactory, HasStates;
 
     protected $fillable = [
@@ -28,27 +41,39 @@ class Visit extends Model
         'status' => VisitStatus::class,
     ];
 
-    public function user()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
+     */
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function property()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Property, $this>
+     */
+    public function property(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Property::class);
     }
 
-    public function document()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Document, $this>
+     */
+    public function document(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Document::class);
     }
 
-    public function offer()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<Offer, $this>
+     */
+    public function offer(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Offer::class);
     }
 
-    protected static function newFactory()
+    protected static function newFactory(): \Database\Factories\VisitFactory
     {
         return \Database\Factories\VisitFactory::new();
     }

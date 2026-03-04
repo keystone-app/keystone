@@ -2,9 +2,13 @@
 
 namespace App\Domain\Legal\States;
 
+use App\Domain\Legal\Models\Lease;
 use Spatie\ModelStates\State;
 use Spatie\ModelStates\StateConfig;
 
+/**
+ * @extends \Spatie\ModelStates\State<Lease>
+ */
 abstract class LeaseStatus extends State
 {
     public static function config(): StateConfig

@@ -10,8 +10,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\ModelStates\HasStates;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property string $name
+ * @property string $address
+ * @property float $price
+ * @property string|null $description
+ * @property string $type
+ * @property PropertyStatus $status
+ * @property-read User $user
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Lease> $leases
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Offer> $offers
+ */
 class Property extends Model
 {
+    /** @use HasFactory<\Database\Factories\PropertyFactory> */
     use HasFactory, HasStates;
 
     protected $fillable = [
@@ -28,22 +42,31 @@ class Property extends Model
         'status' => PropertyStatus::class,
     ];
 
-    public function user()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
+     */
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function leases()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Lease, $this>
+     */
+    public function leases(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Lease::class);
     }
 
-    public function offers()
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Offer, $this>
+     */
+    public function offers(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Offer::class);
     }
 
-    protected static function newFactory()
+    protected static function newFactory(): \Database\Factories\PropertyFactory
     {
         return \Database\Factories\PropertyFactory::new();
     }

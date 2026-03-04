@@ -14,7 +14,7 @@ class VisitControllerTest extends TestCase
     use RefreshDatabase;
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_landlord_can_fetch_visit_requests_for_their_properties()
+    public function a_landlord_can_fetch_visit_requests_for_their_properties(): void
     {
         $landlord = User::factory()->landlord()->create();
         $otherLandlord = User::factory()->landlord()->create();
@@ -31,12 +31,12 @@ class VisitControllerTest extends TestCase
         $response->assertJsonCount(1);
         $response->assertJsonFragment(['id' => $visit->id]);
 
-        $ids = collect($response->json())->pluck('id');
+        $ids = collect((array) $response->json())->pluck('id');
         $this->assertNotContains($otherVisit->id, $ids);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_user_can_schedule_a_visit_with_an_identity_document()
+    public function a_user_can_schedule_a_visit_with_an_identity_document(): void
     {
         $user = User::factory()->tenant()->create();
         $property = Property::factory()->create();
@@ -60,7 +60,7 @@ class VisitControllerTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_user_can_schedule_a_visit_using_their_stored_identity_document()
+    public function a_user_can_schedule_a_visit_using_their_stored_identity_document(): void
     {
         $user = User::factory()->tenant()->create();
         $document = Document::factory()->create(['user_id' => $user->id]);
@@ -84,7 +84,7 @@ class VisitControllerTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_landlord_can_approve_a_visit_request()
+    public function a_landlord_can_approve_a_visit_request(): void
     {
         $landlord = User::factory()->landlord()->create();
         $property = Property::factory()->create(['user_id' => $landlord->id]);
@@ -95,11 +95,13 @@ class VisitControllerTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $this->assertEquals('scheduled', $visit->fresh()->status);
+        /** @var Visit $refreshedVisit */
+        $refreshedVisit = $visit->fresh();
+        $this->assertEquals('scheduled', $refreshedVisit->status);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_landlord_cannot_update_a_visit_for_a_property_they_do_not_own()
+    public function a_landlord_cannot_update_a_visit_for_a_property_they_do_not_own(): void
     {
         $landlord = User::factory()->landlord()->create();
         $otherLandlord = User::factory()->landlord()->create();
@@ -111,6 +113,8 @@ class VisitControllerTest extends TestCase
         ]);
 
         $response->assertStatus(403);
-        $this->assertEquals('pending', $visit->fresh()->status);
+        /** @var Visit $refreshedVisit */
+        $refreshedVisit = $visit->fresh();
+        $this->assertEquals('pending', $refreshedVisit->status);
     }
 }

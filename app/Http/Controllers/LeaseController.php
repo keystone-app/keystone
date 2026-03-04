@@ -14,6 +14,10 @@ class LeaseController extends Controller
     {
         $user = auth()->user();
 
+        if (! $user) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+
         $leases = Lease::where('landlord_id', $user->id)
             ->orWhere('tenant_id', $user->id)
             ->with(['property', 'landlord', 'tenant', 'documents'])
@@ -30,7 +34,12 @@ class LeaseController extends Controller
             'file' => 'required|file|max:10240',
         ]);
 
-        $document = $action->execute($lease, $request->type, $request->file('file'));
+        $file = $request->file('file');
+        if (! $file instanceof \Illuminate\Http\UploadedFile) {
+            return response()->json(['message' => 'Invalid file.'], 400);
+        }
+
+        $document = $action->execute($lease, (string) $request->string('type'), $file);
 
         return response()->json($document);
     }

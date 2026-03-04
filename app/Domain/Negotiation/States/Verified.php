@@ -4,5 +4,5 @@ namespace App\Domain\Negotiation\States;
 
 class Verified extends OfferStatus
 {
-    public static $name = 'verified';
+    public static string $name = 'verified';
 }

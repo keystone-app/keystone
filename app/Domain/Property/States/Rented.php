@@ -4,5 +4,5 @@ namespace App\Domain\Property\States;
 
 class Rented extends PropertyStatus
 {
-    public static $name = 'rented';
+    public static string $name = 'rented';
 }

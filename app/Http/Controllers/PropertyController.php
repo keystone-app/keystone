@@ -10,7 +10,13 @@ class PropertyController extends Controller
 {
     public function store(Request $request, StoreProperty $storeProperty): JsonResponse
     {
-        $property = $storeProperty->execute($request->user(), $request->all());
+        $user = $request->user();
+
+        if (! $user) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+
+        $property = $storeProperty->execute($user, $request->all());
 
         return response()->json($property, 201);
     }

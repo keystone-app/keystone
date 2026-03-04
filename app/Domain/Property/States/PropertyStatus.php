@@ -2,9 +2,13 @@
 
 namespace App\Domain\Property\States;
 
+use App\Domain\Property\Models\Property;
 use Spatie\ModelStates\State;
 use Spatie\ModelStates\StateConfig;
 
+/**
+ * @extends \Spatie\ModelStates\State<Property>
+ */
 abstract class PropertyStatus extends State
 {
     public static function config(): StateConfig
