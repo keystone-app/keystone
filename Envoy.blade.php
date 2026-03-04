@@ -50,12 +50,17 @@
 @task('link_shared_files')
     echo "Linking shared .env and storage..."
     ln -nfs {{ $path }}/.env {{ $new_release_dir }}/.env
+    
+    # Remove the release's storage and link to shared
     rm -rf {{ $new_release_dir }}/storage
     ln -nfs {{ $path }}/storage {{ $new_release_dir }}/storage
     
     echo "Injecting pre-built assets..."
     mkdir -p {{ $new_release_dir }}/public/build
-    cp -R {{ $path }}/shared_build/* {{ $new_release_dir }}/public/build/
+    # Check if files exist before copying to avoid errors
+    if [ -d "{{ $path }}/shared_build" ]; then
+        cp -R {{ $path }}/shared_build/* {{ $new_release_dir }}/public/build/
+    fi
 @endtask
 
 @task('activate_release')
