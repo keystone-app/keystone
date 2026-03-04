@@ -5,12 +5,14 @@ namespace App\Domain\Property\Models;
 use App\Domain\Identity\Models\User;
 use App\Domain\Legal\Models\Lease;
 use App\Domain\Negotiation\Models\Offer;
+use App\Domain\Property\States\PropertyStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\ModelStates\HasStates;
 
 class Property extends Model
 {
-    use HasFactory;
+    use HasFactory, HasStates;
 
     protected $fillable = [
         'user_id',
@@ -20,6 +22,10 @@ class Property extends Model
         'description',
         'status',
         'type',
+    ];
+
+    protected $casts = [
+        'status' => PropertyStatus::class,
     ];
 
     public function user()

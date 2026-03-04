@@ -4,6 +4,9 @@ namespace Tests\Feature;
 
 use App\Domain\Identity\Models\User;
 use App\Domain\Negotiation\Models\Offer;
+use App\Domain\Negotiation\States\AwaitingDocuments;
+use App\Domain\Negotiation\States\PendingVerification;
+use App\Domain\Negotiation\States\Verified;
 use App\Domain\Property\Models\Property;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -22,7 +25,6 @@ class ComplianceFlowTest extends TestCase
         $offer = Offer::factory()->create([
             'property_id' => $property->id,
             'status' => 'pending',
-            'compliance_status' => 'none',
         ]);
 
         $response = $this->actingAs($landlord)->patchJson("/offers/{$offer->id}", [
@@ -30,8 +32,8 @@ class ComplianceFlowTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $this->assertEquals('accepted', $offer->fresh()->status);
-        $this->assertEquals('awaiting_documents', $offer->fresh()->compliance_status);
+        // It should be awaiting_documents because we auto-transition in RespondToOfferAction
+        $this->assertInstanceOf(AwaitingDocuments::class, $offer->fresh()->status);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -41,7 +43,7 @@ class ComplianceFlowTest extends TestCase
         $tenant = User::factory()->tenant()->create();
         $offer = Offer::factory()->create([
             'user_id' => $tenant->id,
-            'compliance_status' => 'awaiting_documents',
+            'status' => AwaitingDocuments::class,
         ]);
 
         $file = UploadedFile::fake()->image('income.jpg');
@@ -66,7 +68,7 @@ class ComplianceFlowTest extends TestCase
         $tenant = User::factory()->tenant()->create();
         $offer = Offer::factory()->create([
             'user_id' => $tenant->id,
-            'compliance_status' => 'awaiting_documents',
+            'status' => AwaitingDocuments::class,
         ]);
 
         // Upload first doc
@@ -76,7 +78,7 @@ class ComplianceFlowTest extends TestCase
             'file' => UploadedFile::fake()->image('income.jpg'),
         ]);
 
-        $this->assertEquals('awaiting_documents', $offer->fresh()->compliance_status);
+        $this->assertInstanceOf(AwaitingDocuments::class, $offer->fresh()->status);
 
         // Upload second doc
         $this->actingAs($tenant)->postJson('/compliance-upload', [
@@ -85,7 +87,7 @@ class ComplianceFlowTest extends TestCase
             'file' => UploadedFile::fake()->image('residency.jpg'),
         ]);
 
-        $this->assertEquals('pending_verification', $offer->fresh()->compliance_status);
+        $this->assertInstanceOf(PendingVerification::class, $offer->fresh()->status);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -94,13 +96,13 @@ class ComplianceFlowTest extends TestCase
         $tenant = User::factory()->tenant()->create();
         $offer = Offer::factory()->create([
             'user_id' => $tenant->id,
-            'compliance_status' => 'pending_verification',
+            'status' => PendingVerification::class,
         ]);
 
         $response = $this->actingAs($tenant)->postJson("/offers/{$offer->id}/verify");
 
         $response->assertStatus(200);
-        $this->assertEquals('verified', $offer->fresh()->compliance_status);
+        $this->assertInstanceOf(Verified::class, $offer->fresh()->status);
         $response->assertJsonPath('verification.provider', 'Brazil Open Finance');
     }
 }

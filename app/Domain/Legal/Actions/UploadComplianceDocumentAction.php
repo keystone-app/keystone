@@ -29,8 +29,8 @@ class UploadComplianceDocumentAction
         $hasIncome = Document::where('user_id', Auth::id())->where('type', 'income_proof')->exists();
         $hasResidency = Document::where('user_id', Auth::id())->where('type', 'residency_proof')->exists();
 
-        if ($hasIncome && $hasResidency && $offer->compliance_status === 'awaiting_documents') {
-            $offer->update(['compliance_status' => 'pending_verification']);
+        if ($hasIncome && $hasResidency && ($offer->status instanceof \App\Domain\Negotiation\States\AwaitingDocuments)) {
+            $offer->status->transitionTo(\App\Domain\Negotiation\States\PendingVerification::class);
         }
 
         return $document;

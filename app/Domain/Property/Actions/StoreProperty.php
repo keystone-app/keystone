@@ -30,7 +30,7 @@ class StoreProperty
             'price' => $data['price'],
             'type' => $data['type'],
             'description' => $data['description'] ?? null,
-            'status' => 'available',
+            'status' => \App\Domain\Property\States\Available::class,
         ]);
     }
 }

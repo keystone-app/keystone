@@ -4,7 +4,7 @@
 Keystone is a legally-secure property management platform. It facilitates connections between Landlords and Tenants through verified identities, automated compliance checks, and real-time offer negotiation.
 
 ## 2. Core Tech Stack
-- **Backend:** Laravel 11 (PHP 8.2+)
+- **Backend:** Laravel 12 (PHP 8.2+)
 - **Frontend:** Svelte 5 (Runes) + Tailwind CSS v4
 - **Database:** PostgreSQL
 - **Tooling:** Laravel Sail (Docker), Laravel Pint (Styling), Vitest (JS Testing), PHPUnit (PHP Testing)

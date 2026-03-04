@@ -6,12 +6,14 @@ use App\Domain\Identity\Models\User;
 use App\Domain\Legal\Models\Document;
 use App\Domain\Negotiation\Models\Offer;
 use App\Domain\Property\Models\Property;
+use App\Domain\Scheduling\States\VisitStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\ModelStates\HasStates;
 
 class Visit extends Model
 {
-    use HasFactory;
+    use HasFactory, HasStates;
 
     protected $fillable = [
         'user_id',
@@ -23,6 +25,7 @@ class Visit extends Model
 
     protected $casts = [
         'visit_at' => 'datetime',
+        'status' => VisitStatus::class,
     ];
 
     public function user()

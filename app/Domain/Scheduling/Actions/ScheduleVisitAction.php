@@ -21,7 +21,7 @@ class ScheduleVisitAction
             'property_id' => $data['property_id'],
             'document_id' => $docId,
             'visit_at' => $data['visit_at'],
-            'status' => 'pending',
+            'status' => \App\Domain\Scheduling\States\Pending::class,
         ]);
     }
 }

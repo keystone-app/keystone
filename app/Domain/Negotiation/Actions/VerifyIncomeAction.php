@@ -14,7 +14,7 @@ class VerifyIncomeAction
             throw new \Exception('Unauthorized', 403);
         }
 
-        $offer->update(['compliance_status' => 'verified']);
+        $offer->status->transitionTo(\App\Domain\Negotiation\States\Verified::class);
 
         return [
             'offer' => $offer->load(['user', 'property']),

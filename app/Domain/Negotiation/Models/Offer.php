@@ -4,14 +4,16 @@ namespace App\Domain\Negotiation\Models;
 
 use App\Domain\Identity\Models\User;
 use App\Domain\Legal\Models\Document;
+use App\Domain\Negotiation\States\OfferStatus;
 use App\Domain\Property\Models\Property;
 use App\Domain\Scheduling\Models\Visit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\ModelStates\HasStates;
 
 class Offer extends Model
 {
-    use HasFactory;
+    use HasFactory, HasStates;
 
     protected $fillable = [
         'user_id',
@@ -21,6 +23,10 @@ class Offer extends Model
         'terms',
         'status',
         'compliance_status',
+    ];
+
+    protected $casts = [
+        'status' => OfferStatus::class,
     ];
 
     public function complianceDocuments()

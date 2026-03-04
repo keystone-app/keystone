@@ -61,7 +61,7 @@ class VisitController extends Controller
             'status' => 'required|in:scheduled,cancelled,rejected',
         ]);
 
-        $visit->update(['status' => $data['status']]);
+        $visit->status->transitionTo($data['status']);
 
         return response()->json($visit->load(['user', 'property', 'document']));
     }

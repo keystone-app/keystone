@@ -14,11 +14,11 @@ class RespondToOfferAction
             throw new \Exception('Unauthorized', 403);
         }
 
-        $offer->update(['status' => $data['status']]);
+        $offer->status->transitionTo($data['status']);
 
         // If accepted, move to compliance document phase
         if ($data['status'] === 'accepted') {
-            $offer->update(['compliance_status' => 'awaiting_documents']);
+            $offer->status->transitionTo(\App\Domain\Negotiation\States\AwaitingDocuments::class);
         }
 
         return $offer->load(['user', 'property', 'visit']);

@@ -4,8 +4,12 @@ namespace Tests\Feature;
 
 use App\Domain\Identity\Models\User;
 use App\Domain\Negotiation\Models\Offer;
+use App\Domain\Negotiation\States\AwaitingDocuments;
+use App\Domain\Negotiation\States\Countered;
+use App\Domain\Negotiation\States\Pending;
 use App\Domain\Property\Models\Property;
 use App\Domain\Scheduling\Models\Visit;
+use App\Domain\Scheduling\States\Scheduled;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -56,7 +60,7 @@ class OfferFlowTest extends TestCase
         $tenant = User::factory()->tenant()->create();
         $visit = Visit::factory()->create([
             'user_id' => $tenant->id,
-            'status' => 'scheduled',
+            'status' => Scheduled::class,
         ]);
 
         $offerData = [
@@ -111,7 +115,8 @@ class OfferFlowTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $this->assertEquals('accepted', $offer->fresh()->status);
+        // It should be awaiting_documents because we auto-transition in RespondToOfferAction
+        $this->assertInstanceOf(AwaitingDocuments::class, $offer->fresh()->status);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -131,7 +136,7 @@ class OfferFlowTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $this->assertEquals('countered', $offer->fresh()->status);
+        $this->assertInstanceOf(Countered::class, $offer->fresh()->status);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -150,6 +155,6 @@ class OfferFlowTest extends TestCase
         ]);
 
         $response->assertStatus(403);
-        $this->assertEquals('pending', $offer->fresh()->status);
+        $this->assertInstanceOf(Pending::class, $offer->fresh()->status);
     }
 }

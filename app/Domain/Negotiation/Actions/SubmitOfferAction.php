@@ -13,7 +13,7 @@ class SubmitOfferAction
         $visit = Visit::findOrFail($data['visit_id']);
 
         // Business Rule: Ensure visit is scheduled and belongs to the user
-        if ($visit->user_id !== Auth::id() || $visit->status !== 'scheduled') {
+        if ($visit->user_id !== Auth::id() || ! ($visit->status instanceof \App\Domain\Scheduling\States\Scheduled)) {
             throw new \Exception('Unauthorized or visit not scheduled.', 403);
         }
 
@@ -23,7 +23,7 @@ class SubmitOfferAction
             'visit_id' => $visit->id,
             'amount' => $data['amount'],
             'terms' => $data['terms'],
-            'status' => 'pending',
+            'status' => \App\Domain\Negotiation\States\Pending::class,
         ]);
     }
 }
