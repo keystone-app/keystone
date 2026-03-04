@@ -3,7 +3,11 @@
 namespace Tests\Feature;
 
 use App\Domain\Identity\Models\User;
+use App\Domain\Legal\Models\Document;
+use App\Domain\Property\Models\Property;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PropertyControllerTest extends TestCase
@@ -30,6 +34,56 @@ class PropertyControllerTest extends TestCase
             'name' => 'Test Property',
             'user_id' => $user->id,
         ]);
+    }
+
+    public function test_landlord_can_store_property_with_media(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->create(['role' => 'landlord']);
+
+        $response = $this->actingAs($user)->postJson('/properties', [
+            'name' => 'Media Property',
+            'address' => '456 Media Ave',
+            'price' => 2000.00,
+            'type' => 'House',
+            'images' => [
+                UploadedFile::fake()->image('house1.jpg'),
+                UploadedFile::fake()->image('house2.png'),
+            ],
+            'videos' => [
+                UploadedFile::fake()->create('tour.mp4', 5000, 'video/mp4'),
+            ],
+        ]);
+
+        $response->assertStatus(201);
+
+        $propertyId = $response->json('id');
+
+        $this->assertDatabaseHas('documents', [
+            'documentable_type' => Property::class,
+            'documentable_id' => $propertyId,
+            'type' => 'property_image',
+            'name' => 'house1.jpg',
+        ]);
+
+        $this->assertDatabaseHas('documents', [
+            'documentable_type' => Property::class,
+            'documentable_id' => $propertyId,
+            'type' => 'property_video',
+            'name' => 'tour.mp4',
+        ]);
+
+        $imageDoc = Document::where('documentable_id', $propertyId)
+            ->where('type', 'property_image')
+            ->first();
+        $this->assertNotNull($imageDoc);
+        Storage::disk('public')->assertExists($imageDoc->path);
+
+        $videoDoc = Document::where('documentable_id', $propertyId)
+            ->where('type', 'property_video')
+            ->first();
+        $this->assertNotNull($videoDoc);
+        Storage::disk('public')->assertExists($videoDoc->path);
     }
 
     public function test_guest_cannot_store_property(): void

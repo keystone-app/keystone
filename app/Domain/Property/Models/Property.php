@@ -3,6 +3,7 @@
 namespace App\Domain\Property\Models;
 
 use App\Domain\Identity\Models\User;
+use App\Domain\Legal\Models\Document;
 use App\Domain\Legal\Models\Lease;
 use App\Domain\Negotiation\Models\Offer;
 use App\Domain\Property\States\PropertyStatus;
@@ -20,6 +21,7 @@ use Spatie\ModelStates\HasStates;
  * @property string $type
  * @property PropertyStatus $status
  * @property-read User $user
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Document> $media
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Lease> $leases
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Offer> $offers
  */
@@ -48,6 +50,14 @@ class Property extends Model
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany<Document, $this>
+     */
+    public function media(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Document::class, 'documentable');
     }
 
     /**
