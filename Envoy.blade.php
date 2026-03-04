@@ -62,6 +62,10 @@
     rm -rf {{ $new_release_dir }}/storage
     ln -nfs {{ $path }}/storage {{ $new_release_dir }}/storage
     
+    echo "Injecting pre-built assets..."
+    mkdir -p {{ $new_release_dir }}/public/build
+    cp -R {{ $path }}/shared_build/* {{ $new_release_dir }}/public/build/
+
     echo 'Flipping the symlink to v{{ $release }}...'
     ln -nfs {{ $new_release_dir }} {{ $app_dir }}
 @endtask

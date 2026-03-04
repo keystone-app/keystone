@@ -36,6 +36,17 @@ jobs:
       - name: Install Dependencies
         run: composer install --no-ansi --no-interaction --no-scripts --prefer-dist
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Build Assets (Vite/NPM)
+        run: |
+          npm install
+          npm run build
+
       - name: Start SSH Agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -46,6 +57,13 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.DEPLOY_IP }} >> ~/.ssh/known_hosts
+
+      - name: Upload Build Assets to Server
+        run: |
+          # Create a temporary folder on the server to hold the latest build
+          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_IP }} "mkdir -p ${{ secrets.DEPLOY_PATH }}/shared_build"
+          # Sync the compiled assets from GitHub to the server
+          scp -r public/build/* ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_IP }}:${{ secrets.DEPLOY_PATH }}/shared_build/
 
       - name: Execute Envoy Deployment
         run: |
