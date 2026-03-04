@@ -40,11 +40,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          # This is the magic line for caching
           cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Build Assets (Vite/NPM)
         run: |
-          npm install
+          # npm ci is faster and more reliable than 'npm install' for CI/CD
+          npm ci
           npm run build
 
       - name: Start SSH Agent

@@ -11,9 +11,10 @@
 @story('deploy')
     clone_repository
     run_composer
+    link_shared_files
     run_migrations
     optimize_laravel
-    update_symlinks
+    activate_release
     clean_old_releases
 @endstory
 
@@ -46,20 +47,19 @@
     php artisan view:cache
 @endtask
 
-@task('update_symlinks')
-    echo "Linking shared assets..."
-    # Link the shared .env
+@task('link_shared_files')
+    echo "Linking shared .env and storage..."
     ln -nfs {{ $path }}/.env {{ $new_release_dir }}/.env
-    
-    # Remove the release storage and link to the persistent shared storage
     rm -rf {{ $new_release_dir }}/storage
     ln -nfs {{ $path }}/storage {{ $new_release_dir }}/storage
     
     echo "Injecting pre-built assets..."
     mkdir -p {{ $new_release_dir }}/public/build
     cp -R {{ $path }}/shared_build/* {{ $new_release_dir }}/public/build/
+@endtask
 
-    echo 'Flipping the symlink to v{{ $release }}...'
+@task('activate_release')
+    echo 'Flipping symlink to {{ $release }}...'
     ln -nfs {{ $new_release_dir }} {{ $app_dir }}
 @endtask
 
