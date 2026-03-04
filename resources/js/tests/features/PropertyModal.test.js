@@ -37,7 +37,9 @@ describe("PropertyModal", () => {
             address: "123 Villa St",
             price: 3000,
             type: "Apartment",
-            description: ""
+            description: "",
+            images: [],
+            videos: []
         });
     });
 });

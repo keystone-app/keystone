@@ -177,10 +177,32 @@
     async function storeProperty(data) {
         isSubmitting = true;
         try {
+            const formData = new FormData();
+            formData.append('name', data.name);
+            formData.append('address', data.address);
+            formData.append('price', data.price);
+            formData.append('type', data.type);
+            formData.append('description', data.description || '');
+            
+            if (data.images && data.images.length > 0) {
+                data.images.forEach(image => {
+                    formData.append('images[]', image);
+                });
+            }
+            
+            if (data.videos && data.videos.length > 0) {
+                data.videos.forEach(video => {
+                    formData.append('videos[]', video);
+                });
+            }
+
             const res = await fetch('/properties', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' },
-                body: JSON.stringify(data)
+                headers: { 
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 
+                    'Accept': 'application/json' 
+                },
+                body: formData
             });
             if (res.ok) {
                 const newProperty = await res.json();

@@ -10,11 +10,17 @@
         rented: 'info',
         maintenance: 'warning'
     };
+
+    const thumbnail = $derived(property.media?.find(m => m.type === 'property_image')?.path);
 </script>
 
 <div class="group bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
     <div class="h-56 bg-gray-100 flex items-center justify-center border-b border-gray-100 relative">
-        <Home class="w-16 h-16 text-gray-300 group-hover:text-indigo-200 transition-colors" />
+        {#if thumbnail}
+            <img src="/storage/{thumbnail}" alt={property.name} class="w-full h-full object-cover" />
+        {:else}
+            <Home class="w-16 h-16 text-gray-300 group-hover:text-indigo-200 transition-colors" />
+        {/if}
         <div class="absolute top-4 left-4">
             <span class="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold shadow-sm">
                 {property.type}
