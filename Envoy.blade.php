@@ -11,7 +11,6 @@
 @story('deploy')
     clone_repository
     run_composer
-    run_npm
     run_migrations
     optimize_laravel
     update_symlinks
@@ -29,13 +28,6 @@
     echo "Installing Composer dependencies..."
     cd {{ $new_release_dir }}
     composer install --prefer-dist --no-scripts --no-dev -q -o
-@endtask
-
-@task('run_npm')
-    echo "Building assets..."
-    cd {{ $new_release_dir }}
-    npm install --silent
-    npm run build --silent
 @endtask
 
 @task('run_migrations')
