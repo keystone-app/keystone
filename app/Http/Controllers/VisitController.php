@@ -4,13 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Domain\Scheduling\Actions\ScheduleVisitAction;
 use App\Domain\Scheduling\Models\Visit;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class VisitController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
         $user = auth()->user();
+
+        if (! $user) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
 
         // Get visits for properties owned by this landlord
         $visits = Visit::whereHas('property', function ($query) use ($user) {
@@ -23,7 +28,7 @@ class VisitController extends Controller
         return response()->json($visits);
     }
 
-    public function myVisits()
+    public function myVisits(): JsonResponse
     {
         $visits = Visit::where('user_id', auth()->id())
             ->with(['property', 'document'])
@@ -33,7 +38,7 @@ class VisitController extends Controller
         return response()->json($visits);
     }
 
-    public function store(Request $request, ScheduleVisitAction $action)
+    public function store(Request $request, ScheduleVisitAction $action): JsonResponse
     {
         $data = $request->validate([
             'property_id' => 'required|exists:properties,id',
@@ -50,7 +55,7 @@ class VisitController extends Controller
         }
     }
 
-    public function update(Request $request, Visit $visit)
+    public function update(Request $request, Visit $visit): JsonResponse
     {
         // Ensure the visit belongs to a property owned by the authenticated user
         if ($visit->property->user_id !== auth()->id()) {

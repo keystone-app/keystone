@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Domain\Legal\Actions\UploadComplianceDocumentAction;
 use App\Domain\Legal\Actions\UploadIdentityDocumentAction;
 use App\Domain\Negotiation\Models\Offer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DocumentController extends Controller
 {
-    public function uploadIdentity(Request $request, UploadIdentityDocumentAction $action)
+    public function uploadIdentity(Request $request, UploadIdentityDocumentAction $action): JsonResponse
     {
         $request->validate([
             'file' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
@@ -24,17 +25,23 @@ class DocumentController extends Controller
         }
     }
 
-    public function uploadCompliance(Request $request, UploadComplianceDocumentAction $action)
+    public function uploadCompliance(Request $request, UploadComplianceDocumentAction $action): JsonResponse
     {
         $request->validate([
-            'file' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
+            'file' => 'required|file|max:10240',
             'type' => 'required|in:income_proof,residency_proof',
             'offer_id' => 'required|exists:offers,id',
         ]);
 
+        $file = $request->file('file');
+        if (! $file instanceof \Illuminate\Http\UploadedFile) {
+            return response()->json(['message' => 'Invalid file.'], 400);
+        }
+
         try {
-            $offer = Offer::findOrFail($request->offer_id);
-            $document = $action->execute($offer, $request->type, $request->file('file'));
+            /** @var Offer $offer */
+            $offer = Offer::findOrFail($request->integer('offer_id'));
+            $document = $action->execute($offer, (string) $request->string('type'), $file);
 
             return response()->json($document);
         } catch (\Exception $e) {

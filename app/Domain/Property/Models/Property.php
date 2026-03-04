@@ -25,6 +25,7 @@ use Spatie\ModelStates\HasStates;
  */
 class Property extends Model
 {
+    /** @use HasFactory<\Database\Factories\PropertyFactory> */
     use HasFactory, HasStates;
 
     protected $fillable = [
@@ -41,16 +42,25 @@ class Property extends Model
         'status' => PropertyStatus::class,
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
+     */
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Lease, $this>
+     */
     public function leases(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Lease::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Offer, $this>
+     */
     public function offers(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Offer::class);

@@ -15,12 +15,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $name
  * @property string $path
  * @property string $type
- * @property-read Model|\Illuminate\Database\Eloquent\Relations\MorphTo|null $documentable
+ * @property-read \Illuminate\Database\Eloquent\Relations\MorphTo<\Illuminate\Database\Eloquent\Model, $this> $documentable
  * @property-read User|null $user
  * @property-read Lease|null $lease
  */
 class Document extends Model
 {
+    /** @use HasFactory<\Database\Factories\DocumentFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -33,16 +34,25 @@ class Document extends Model
         'type',
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo<\Illuminate\Database\Eloquent\Model, $this>
+     */
     public function documentable(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
         return $this->morphTo();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
+     */
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Lease, $this>
+     */
     public function lease(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Lease::class);

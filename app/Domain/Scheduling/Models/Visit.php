@@ -25,6 +25,7 @@ use Spatie\ModelStates\HasStates;
  */
 class Visit extends Model
 {
+    /** @use HasFactory<\Database\Factories\VisitFactory> */
     use HasFactory, HasStates;
 
     protected $fillable = [
@@ -40,21 +41,33 @@ class Visit extends Model
         'status' => VisitStatus::class,
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
+     */
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Property, $this>
+     */
     public function property(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Property::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Document, $this>
+     */
     public function document(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Document::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<Offer, $this>
+     */
     public function offer(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Offer::class);

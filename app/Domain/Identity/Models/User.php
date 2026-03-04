@@ -54,36 +54,57 @@ class User extends Authenticatable
         return $this->role === 'tenant';
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Domain\Property\Models\Property, $this>
+     */
     public function properties(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Property::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Domain\Legal\Models\Lease, $this>
+     */
     public function landlordLeases(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Lease::class, 'landlord_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Domain\Legal\Models\Lease, $this>
+     */
     public function tenantLeases(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Lease::class, 'tenant_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Domain\Scheduling\Models\Visit, $this>
+     */
     public function visits(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Visit::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Domain\Legal\Models\Document, $this>
+     */
     public function documents(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Document::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Domain\Negotiation\Models\Offer, $this>
+     */
     public function offers(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Offer::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Domain\Legal\Models\Document, $this>
+     */
     public function identityDocument(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Document::class, 'identity_document_id');

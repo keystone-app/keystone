@@ -17,7 +17,7 @@ use Spatie\ModelStates\HasStates;
  * @property int $property_id
  * @property int|null $visit_id
  * @property float $amount
- * @property array|string|null $terms
+ * @property array<string, mixed>|string|null $terms
  * @property OfferStatus $status
  * @property string|null $compliance_status
  * @property-read User $user
@@ -27,6 +27,7 @@ use Spatie\ModelStates\HasStates;
  */
 class Offer extends Model
 {
+    /** @use HasFactory<\Database\Factories\OfferFactory> */
     use HasFactory, HasStates;
 
     protected $fillable = [
@@ -43,22 +44,34 @@ class Offer extends Model
         'status' => OfferStatus::class,
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Document, $this>
+     */
     public function complianceDocuments(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Document::class, 'user_id', 'user_id')
             ->whereIn('type', ['income_proof', 'residency_proof']);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, $this>
+     */
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Property, $this>
+     */
     public function property(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Property::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Visit, $this>
+     */
     public function visit(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Visit::class);

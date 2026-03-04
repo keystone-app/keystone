@@ -9,6 +9,9 @@ use Illuminate\Validation\ValidationException;
 
 class StoreProperty
 {
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function execute(User $user, array $data): Property
     {
         $validator = Validator::make($data, [

@@ -2,9 +2,13 @@
 
 namespace App\Domain\Negotiation\States;
 
+use App\Domain\Negotiation\Models\Offer;
 use Spatie\ModelStates\State;
 use Spatie\ModelStates\StateConfig;
 
+/**
+ * @extends \Spatie\ModelStates\State<Offer>
+ */
 abstract class OfferStatus extends State
 {
     public static function config(): StateConfig

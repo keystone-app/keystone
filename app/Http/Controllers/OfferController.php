@@ -6,13 +6,18 @@ use App\Domain\Negotiation\Actions\RespondToOfferAction;
 use App\Domain\Negotiation\Actions\SubmitOfferAction;
 use App\Domain\Negotiation\Actions\VerifyIncomeAction;
 use App\Domain\Negotiation\Models\Offer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class OfferController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
         $user = auth()->user();
+
+        if (! $user) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
 
         if ($user->role === 'landlord') {
             $offers = Offer::whereHas('property', function ($query) use ($user) {
@@ -31,7 +36,7 @@ class OfferController extends Controller
         return response()->json($offers);
     }
 
-    public function store(Request $request, SubmitOfferAction $action)
+    public function store(Request $request, SubmitOfferAction $action): JsonResponse
     {
         $data = $request->validate([
             'visit_id' => 'required|exists:visits,id',
@@ -48,7 +53,7 @@ class OfferController extends Controller
         }
     }
 
-    public function update(Request $request, Offer $offer, RespondToOfferAction $action)
+    public function update(Request $request, Offer $offer, RespondToOfferAction $action): JsonResponse
     {
         $data = $request->validate([
             'status' => 'required|in:accepted,rejected,countered',
@@ -65,7 +70,7 @@ class OfferController extends Controller
         }
     }
 
-    public function verify(Request $request, Offer $offer, VerifyIncomeAction $action)
+    public function verify(Request $request, Offer $offer, VerifyIncomeAction $action): JsonResponse
     {
         try {
             $result = $action->execute($offer);

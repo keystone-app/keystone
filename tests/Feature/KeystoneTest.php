@@ -14,7 +14,7 @@ class KeystoneTest extends TestCase
     use RefreshDatabase;
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function it_can_create_a_landlord_with_properties()
+    public function it_can_create_a_landlord_with_properties(): void
     {
         $landlord = User::create([
             'name' => 'Alice Landlord',
@@ -32,12 +32,16 @@ class KeystoneTest extends TestCase
 
         $this->assertEquals('landlord', $landlord->role);
         $this->assertTrue($landlord->isLandlord());
-        $this->assertCount(1, $landlord->properties);
-        $this->assertEquals($property->id, $landlord->properties->first()->id);
+        $property = $landlord->properties->first();
+        $this->assertInstanceOf(Property::class, $property);
+
+        $firstProperty = $landlord->properties->first();
+        $this->assertInstanceOf(Property::class, $firstProperty);
+        $this->assertEquals($property->id, $firstProperty->id);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function it_can_manage_leases_between_landlord_and_tenant()
+    public function it_can_manage_leases_between_landlord_and_tenant(): void
     {
         $landlord = User::create([
             'name' => 'Alice Landlord',
@@ -77,7 +81,7 @@ class KeystoneTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function it_can_attach_documents_to_a_lease()
+    public function it_can_attach_documents_to_a_lease(): void
     {
         $landlord = User::create([
             'name' => 'Alice Landlord',
@@ -115,6 +119,8 @@ class KeystoneTest extends TestCase
         ]);
 
         $this->assertCount(1, $lease->documents);
-        $this->assertEquals($document->id, $lease->documents->first()->id);
+        /** @var \App\Domain\Legal\Models\Document $firstDoc */
+        $firstDoc = $lease->documents->first();
+        $this->assertEquals($document->id, $firstDoc->id);
     }
 }

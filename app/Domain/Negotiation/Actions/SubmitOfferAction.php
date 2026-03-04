@@ -8,8 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class SubmitOfferAction
 {
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function execute(array $data): Offer
     {
+        /** @var Visit $visit */
         $visit = Visit::findOrFail($data['visit_id']);
 
         // Business Rule: Ensure visit is scheduled and belongs to the user

@@ -20,7 +20,7 @@ class LeaseFlowTest extends TestCase
     use RefreshDatabase;
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function accepting_an_offer_creates_a_lease_draft()
+    public function accepting_an_offer_creates_a_lease_draft(): void
     {
         $landlord = User::factory()->landlord()->create();
         $property = Property::factory()->create(['user_id' => $landlord->id]);
@@ -43,7 +43,7 @@ class LeaseFlowTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function lease_transitions_to_waiting_signature_after_both_parties_upload_docs()
+    public function lease_transitions_to_waiting_signature_after_both_parties_upload_docs(): void
     {
         Storage::fake('public');
         $landlord = User::factory()->landlord()->create();
@@ -60,7 +60,9 @@ class LeaseFlowTest extends TestCase
             'file' => UploadedFile::fake()->image('landlord.jpg'),
         ]);
 
-        $this->assertInstanceOf(Draft::class, $lease->fresh()->status);
+        /** @var Lease $refreshedLease */
+        $refreshedLease = $lease->fresh();
+        $this->assertInstanceOf(Draft::class, $refreshedLease->status);
 
         // Tenant uploads
         $this->actingAs($tenant)->postJson("/leases/{$lease->id}/upload", [
@@ -68,7 +70,9 @@ class LeaseFlowTest extends TestCase
             'file' => UploadedFile::fake()->image('tenant.jpg'),
         ]);
 
-        $this->assertInstanceOf(WaitingLandlordSignature::class, $lease->fresh()->status);
+        /** @var Lease $refreshedLease */
+        $refreshedLease = $lease->fresh();
+        $this->assertInstanceOf(WaitingLandlordSignature::class, $refreshedLease->status);
 
         // Should have the generated lease agreement doc
         $this->assertDatabaseHas('documents', [
@@ -78,7 +82,7 @@ class LeaseFlowTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function lease_transitions_through_signature_flow_to_active()
+    public function lease_transitions_through_signature_flow_to_active(): void
     {
         $landlord = User::factory()->landlord()->create();
         $tenant = User::factory()->tenant()->create();
@@ -91,11 +95,15 @@ class LeaseFlowTest extends TestCase
         // Landlord signs
         $response = $this->actingAs($landlord)->postJson("/leases/{$lease->id}/sign");
         $response->assertStatus(200);
-        $this->assertInstanceOf(WaitingTenantSignature::class, $lease->fresh()->status);
+        /** @var Lease $refreshedLease */
+        $refreshedLease = $lease->fresh();
+        $this->assertInstanceOf(WaitingTenantSignature::class, $refreshedLease->status);
 
         // Tenant signs
         $response = $this->actingAs($tenant)->postJson("/leases/{$lease->id}/sign");
         $response->assertStatus(200);
-        $this->assertInstanceOf(Active::class, $lease->fresh()->status);
+        /** @var Lease $refreshedLease */
+        $refreshedLease = $lease->fresh();
+        $this->assertInstanceOf(Active::class, $refreshedLease->status);
     }
 }

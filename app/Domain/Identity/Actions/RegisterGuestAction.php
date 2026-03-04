@@ -13,10 +13,15 @@ class RegisterGuestAction
      */
     public function execute(array $data): User
     {
+        $password = $data['password'];
+        if (! is_string($password)) {
+            throw new \InvalidArgumentException('Password must be a string.');
+        }
+
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'password' => Hash::make($password),
             'role' => 'guest',
         ]);
 

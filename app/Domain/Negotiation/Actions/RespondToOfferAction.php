@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 
 class RespondToOfferAction
 {
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function execute(Offer $offer, array $data): Offer
     {
         // Authorization: Ensure the offer belongs to a property owned by the authenticated landlord
@@ -15,7 +18,12 @@ class RespondToOfferAction
             throw new \Exception('Unauthorized', 403);
         }
 
-        $offer->status->transitionTo($data['status']);
+        $status = $data['status'];
+        if (! is_string($status)) {
+            throw new \InvalidArgumentException('Status must be a string.');
+        }
+
+        $offer->status->transitionTo($status);
 
         // If accepted, move to compliance document phase and create lease draft
         if ($data['status'] === 'accepted') {

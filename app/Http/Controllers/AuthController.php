@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Domain\Identity\Actions\RegisterGuestAction;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    public function register(Request $request, RegisterGuestAction $action)
+    public function register(Request $request, RegisterGuestAction $action): JsonResponse
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -17,7 +18,11 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8'],
         ]);
 
-        $user = $action->execute($data);
+        $user = $action->execute([
+            'name' => (string) $data['name'],
+            'email' => (string) $data['email'],
+            'password' => (string) $data['password'],
+        ]);
         $request->session()->regenerate();
 
         return response()->json([
@@ -27,7 +32,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
@@ -36,10 +41,15 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+            $user = Auth::user();
+
+            if (! $user instanceof \App\Domain\Identity\Models\User) {
+                return response()->json(['message' => 'Authentication failed.'], 401);
+            }
 
             return response()->json([
-                'user' => Auth::user(),
-                'role' => Auth::user()->role,
+                'user' => $user,
+                'role' => $user->role,
                 'csrf_token' => csrf_token(),
             ]);
         }
@@ -49,7 +59,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         Auth::logout();
 
@@ -59,7 +69,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logged out successfully']);
     }
 
-    public function me()
+    public function me(): JsonResponse
     {
         $user = Auth::user();
 
