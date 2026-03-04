@@ -53,5 +53,5 @@ jobs:
 
           ./vendor/bin/envoy run deploy \
             -v tag=$DEPLOY_TAG \
-            -v server=${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_IP }} \
+            --server=${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_IP }} \
             -v path=${{ secrets.DEPLOY_PATH }}
