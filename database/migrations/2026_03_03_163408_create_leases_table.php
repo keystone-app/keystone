@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->decimal('rent_amount', 10, 2);
-            $table->string('status')->default('pending'); // 'pending', 'active', 'terminated'
+            $table->string('status')->default('draft');
             $table->timestamps();
         });
     }

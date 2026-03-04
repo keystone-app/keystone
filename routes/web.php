@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\LeaseController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\VisitController;
@@ -31,4 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/offers', [OfferController::class, 'store']);
     Route::patch('/offers/{offer}', [OfferController::class, 'update']);
     Route::post('/offers/{offer}/verify', [OfferController::class, 'verify']);
+
+    Route::get('/leases', [LeaseController::class, 'index']);
+    Route::post('/leases/{lease}/upload', [LeaseController::class, 'uploadDocument']);
+    Route::post('/leases/{lease}/sign', [LeaseController::class, 'sign']);
 });

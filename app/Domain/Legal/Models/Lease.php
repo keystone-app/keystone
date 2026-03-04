@@ -3,13 +3,15 @@
 namespace App\Domain\Legal\Models;
 
 use App\Domain\Identity\Models\User;
+use App\Domain\Legal\States\LeaseStatus;
 use App\Domain\Property\Models\Property;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\ModelStates\HasStates;
 
 class Lease extends Model
 {
-    use HasFactory;
+    use HasFactory, HasStates;
 
     protected $fillable = [
         'property_id',
@@ -19,6 +21,12 @@ class Lease extends Model
         'end_date',
         'rent_amount',
         'status',
+    ];
+
+    protected $casts = [
+        'status' => LeaseStatus::class,
+        'start_date' => 'date',
+        'end_date' => 'date',
     ];
 
     public function property()

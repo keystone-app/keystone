@@ -2,6 +2,7 @@
 
 namespace App\Domain\Negotiation\Actions;
 
+use App\Domain\Legal\Actions\CreateLeaseFromOfferAction;
 use App\Domain\Negotiation\Models\Offer;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,9 +17,11 @@ class RespondToOfferAction
 
         $offer->status->transitionTo($data['status']);
 
-        // If accepted, move to compliance document phase
+        // If accepted, move to compliance document phase and create lease draft
         if ($data['status'] === 'accepted') {
             $offer->status->transitionTo(\App\Domain\Negotiation\States\AwaitingDocuments::class);
+
+            app(CreateLeaseFromOfferAction::class)->execute($offer);
         }
 
         return $offer->load(['user', 'property', 'visit']);
