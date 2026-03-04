@@ -11,17 +11,18 @@ jobs:
 
     steps:
       - name: Checkout Code
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4 # Combined into one step
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.5'
+          php-version: '8.4'
           tools: envoy
 
       - name: Start SSH Agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
+          # Ensure this secret name matches exactly what you saved in GitHub
           ssh-private-key: ${{ secrets.DEPLOY_SSH_SECRET }}
 
       - name: Add Server to Known Hosts
@@ -33,4 +34,5 @@ jobs:
         run: |
           envoy run deploy \
             -v tag=${{ github.event.release.tag_name }} \
-            -v server=${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_IP }}
+            -v server=${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_IP }} \
+            -v path=${{ secrets.DEPLOY_PATH }}
