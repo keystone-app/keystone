@@ -31,9 +31,10 @@
 @endtask
 
 @task('run_migrations')
-    echo "Running migrations..."
+    echo "Clearing config cache and running migrations..."
     cd {{ $new_release_dir }}
-    # Run migrations on the new folder BEFORE it goes live
+    # Force Laravel to stop looking at old cached configs
+    php artisan config:clear
     php artisan migrate --force
 @endtask
 
