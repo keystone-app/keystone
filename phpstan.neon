@@ -1,0 +1,16 @@
+includes:
+    - vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+        - database/
+        - routes/
+        - tests/
+
+    # Level 9 is the highest level
+    level: 9
+
+    # Deprecated in 2.0+ (implied by level 9)
+    # checkMissingIterableValueType: true
+    # checkGenericClassInNonGenericObjectType: false

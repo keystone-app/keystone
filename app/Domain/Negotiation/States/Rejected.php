@@ -4,5 +4,5 @@ namespace App\Domain\Negotiation\States;
 
 class Rejected extends OfferStatus
 {
-    public static $name = 'rejected';
+    public static string $name = 'rejected';
 }

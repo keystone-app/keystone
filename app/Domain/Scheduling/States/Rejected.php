@@ -4,5 +4,5 @@ namespace App\Domain\Scheduling\States;
 
 class Rejected extends VisitStatus
 {
-    public static $name = 'rejected';
+    public static string $name = 'rejected';
 }

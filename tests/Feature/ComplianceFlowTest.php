@@ -18,7 +18,7 @@ class ComplianceFlowTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function it_transitions_offer_to_pending_verification_when_all_documents_are_uploaded()
+    public function it_transitions_offer_to_pending_verification_when_all_documents_are_uploaded(): void
     {
         Storage::fake('public');
         $user = User::factory()->create(['role' => 'tenant']);

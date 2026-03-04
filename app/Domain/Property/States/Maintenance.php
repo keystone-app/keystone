@@ -4,5 +4,5 @@ namespace App\Domain\Property\States;
 
 class Maintenance extends PropertyStatus
 {
-    public static $name = 'maintenance';
+    public static string $name = 'maintenance';
 }

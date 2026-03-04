@@ -11,6 +11,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\ModelStates\HasStates;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $property_id
+ * @property int|null $visit_id
+ * @property float $amount
+ * @property array|string|null $terms
+ * @property OfferStatus $status
+ * @property string|null $compliance_status
+ * @property-read User $user
+ * @property-read Property $property
+ * @property-read Visit|null $visit
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Document> $complianceDocuments
+ */
 class Offer extends Model
 {
     use HasFactory, HasStates;
@@ -29,28 +43,28 @@ class Offer extends Model
         'status' => OfferStatus::class,
     ];
 
-    public function complianceDocuments()
+    public function complianceDocuments(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Document::class, 'user_id', 'user_id')
             ->whereIn('type', ['income_proof', 'residency_proof']);
     }
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function property()
+    public function property(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Property::class);
     }
 
-    public function visit()
+    public function visit(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Visit::class);
     }
 
-    protected static function newFactory()
+    protected static function newFactory(): \Database\Factories\OfferFactory
     {
         return \Database\Factories\OfferFactory::new();
     }

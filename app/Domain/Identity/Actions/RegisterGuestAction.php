@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Hash;
 
 class RegisterGuestAction
 {
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function execute(array $data): User
     {
         $user = User::create([
