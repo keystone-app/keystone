@@ -527,8 +527,14 @@
         <Sidebar 
             role={role} 
             currentView={view} 
+            landlordView={landlordView}
+            tenantView={tenantView}
             currentUser={currentUser}
+            landlordVisits={landlordVisits}
+            offers={offers}
             onViewChange={(newView) => { view = newView; selectedProperty = null; }} 
+            onLandlordViewChange={(v) => landlordView = v}
+            onTenantViewChange={(v) => tenantView = v}
         />
     {/if}
 
@@ -732,24 +738,6 @@
                                     </Button>
                                 {/if}
                             </div>
-
-                            <div class="flex border-b border-gray-200">
-                                <Button variant="tab" class={landlordView === 'properties' ? 'border-brand-action text-brand-action' : 'border-transparent text-gray-400'} onclick={() => landlordView = 'properties'}>
-                                    My Portfolio
-                                </Button>
-                                <Button variant="tab" class={landlordView === 'visits' ? 'border-brand-action text-brand-action' : 'border-transparent text-gray-400'} onclick={() => landlordView = 'visits'}>
-                                    Visit Requests
-                                    {#if landlordVisits.filter(v => v.status === 'pending').length > 0}
-                                        <Badge type="info" class="ml-2">{landlordVisits.filter(v => v.status === 'pending').length}</Badge>
-                                    {/if}
-                                </Button>
-                                <Button variant="tab" class={landlordView === 'offers' ? 'border-brand-action text-brand-action' : 'border-transparent text-gray-400'} onclick={() => landlordView = 'offers'}>
-                                    Offers
-                                    {#if offers.filter(o => o.status === 'pending').length > 0}
-                                        <Badge type="info" class="ml-2">{offers.filter(o => o.status === 'pending').length}</Badge>
-                                    {/if}
-                                </Button>
-                            </div>
                         </header>
 
                         {#if landlordView === 'properties'}
@@ -794,30 +782,11 @@
                                     {:else if tenantView === 'offers'}Negotiate and track your property offers
                                     {:else}Manage your active lease agreements
                                     {/if}
-                                </p>
-                            </div>
+                                    </p>
+                                    </div>
+                                    </header>
 
-                            <div class="flex border-b border-gray-200">
-                                <Button variant="tab" class={tenantView === 'visits' ? 'border-brand-action text-brand-action' : 'border-transparent text-gray-400'} onclick={() => tenantView = 'visits'}>
-                                    Scheduled Visits
-                                    {#if myVisits.length > 0}
-                                        <Badge type="info" class="ml-2">{myVisits.length}</Badge>
-                                    {/if}
-                                </Button>
-                                <Button variant="tab" class={tenantView === 'offers' ? 'border-brand-action text-brand-action' : 'border-transparent text-gray-400'} onclick={() => tenantView = 'offers'}>
-                                    Negotiations
-                                    {#if offers.length > 0}
-                                        <Badge type="info" class="ml-2">{offers.length}</Badge>
-                                    {/if}
-                                </Button>
-                                <Button variant="tab" class={tenantView === 'leases' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400'} onclick={() => tenantView = 'leases'}>
-                                    My Leases
-                                </Button>
-                            </div>
-                        </header>
-
-                        {#if tenantView === 'leases'}
-                            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                                    {#if tenantView === 'leases'}                            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                                 <div class="p-6 border-b border-gray-100 flex justify-between items-center">
                                     <div class="flex items-center gap-4">
                                         <div class="w-12 h-12 bg-brand-action/10 rounded-lg flex items-center justify-center text-brand-action">

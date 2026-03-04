@@ -1,17 +1,22 @@
 <script>
     import { cn } from "../../lib/utils";
 
-    let { role, currentView, onViewChange, currentUser } = $props();
+    let { 
+        role, 
+        currentView, 
+        landlordView,
+        tenantView,
+        onViewChange, 
+        onLandlordViewChange,
+        onTenantViewChange,
+        currentUser,
+        landlordVisits = [],
+        myVisits = [],
+        offers = []
+    } = $props();
 
-    const navItems = $derived([
-        { id: 'listings', label: 'Visual Identity', icon: 'palette' },
-        { id: 'dashboard', label: 'Layout & Navigation', icon: 'dashboard', auth: true },
-        { id: 'components', label: 'Components', icon: 'category' },
-        { id: 'personas', label: 'Personas', icon: 'group' },
-    ]);
-
-    // Role-based adaptations based on Section 04 of Design System
-    const sidebarTitle = $derived(role === 'landlord' ? 'Landlord Portal' : 'Tenant Portal');
+    const pendingLandlordVisits = $derived(landlordVisits.filter(v => v.status === 'pending').length);
+    const pendingOffers = $derived(offers.filter(o => o.status === 'pending').length);
 </script>
 
 <aside class="w-64 text-white flex-shrink-0 sticky top-0 h-screen hidden lg:flex flex-col border-r border-white/10 bg-brand-primary">
@@ -48,6 +53,78 @@
                     <span class="material-symbols-outlined">dashboard</span>
                     My Dashboard
                 </button>
+
+                <!-- Nested Submenu for Landlord Dashboard -->
+                {#if currentView === 'dashboard' && role === 'landlord'}
+                    <div class="ml-4 mt-2 space-y-1 border-l border-white/10 pl-2">
+                        <button 
+                            onclick={() => onLandlordViewChange('properties')}
+                            class={cn(
+                                "w-full flex items-center justify-between px-4 py-2 text-xs font-bold transition-all hover:text-white",
+                                landlordView === 'properties' ? "text-brand-action" : "text-gray-500"
+                            )}
+                        >
+                            <span>My Portfolio</span>
+                        </button>
+                        <button 
+                            onclick={() => onLandlordViewChange('visits')}
+                            class={cn(
+                                "w-full flex items-center justify-between px-4 py-2 text-xs font-bold transition-all hover:text-white",
+                                landlordView === 'visits' ? "text-brand-action" : "text-gray-500"
+                            )}
+                        >
+                            <span>Visit Requests</span>
+                            {#if pendingLandlordVisits > 0}
+                                <span class="bg-brand-action text-white text-[8px] px-1.5 py-0.5 rounded-full">{pendingLandlordVisits}</span>
+                            {/if}
+                        </button>
+                        <button 
+                            onclick={() => onLandlordViewChange('offers')}
+                            class={cn(
+                                "w-full flex items-center justify-between px-4 py-2 text-xs font-bold transition-all hover:text-white",
+                                landlordView === 'offers' ? "text-brand-action" : "text-gray-500"
+                            )}
+                        >
+                            <span>Offers</span>
+                            {#if pendingOffers > 0}
+                                <span class="bg-brand-action text-white text-[8px] px-1.5 py-0.5 rounded-full">{pendingOffers}</span>
+                            {/if}
+                        </button>
+                    </div>
+                {/if}
+
+                <!-- Nested Submenu for Tenant Dashboard -->
+                {#if currentView === 'dashboard' && role === 'tenant'}
+                    <div class="ml-4 mt-2 space-y-1 border-l border-white/10 pl-2">
+                        <button 
+                            onclick={() => onTenantViewChange('visits')}
+                            class={cn(
+                                "w-full flex items-center justify-between px-4 py-2 text-xs font-bold transition-all hover:text-white",
+                                tenantView === 'visits' ? "text-brand-action" : "text-gray-500"
+                            )}
+                        >
+                            <span>Scheduled Visits</span>
+                        </button>
+                        <button 
+                            onclick={() => onTenantViewChange('offers')}
+                            class={cn(
+                                "w-full flex items-center justify-between px-4 py-2 text-xs font-bold transition-all hover:text-white",
+                                tenantView === 'offers' ? "text-brand-action" : "text-gray-500"
+                            )}
+                        >
+                            <span>Negotiations</span>
+                        </button>
+                        <button 
+                            onclick={() => onTenantViewChange('leases')}
+                            class={cn(
+                                "w-full flex items-center justify-between px-4 py-2 text-xs font-bold transition-all hover:text-white",
+                                tenantView === 'leases' ? "text-brand-action" : "text-gray-500"
+                            )}
+                        >
+                            <span>My Leases</span>
+                        </button>
+                    </div>
+                {/if}
             {/if}
         </nav>
     </div>
