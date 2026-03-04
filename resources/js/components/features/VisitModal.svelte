@@ -8,7 +8,6 @@
         onClose, 
         property, 
         identityDoc,
-        onUploadId,
         onSubmit,
         isSubmitting = false
     } = $props();
@@ -46,14 +45,14 @@
     <div class="space-y-8">
         <!-- Progress Steps -->
         <div class="flex items-center gap-4">
-            <div class="flex-1 h-2 rounded-full {step >= 1 ? 'bg-indigo-600' : 'bg-gray-100'}"></div>
-            <div class="flex-1 h-2 rounded-full {step >= 2 || identityDoc ? 'bg-indigo-600' : 'bg-gray-100'}"></div>
+            <div class="flex-1 h-2 rounded-full {step >= 1 ? 'bg-brand-action' : 'bg-gray-100'}"></div>
+            <div class="flex-1 h-2 rounded-full {step >= 2 || identityDoc ? 'bg-brand-action' : 'bg-gray-100'}"></div>
         </div>
 
         {#if step === 1}
-            <div class="space-y-6">
+            <div class="space-y-6 animate-in slide-in-from-right-4 duration-300">
                 <div class="space-y-2">
-                    <h3 class="text-2xl font-black">When would you like to visit?</h3>
+                    <h3 class="text-2xl font-black text-brand-primary">When would you like to visit?</h3>
                     <p class="text-gray-500 text-sm">Select a date and time that works for you.</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -61,14 +60,14 @@
                         <label for="visit-date" class="text-xs font-black uppercase tracking-widest text-gray-400">Date</label>
                         <div class="relative">
                             <Calendar class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                            <input id="visit-date" type="date" bind:value={date} class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold" />
+                            <input id="visit-date" type="date" bind:value={date} class="w-full pl-10 pr-4 py-3 bg-brand-primary/5 border border-brand-primary/10 rounded-xl focus:ring-2 focus:ring-brand-action outline-none font-bold" />
                         </div>
                     </div>
                     <div class="space-y-2">
                         <label for="visit-time" class="text-xs font-black uppercase tracking-widest text-gray-400">Time</label>
                         <div class="relative">
                             <Clock class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                            <input id="visit-time" type="time" bind:value={time} class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold" />
+                            <input id="visit-time" type="time" bind:value={time} class="w-full pl-10 pr-4 py-3 bg-brand-primary/5 border border-brand-primary/10 rounded-xl focus:ring-2 focus:ring-brand-action outline-none font-bold" />
                         </div>
                     </div>
                 </div>
@@ -83,15 +82,15 @@
                 </Button>
             </div>
         {:else}
-            <div class="space-y-6">
+            <div class="space-y-6 animate-in slide-in-from-right-4 duration-300">
                 <div class="space-y-2">
-                    <h3 class="text-2xl font-black">Identity Verification</h3>
+                    <h3 class="text-2xl font-black text-brand-primary">Identity Verification</h3>
                     <p class="text-gray-500 text-sm">Please upload a valid legal document to secure your visit.</p>
                 </div>
                 
                 <div class="relative group">
                     {#if filePreviewUrl}
-                        <div class="relative rounded-3xl overflow-hidden border-2 border-indigo-600 shadow-xl">
+                        <div class="relative rounded-3xl overflow-hidden border-2 border-brand-action shadow-xl">
                             <img src={filePreviewUrl} alt="Preview" class="w-full h-64 object-cover" />
                             <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <Button variant="secondary" size="md" onclick={removeFile}>
@@ -101,12 +100,12 @@
                             </div>
                         </div>
                     {:else}
-                        <label for="visit-identity-file" class="border-2 border-dashed border-gray-200 rounded-3xl p-10 flex flex-col items-center justify-center text-center gap-4 bg-gray-50/50 hover:border-indigo-300 transition-colors cursor-pointer group">
-                            <div class="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center text-gray-400 group-hover:text-indigo-600 transition-colors">
+                        <label for="visit-identity-file" class="border-2 border-dashed border-brand-primary/10 rounded-3xl p-10 flex flex-col items-center justify-center text-center gap-4 bg-brand-primary/5 hover:border-brand-action transition-colors cursor-pointer group">
+                            <div class="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center text-gray-400 group-hover:text-brand-action transition-colors">
                                 <Upload size={32} />
                             </div>
                             <div class="space-y-1">
-                                <p class="font-bold">Click to upload or drag & drop</p>
+                                <p class="font-bold text-brand-primary">Click to upload or drag & drop</p>
                                 <p class="text-xs text-gray-400 font-medium">PNG, JPG or WEBP (max. 10MB)</p>
                             </div>
                             <input id="visit-identity-file" type="file" class="hidden" accept="image/*" onchange={handleFileSelection} />

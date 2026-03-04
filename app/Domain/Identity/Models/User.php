@@ -82,7 +82,7 @@ class User extends Authenticatable
 
     public function hasIdentityDocument(): bool
     {
-        return !is_null($this->identity_document_id);
+        return ! is_null($this->identity_document_id);
     }
 
     public function getIdentityDocument()

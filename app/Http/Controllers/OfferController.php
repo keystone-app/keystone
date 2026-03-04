@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Negotiation\Models\Offer;
-use App\Domain\Scheduling\Models\Visit;
-use App\Domain\Negotiation\Actions\SubmitOfferAction;
 use App\Domain\Negotiation\Actions\RespondToOfferAction;
+use App\Domain\Negotiation\Actions\SubmitOfferAction;
 use App\Domain\Negotiation\Actions\VerifyIncomeAction;
+use App\Domain\Negotiation\Models\Offer;
 use Illuminate\Http\Request;
 
 class OfferController extends Controller
@@ -19,9 +18,9 @@ class OfferController extends Controller
             $offers = Offer::whereHas('property', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             })
-            ->with(['user', 'property', 'visit'])
-            ->latest()
-            ->get();
+                ->with(['user', 'property', 'visit'])
+                ->latest()
+                ->get();
         } else {
             $offers = Offer::where('user_id', $user->id)
                 ->with(['property', 'visit'])
@@ -42,6 +41,7 @@ class OfferController extends Controller
 
         try {
             $offer = $action->execute($data);
+
             return response()->json($offer->load(['property', 'visit']));
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
@@ -58,6 +58,7 @@ class OfferController extends Controller
 
         try {
             $offer = $action->execute($offer, $data);
+
             return response()->json($offer);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
@@ -68,6 +69,7 @@ class OfferController extends Controller
     {
         try {
             $result = $action->execute($offer);
+
             return response()->json($result);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);

@@ -3,10 +3,9 @@
 namespace Tests\Feature;
 
 use App\Domain\Identity\Models\User;
+use App\Domain\Negotiation\Models\Offer;
 use App\Domain\Property\Models\Property;
 use App\Domain\Scheduling\Models\Visit;
-use App\Domain\Negotiation\Models\Offer;
-use App\Domain\Legal\Models\Document;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -26,7 +25,7 @@ class OfferFlowTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonCount(1);
         $response->assertJsonFragment(['id' => $offer->id]);
-        
+
         $ids = collect($response->json())->pluck('id');
         $this->assertNotContains($otherOffer->id, $ids);
     }
@@ -37,7 +36,7 @@ class OfferFlowTest extends TestCase
         $landlord = User::factory()->landlord()->create();
         $property = Property::factory()->create(['user_id' => $landlord->id]);
         $offer = Offer::factory()->create(['property_id' => $property->id]);
-        
+
         $otherLandlord = User::factory()->landlord()->create();
         $otherOffer = Offer::factory()->create();
 
@@ -46,7 +45,7 @@ class OfferFlowTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonCount(1);
         $response->assertJsonFragment(['id' => $offer->id]);
-        
+
         $ids = collect($response->json())->pluck('id');
         $this->assertNotContains($otherOffer->id, $ids);
     }
@@ -57,13 +56,13 @@ class OfferFlowTest extends TestCase
         $tenant = User::factory()->tenant()->create();
         $visit = Visit::factory()->create([
             'user_id' => $tenant->id,
-            'status' => 'scheduled'
+            'status' => 'scheduled',
         ]);
 
         $offerData = [
             'visit_id' => $visit->id,
             'amount' => 2500,
-            'terms' => 'Including parking space.'
+            'terms' => 'Including parking space.',
         ];
 
         $response = $this->actingAs($tenant)->postJson('/offers', $offerData);
@@ -73,7 +72,7 @@ class OfferFlowTest extends TestCase
             'user_id' => $tenant->id,
             'visit_id' => $visit->id,
             'amount' => 2500,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
     }
 
@@ -83,7 +82,7 @@ class OfferFlowTest extends TestCase
         $tenant = User::factory()->tenant()->create();
         $visit = Visit::factory()->create([
             'user_id' => $tenant->id,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
 
         $offerData = [
@@ -104,11 +103,11 @@ class OfferFlowTest extends TestCase
         $property = Property::factory()->create(['user_id' => $landlord->id]);
         $offer = Offer::factory()->create([
             'property_id' => $property->id,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
 
         $response = $this->actingAs($landlord)->patchJson("/offers/{$offer->id}", [
-            'status' => 'accepted'
+            'status' => 'accepted',
         ]);
 
         $response->assertStatus(200);
@@ -122,13 +121,13 @@ class OfferFlowTest extends TestCase
         $property = Property::factory()->create(['user_id' => $landlord->id]);
         $offer = Offer::factory()->create([
             'property_id' => $property->id,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
 
         $response = $this->actingAs($landlord)->patchJson("/offers/{$offer->id}", [
             'status' => 'countered',
             'amount' => 2700,
-            'terms' => 'Rent increased to include utilities.'
+            'terms' => 'Rent increased to include utilities.',
         ]);
 
         $response->assertStatus(200);
@@ -143,11 +142,11 @@ class OfferFlowTest extends TestCase
         $property = Property::factory()->create(['user_id' => $otherLandlord->id]);
         $offer = Offer::factory()->create([
             'property_id' => $property->id,
-            'status' => 'pending'
+            'status' => 'pending',
         ]);
 
         $response = $this->actingAs($landlord)->patchJson("/offers/{$offer->id}", [
-            'status' => 'accepted'
+            'status' => 'accepted',
         ]);
 
         $response->assertStatus(403);

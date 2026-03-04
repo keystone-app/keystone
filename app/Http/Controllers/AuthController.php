@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Domain\Identity\Actions\RegisterGuestAction;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-
-use App\Domain\Identity\Models\User;
-use Illuminate\Support\Facades\Hash;
-
-use App\Domain\Identity\Actions\RegisterGuestAction;
 
 class AuthController extends Controller
 {
@@ -67,7 +62,7 @@ class AuthController extends Controller
     public function me()
     {
         $user = Auth::user();
-        
+
         return response()->json([
             'user' => $user,
             'role' => $user?->role,

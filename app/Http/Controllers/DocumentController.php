@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Legal\Models\Document;
-use App\Domain\Negotiation\Models\Offer;
 use App\Domain\Legal\Actions\UploadComplianceDocumentAction;
-use Illuminate\Http\Request;
-
 use App\Domain\Legal\Actions\UploadIdentityDocumentAction;
+use App\Domain\Negotiation\Models\Offer;
+use Illuminate\Http\Request;
 
 class DocumentController extends Controller
 {
@@ -19,6 +17,7 @@ class DocumentController extends Controller
 
         try {
             $document = $action->execute($request->file('file'));
+
             return response()->json($document);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
@@ -36,6 +35,7 @@ class DocumentController extends Controller
         try {
             $offer = Offer::findOrFail($request->offer_id);
             $document = $action->execute($offer, $request->type, $request->file('file'));
+
             return response()->json($document);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);

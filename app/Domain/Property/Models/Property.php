@@ -16,8 +16,10 @@ class Property extends Model
         'user_id',
         'name',
         'address',
+        'price',
         'description',
         'status',
+        'type',
     ];
 
     public function user()

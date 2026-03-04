@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Scheduling\Models\Visit;
 use App\Domain\Scheduling\Actions\ScheduleVisitAction;
+use App\Domain\Scheduling\Models\Visit;
 use Illuminate\Http\Request;
 
 class VisitController extends Controller
@@ -16,9 +16,9 @@ class VisitController extends Controller
         $visits = Visit::whereHas('property', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
-        ->with(['user', 'property', 'document'])
-        ->latest()
-        ->get();
+            ->with(['user', 'property', 'document'])
+            ->latest()
+            ->get();
 
         return response()->json($visits);
     }
@@ -43,6 +43,7 @@ class VisitController extends Controller
 
         try {
             $visit = $action->execute($data);
+
             return response()->json($visit->load(['user', 'property', 'document']));
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);

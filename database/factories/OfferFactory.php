@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class OfferFactory extends Factory
 {
     protected $model = Offer::class;
+
     /**
      * Define the model's default state.
      *

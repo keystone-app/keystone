@@ -9,6 +9,7 @@
     import OfferTable from './components/features/OfferTable.svelte';
     import OfferModal from './components/features/OfferModal.svelte';
     import VisitModal from './components/features/VisitModal.svelte';
+    import PropertyModal from './components/features/PropertyModal.svelte';
     import LoginModal from './components/features/LoginModal.svelte';
     import RegisterModal from './components/features/RegisterModal.svelte';
 
@@ -141,7 +142,7 @@
     let selectedProperty = $state(null);
 
     let isScheduling = $state(false);
-    let showAuthPrompt = $state(false);
+    let showPropertyModal = $state(false);
     let showLoginModal = $state(false);
     let showRegisterModal = $state(false);
     let identityDoc = $state(null);
@@ -282,7 +283,6 @@
                 role = data.role;
                 updateCsrfToken(data.csrf_token);
                 showRegisterModal = false;
-                showAuthPrompt = false;
                 
                 fetchOffers();
                 fetchMyVisits();
@@ -323,7 +323,6 @@
                 role = data.role;
                 updateCsrfToken(data.csrf_token);
                 showLoginModal = false;
-                showAuthPrompt = false;
                 
                 fetchOffers();
                 fetchMyVisits();
@@ -360,11 +359,11 @@
     }
 
     function startScheduling() {
-        isScheduling = true;
-        schedulingStep = 1;
         if (!isLoggedIn) {
-            showAuthPrompt = true;
+            showLoginModal = true;
+            return;
         }
+        isScheduling = true;
     }
 
     async function handleComplianceUpload(offerId, type, e) {
@@ -477,6 +476,40 @@
             }
         } catch (e) {
             alert(e.message || 'Connection error.');
+            return false;
+        } finally {
+            isSubmitting = false;
+        }
+    }
+
+    async function storeProperty(data) {
+        isSubmitting = true;
+        try {
+            const res = await fetch('/properties', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                const newProperty = await res.json();
+                properties.push({
+                    ...newProperty,
+                    compliance: { gas: 'Pending', fire: 'Pending', electric: 'Pending' },
+                    features: []
+                });
+                return true;
+            } else {
+                const errorData = await res.json();
+                alert(errorData.message || 'Failed to list property.');
+                return false;
+            }
+        } catch (e) {
+            alert('Connection error.');
             return false;
         } finally {
             isSubmitting = false;
@@ -693,7 +726,7 @@
                                     </p>
                                 </div>
                                 {#if landlordView === 'properties'}
-                                    <Button variant="primary" size="lg">
+                                    <Button variant="primary" size="lg" onclick={() => showPropertyModal = true}>
                                         <Plus size={20} />
                                         Add Property
                                     </Button>
@@ -838,7 +871,7 @@
 
     <VisitModal 
         isOpen={isScheduling} 
-        onClose={() => { isScheduling = false; showAuthPrompt = false; }}
+        onClose={() => isScheduling = false}
         property={selectedProperty}
         identityDoc={identityDoc}
         onSubmit={submitVisit}
@@ -871,29 +904,12 @@
         isSubmitting={isSubmitting}
     />
 
-    {#if showAuthPrompt}
-        <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div class="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-                <div class="p-8 text-center space-y-6">
-                    <div class="w-20 h-20 bg-brand-primary/5 rounded-full flex items-center justify-center mx-auto text-brand-action">
-                        <span class="material-symbols-outlined text-4xl">lock</span>
-                    </div>
-                    <div class="space-y-2">
-                        <h2 class="text-3xl font-black text-brand-primary">Authentication Required</h2>
-                        <p class="text-gray-500">To ensure safety and legal compliance, you must be signed in to schedule a visit.</p>
-                    </div>
-                    <div class="flex flex-col gap-3">
-                        <Button variant="primary" size="xl" onclick={() => { showAuthPrompt = false; showLoginModal = true; }}>
-                            Sign In or Create Account
-                        </Button>
-                        <Button variant="secondary" size="xl" onclick={() => { showAuthPrompt = false; isScheduling = false; }}>
-                            Not now
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {/if}
+    <PropertyModal 
+        isOpen={showPropertyModal} 
+        onClose={() => showPropertyModal = false}
+        onSubmit={storeProperty}
+        isSubmitting={isSubmitting}
+    />
 </div>
 
 <style>

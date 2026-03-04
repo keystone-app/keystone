@@ -3,9 +3,9 @@
 namespace Tests\Feature;
 
 use App\Domain\Identity\Models\User;
+use App\Domain\Legal\Models\Document;
 use App\Domain\Property\Models\Property;
 use App\Domain\Scheduling\Models\Visit;
-use App\Domain\Legal\Models\Document;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -30,7 +30,7 @@ class VisitControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonCount(1);
         $response->assertJsonFragment(['id' => $visit->id]);
-        
+
         $ids = collect($response->json())->pluck('id');
         $this->assertNotContains($otherVisit->id, $ids);
     }

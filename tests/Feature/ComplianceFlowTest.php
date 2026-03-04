@@ -3,10 +3,8 @@
 namespace Tests\Feature;
 
 use App\Domain\Identity\Models\User;
-use App\Domain\Property\Models\Property;
-use App\Domain\Scheduling\Models\Visit;
 use App\Domain\Negotiation\Models\Offer;
-use App\Domain\Legal\Models\Document;
+use App\Domain\Property\Models\Property;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -24,11 +22,11 @@ class ComplianceFlowTest extends TestCase
         $offer = Offer::factory()->create([
             'property_id' => $property->id,
             'status' => 'pending',
-            'compliance_status' => 'none'
+            'compliance_status' => 'none',
         ]);
 
         $response = $this->actingAs($landlord)->patchJson("/offers/{$offer->id}", [
-            'status' => 'accepted'
+            'status' => 'accepted',
         ]);
 
         $response->assertStatus(200);
@@ -43,7 +41,7 @@ class ComplianceFlowTest extends TestCase
         $tenant = User::factory()->tenant()->create();
         $offer = Offer::factory()->create([
             'user_id' => $tenant->id,
-            'compliance_status' => 'awaiting_documents'
+            'compliance_status' => 'awaiting_documents',
         ]);
 
         $file = UploadedFile::fake()->image('income.jpg');
@@ -51,13 +49,13 @@ class ComplianceFlowTest extends TestCase
         $response = $this->actingAs($tenant)->postJson('/compliance-upload', [
             'offer_id' => $offer->id,
             'type' => 'income_proof',
-            'file' => $file
+            'file' => $file,
         ]);
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('documents', [
             'user_id' => $tenant->id,
-            'type' => 'income_proof'
+            'type' => 'income_proof',
         ]);
     }
 
@@ -68,14 +66,14 @@ class ComplianceFlowTest extends TestCase
         $tenant = User::factory()->tenant()->create();
         $offer = Offer::factory()->create([
             'user_id' => $tenant->id,
-            'compliance_status' => 'awaiting_documents'
+            'compliance_status' => 'awaiting_documents',
         ]);
 
         // Upload first doc
         $this->actingAs($tenant)->postJson('/compliance-upload', [
             'offer_id' => $offer->id,
             'type' => 'income_proof',
-            'file' => UploadedFile::fake()->image('income.jpg')
+            'file' => UploadedFile::fake()->image('income.jpg'),
         ]);
 
         $this->assertEquals('awaiting_documents', $offer->fresh()->compliance_status);
@@ -84,7 +82,7 @@ class ComplianceFlowTest extends TestCase
         $this->actingAs($tenant)->postJson('/compliance-upload', [
             'offer_id' => $offer->id,
             'type' => 'residency_proof',
-            'file' => UploadedFile::fake()->image('residency.jpg')
+            'file' => UploadedFile::fake()->image('residency.jpg'),
         ]);
 
         $this->assertEquals('pending_verification', $offer->fresh()->compliance_status);
@@ -96,7 +94,7 @@ class ComplianceFlowTest extends TestCase
         $tenant = User::factory()->tenant()->create();
         $offer = Offer::factory()->create([
             'user_id' => $tenant->id,
-            'compliance_status' => 'pending_verification'
+            'compliance_status' => 'pending_verification',
         ]);
 
         $response = $this->actingAs($tenant)->postJson("/offers/{$offer->id}/verify");

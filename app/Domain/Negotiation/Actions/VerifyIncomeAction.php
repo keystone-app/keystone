@@ -21,10 +21,10 @@ class VerifyIncomeAction
             'verification' => [
                 'provider' => 'Brazil Open Finance',
                 'status' => 'success',
-                'monthly_income_verified' => (float)$offer->amount * 3.5,
+                'monthly_income_verified' => (float) $offer->amount * 3.5,
                 'confidence_score' => 0.98,
                 'verified_at' => now(),
-            ]
+            ],
         ];
     }
 }

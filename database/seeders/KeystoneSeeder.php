@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Domain\Identity\Models\User;
-use App\Domain\Property\Models\Property;
-use App\Domain\Legal\Models\Lease;
 use App\Domain\Legal\Models\Document;
+use App\Domain\Legal\Models\Lease;
+use App\Domain\Property\Models\Property;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 

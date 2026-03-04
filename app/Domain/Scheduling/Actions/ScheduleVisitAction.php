@@ -12,7 +12,7 @@ class ScheduleVisitAction
         $user = Auth::user();
         $docId = $data['document_id'] ?? $user->identity_document_id;
 
-        if (!$docId) {
+        if (! $docId) {
             throw new \Exception('Identity document required.', 422);
         }
 

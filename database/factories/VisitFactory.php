@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class VisitFactory extends Factory
 {
     protected $model = Visit::class;
+
     /**
      * Define the model's default state.
      *

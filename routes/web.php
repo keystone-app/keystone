@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\VisitController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\VisitController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -22,7 +23,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-visits', [VisitController::class, 'myVisits']);
     Route::post('/visits', [VisitController::class, 'store']);
     Route::patch('/visits/{visit}', [VisitController::class, 'update']);
-    
+
+    Route::get('/properties', [PropertyController::class, 'index']);
+    Route::post('/properties', [PropertyController::class, 'store']);
+
     Route::get('/offers', [OfferController::class, 'index']);
     Route::post('/offers', [OfferController::class, 'store']);
     Route::patch('/offers/{offer}', [OfferController::class, 'update']);

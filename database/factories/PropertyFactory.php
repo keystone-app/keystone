@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class PropertyFactory extends Factory
 {
     protected $model = Property::class;
+
     /**
      * Define the model's default state.
      *
@@ -21,10 +22,12 @@ class PropertyFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'name' => $this->faker->company . ' Apartment',
+            'name' => $this->faker->company.' Apartment',
             'address' => $this->faker->address,
+            'price' => $this->faker->randomFloat(2, 1000, 5000),
             'description' => $this->faker->paragraph,
             'status' => 'available',
+            'type' => $this->faker->randomElement(['Apartment', 'House', 'Studio', 'Loft']),
         ];
     }
 }
