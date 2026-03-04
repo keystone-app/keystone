@@ -52,6 +52,6 @@ jobs:
           DEPLOY_TAG=${{ github.event.inputs.tag || github.event.release.tag_name }}
 
           ./vendor/bin/envoy run deploy \
-            -v tag=$DEPLOY_TAG \
+            --tag=$DEPLOY_TAG \
             --server=${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_IP }} \
-            -v path=${{ secrets.DEPLOY_PATH }}
+            --path=${{ secrets.DEPLOY_PATH }}
