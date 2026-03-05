@@ -22,13 +22,13 @@
   - [x] Test polymorphic relationships (`documentable`). dd12b0e
   - [x] Test scopes and custom methods. dd12b0e
 
-## Phase 3: Models and Controllers Refinement
-- [ ] **Task: Complete coverage for `User`, `Property`, and `Offer` models**
-  - [ ] Test all remaining relationships and helper methods.
-- [ ] **Task: Increase coverage for `VisitController` and `MaintenanceController`**
-  - [ ] Cover all remaining error paths (unauthorized, invalid transitions).
-- [ ] **Task: Increase coverage for Domain Actions**
-  - [ ] Target remaining red lines in `SignLeaseAction`, `UploadComplianceDocumentAction`, etc.
+## Phase 3: Models and Controllers Refinement [checkpoint: 1d2f037]
+- [x] **Task: Complete coverage for `User`, `Property`, and `Offer` models** 1d2f037
+  - [x] Test all remaining relationships and helper methods. 1d2f037
+- [x] **Task: Increase coverage for `VisitController` and `MaintenanceController`** 1d2f037
+  - [x] Cover all remaining error paths (unauthorized, invalid transitions). 1d2f037
+- [x] **Task: Increase coverage for Domain Actions** 1d2f037
+  - [x] Target remaining red lines in `SignLeaseAction`, `UploadComplianceDocumentAction`, etc. 1d2f037
 
 ## Phase 4: Final Validation
 - [ ] **Task: Final Coverage Audit**
