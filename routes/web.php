@@ -31,7 +31,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/offers', [OfferController::class, 'index']);
     Route::post('/offers', [OfferController::class, 'store']);
-    Route::patch('/offers/{offer}', [OfferController::class, 'update']);
+    Route::patch('/offers/{offer}', [OfferController::class, 'respond']);
     Route::post('/offers/{offer}/verify', [OfferController::class, 'verify']);
 
     Route::get('/leases', [LeaseController::class, 'index']);

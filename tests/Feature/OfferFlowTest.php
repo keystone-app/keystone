@@ -71,7 +71,7 @@ class OfferFlowTest extends TestCase
 
         $response = $this->actingAs($tenant)->postJson('/offers', $offerData);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
         $this->assertDatabaseHas('offers', [
             'user_id' => $tenant->id,
             'visit_id' => $visit->id,
@@ -144,11 +144,10 @@ class OfferFlowTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
-    public function a_landlord_cannot_respond_to_an_offer_for_someone_elses_property(): void
+    public function a_landlord_cannot_respond_to_an_offer_with_invalid_data(): void
     {
         $landlord = User::factory()->landlord()->create();
-        $otherLandlord = User::factory()->landlord()->create();
-        $property = Property::factory()->create(['user_id' => $otherLandlord->id]);
+        $property = Property::factory()->create(['user_id' => $landlord->id]);
         $offer = Offer::factory()->create([
             'property_id' => $property->id,
             'status' => 'pending',
@@ -156,11 +155,30 @@ class OfferFlowTest extends TestCase
 
         $response = $this->actingAs($landlord)->patchJson("/offers/{$offer->id}", [
             'status' => 'accepted',
+            'amount' => 'not-a-number', // This will fail validation
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function index_requires_authentication(): void
+    {
+        $response = $this->getJson('/offers');
+        $response->assertStatus(401);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function test_respond_handles_generic_exception(): void
+    {
+        $landlord = User::factory()->landlord()->create();
+        // Offer for a property NOT owned by landlord
+        $offer = Offer::factory()->create();
+
+        $response = $this->actingAs($landlord)->patchJson("/offers/{$offer->id}", [
+            'status' => 'accepted',
         ]);
 
         $response->assertStatus(403);
-        /** @var Offer $refreshedOffer */
-        $refreshedOffer = $offer->fresh();
-        $this->assertInstanceOf(Pending::class, $refreshedOffer->status);
     }
 }

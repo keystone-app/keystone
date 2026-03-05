@@ -14,7 +14,7 @@ class UploadIdentityDocumentAction
         $user = Auth::user();
 
         if (! $user instanceof User) {
-            throw new \Exception('Unauthenticated.', 401);
+            abort(401, 'Unauthenticated.');
         }
 
         $path = $file->store('identity_docs', 'public');

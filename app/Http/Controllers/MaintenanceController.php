@@ -13,11 +13,8 @@ class MaintenanceController extends Controller
 {
     public function index(): JsonResponse
     {
+        /** @var \App\Domain\Identity\Models\User $user */
         $user = auth()->user();
-
-        if (! $user) {
-            return response()->json(['message' => 'Unauthenticated.'], 401);
-        }
 
         if ($user->role === 'landlord') {
             $requests = MaintenanceRequest::whereHas('lease', function ($query) use ($user) {
@@ -42,20 +39,21 @@ class MaintenanceController extends Controller
         ]);
 
         $lease = Lease::findOrFail($data['lease_id']);
+        /** @var \App\Domain\Identity\Models\User $user */
         $user = auth()->user();
 
-        if (! $user) {
-            return response()->json(['message' => 'Unauthenticated.'], 401);
+        try {
+            $maintenanceRequest = $action->execute(
+                $lease,
+                $user,
+                $data['title'],
+                $data['description'] ?? null
+            );
+
+            return response()->json($maintenanceRequest, 201);
+        } catch (\Exception $e) {
+            abort(400, $e->getMessage());
         }
-
-        $maintenanceRequest = $action->execute(
-            $lease,
-            $user,
-            $data['title'],
-            $data['description'] ?? null
-        );
-
-        return response()->json($maintenanceRequest, 201);
     }
 
     public function update(Request $request, MaintenanceRequest $maintenanceRequest, UpdateMaintenanceStatusAction $action): JsonResponse
@@ -64,17 +62,8 @@ class MaintenanceController extends Controller
             'status' => 'required|string',
         ]);
 
+        /** @var \App\Domain\Identity\Models\User $user */
         $user = auth()->user();
-
-        if (! $user) {
-            return response()->json(['message' => 'Unauthenticated.'], 401);
-        }
-
-        // Simple authorization check before calling the action
-        // The action also has an authorization check, but we can catch it here too
-        if ($user->role !== 'landlord') {
-             return response()->json(['message' => 'Only landlords can update maintenance status.'], 403);
-        }
 
         try {
             $updatedRequest = $action->execute(
@@ -84,10 +73,10 @@ class MaintenanceController extends Controller
             );
 
             return response()->json($updatedRequest);
-        } catch (\InvalidArgumentException $e) {
-            return response()->json(['message' => $e->getMessage()], 403);
-        } catch (\Spatie\ModelStates\Exceptions\TransitionNotFound $e) {
-            return response()->json(['message' => 'Invalid status transition.'], 422);
+        } catch (\Exception $e) {
+            $code = $e->getCode();
+            if ($code < 100 || $code >= 600) $code = 403;
+            abort($code, $e->getMessage());
         }
     }
 }

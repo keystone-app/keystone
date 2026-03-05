@@ -15,7 +15,7 @@ class RespondToOfferAction
     {
         // Authorization: Ensure the offer belongs to a property owned by the authenticated landlord
         if ($offer->property->user_id !== Auth::id()) {
-            throw new \Exception('Unauthorized', 403);
+            abort(403, 'Unauthorized');
         }
 
         $status = $data['status'];

@@ -117,4 +117,48 @@ class VisitControllerTest extends TestCase
         $refreshedVisit = $visit->fresh();
         $this->assertEquals('pending', $refreshedVisit->status);
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function a_user_can_fetch_their_own_visits(): void
+    {
+        $user = User::factory()->create();
+        Visit::factory()->create(['user_id' => $user->id]);
+        Visit::factory()->create(); // other visit
+
+        $response = $this->actingAs($user)->getJson('/my-visits');
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function index_requires_authentication(): void
+    {
+        $response = $this->getJson('/visits');
+        $response->assertStatus(401);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function my_visits_requires_authentication(): void
+    {
+        $response = $this->getJson('/my-visits');
+        $response->assertStatus(401);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function store_handles_exceptions(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        // This will trigger an exception in the action because no document is provided and user has none
+        $property = Property::factory()->create();
+        
+        $response = $this->postJson('/visits', [
+            'property_id' => $property->id,
+            'visit_at' => now()->addDay()->toDateTimeString(),
+        ]);
+
+        $response->assertStatus(400);
+    }
 }

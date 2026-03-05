@@ -16,13 +16,13 @@ class ScheduleVisitAction
         $user = Auth::user();
 
         if (! $user instanceof User) {
-            throw new \Exception('Unauthenticated.', 401);
+            abort(401, 'Unauthenticated.');
         }
 
         $docId = $data['document_id'] ?? $user->identity_document_id;
 
         if (! $docId) {
-            throw new \Exception('Identity document required.', 422);
+            abort(422, 'Identity document required.');
         }
 
         return Visit::create([

@@ -13,10 +13,6 @@ class VisitController extends Controller
     {
         $user = auth()->user();
 
-        if (! $user) {
-            return response()->json(['message' => 'Unauthenticated.'], 401);
-        }
-
         // Get visits for properties owned by this landlord
         $visits = Visit::whereHas('property', function ($query) use ($user) {
             $query->where('user_id', $user->id);

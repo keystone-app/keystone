@@ -41,11 +41,8 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+            /** @var User $user */
             $user = Auth::user();
-
-            if (! $user instanceof \App\Domain\Identity\Models\User) {
-                return response()->json(['message' => 'Authentication failed.'], 401);
-            }
 
             return response()->json([
                 'user' => $user,

@@ -12,11 +12,8 @@ class LeaseController extends Controller
 {
     public function index(): JsonResponse
     {
+        /** @var \App\Domain\Identity\Models\User $user */
         $user = auth()->user();
-
-        if (! $user) {
-            return response()->json(['message' => 'Unauthenticated.'], 401);
-        }
 
         $leases = Lease::where('landlord_id', $user->id)
             ->orWhere('tenant_id', $user->id)
@@ -35,19 +32,24 @@ class LeaseController extends Controller
         ]);
 
         $file = $request->file('file');
-        if (! $file instanceof \Illuminate\Http\UploadedFile) {
-            return response()->json(['message' => 'Invalid file.'], 400);
+
+        try {
+            $document = $action->execute($lease, (string) $request->string('type'), $file);
+
+            return response()->json($document);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
         }
-
-        $document = $action->execute($lease, (string) $request->string('type'), $file);
-
-        return response()->json($document);
     }
 
     public function sign(Request $request, Lease $lease, SignLeaseAction $action): JsonResponse
     {
-        $lease = $action->execute($lease);
+        try {
+            $lease = $action->execute($lease);
 
-        return response()->json($lease->load(['property', 'landlord', 'tenant', 'documents']));
+            return response()->json($lease->load(['property', 'landlord', 'tenant', 'documents']));
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
+        }
     }
 }
