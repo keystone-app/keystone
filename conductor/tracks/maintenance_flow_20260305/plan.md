@@ -1,15 +1,15 @@
 # Implementation Plan: End-to-End Maintenance Request Flow
 
-## Phase 1: Maintenance Request Domain Actions
-- [ ] **Task: Write tests for `SubmitMaintenanceRequestAction`**
-  - [ ] Implement unit tests ensuring a tenant can submit a request for their active lease.
-- [ ] **Task: Implement `SubmitMaintenanceRequestAction`**
-  - [ ] Create the domain action logic.
-- [ ] **Task: Write tests for `UpdateMaintenanceStatusAction`**
-  - [ ] Implement unit tests ensuring a landlord can update the status of a request for their property.
-- [ ] **Task: Implement `UpdateMaintenanceStatusAction`**
-  - [ ] Create the domain action logic enforcing state transitions.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 1: Maintenance Request Domain Actions' (Protocol in workflow.md)**
+## Phase 1: Maintenance Request Domain Actions [checkpoint: 24be417]
+- [x] **Task: Write tests for SubmitMaintenanceRequestAction** 56204cc
+  - [x] Implement unit tests ensuring a tenant can submit a request for their active lease. 56204cc
+- [x] **Task: Implement `SubmitMaintenanceRequestAction`** 56204cc
+  - [x] Create the domain action logic. 56204cc
+- [x] **Task: Write tests for UpdateMaintenanceStatusAction** 020e9fe
+  - [x] Implement unit tests ensuring a landlord can update the status of a request for their property. 020e9fe
+- [x] **Task: Implement `UpdateMaintenanceStatusAction`** 020e9fe
+  - [x] Create the domain action logic enforcing state transitions. 020e9fe
+- [x] **Task: Conductor - User Manual Verification 'Phase 1: Maintenance Request Domain Actions' (Protocol in workflow.md)** 24be417
 
 ## Phase 2: API Endpoints (Controllers)
 - [ ] **Task: Write tests for `MaintenanceController` endpoints**
