@@ -1,8 +1,8 @@
 # Implementation Plan: Advanced Feature Discovery and Scaffolding
 
 ## Phase 1: Advanced Search Domain Logic
-- [x] **Task: Write tests for Server-Side Property Search** (f30be42)
-- [x] **Task: Implement Advanced Search in `PropertyController`** (f30be42)
+- [x] **Task: Write tests for Server-Side Property Search** (31896a3)
+- [x] **Task: Implement Advanced Search in `PropertyController`** (31896a3)
 - [ ] **Task: Conductor - User Manual Verification 'Phase 1: Advanced Search Domain Logic' (Protocol in workflow.md)**
 
 ## Phase 2: Messaging & Notification Domain
