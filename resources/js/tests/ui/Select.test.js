@@ -50,4 +50,10 @@ describe("Select Component", () => {
         const select = container.querySelector("select");
         expect(select.children.length).toBe(0);
     });
+
+    it("works with bindable value being undefined", () => {
+        render(Select, { id: "test-select", options: ["A"], value: undefined });
+        const select = screen.getByRole("combobox");
+        expect(select.value).toBe("A"); // HTML select defaults to first option if none selected
+    });
 });
