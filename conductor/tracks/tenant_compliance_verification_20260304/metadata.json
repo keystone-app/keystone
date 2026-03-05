@@ -1,0 +1,8 @@
+{
+  "track_id": "tenant_compliance_verification_20260304",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-03-04T12:00:00Z",
+  "updated_at": "2026-03-04T12:00:00Z",
+  "description": "Implement the end-to-end tenant compliance and document verification workflow, from offer acceptance to lease draft generation."
+}
