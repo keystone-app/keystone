@@ -1,7 +1,9 @@
 <script>
-    import { Home } from 'lucide-svelte';
+    import { createRawSnippet } from 'svelte';
+    import Card from '../ui/Card.svelte';
     import Button from '../ui/Button.svelte';
     import Badge from '../ui/Badge.svelte';
+    import PriceDisplay from '../ui/PriceDisplay.svelte';
 
     let { property, onViewDetails } = $props();
 
@@ -10,13 +12,33 @@
         rented: 'info',
         maintenance: 'warning'
     };
+
+    const thumbnail = $derived(property.media?.find(m => m.type === 'property_image')?.path);
+
+    const header = createRawSnippet(() => ({
+        render: () => `
+            <div class="flex justify-between items-center w-full">
+                <span class="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">
+                    ${property.type}
+                </span>
+                <div class="badge-container"></div>
+            </div>
+        `
+    }));
 </script>
 
-<div class="group bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-    <div class="h-56 bg-gray-100 flex items-center justify-center border-b border-gray-100 relative">
-        <Home class="w-16 h-16 text-gray-300 group-hover:text-indigo-200 transition-colors" />
+<!-- Note: Svelte 5 snippets are better used within the same file or passed as props. 
+     Using a more standard approach for Card content below -->
+
+<Card class="group h-full flex flex-col" padding="p-0">
+    <div class="h-56 bg-gray-100 flex items-center justify-center border-b border-gray-100 relative overflow-hidden">
+        {#if thumbnail}
+            <img src="/storage/{thumbnail}" alt={property.name} class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+        {:else}
+            <span class="material-symbols-outlined text-gray-200 text-6xl group-hover:text-indigo-200 transition-colors">home</span>
+        {/if}
         <div class="absolute top-4 left-4">
-            <span class="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+            <span class="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">
                 {property.type}
             </span>
         </div>
@@ -26,20 +48,18 @@
             </Badge>
         </div>
     </div>
-    <div class="p-6">
-        <h3 class="font-extrabold text-xl mb-1 group-hover:text-indigo-600 transition-colors">{property.name}</h3>
-        <p class="text-gray-500 text-sm mb-6 flex items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+    <div class="p-6 flex-1 flex flex-col">
+        <h3 class="font-extrabold text-xl mb-1 group-hover:text-brand-action transition-colors line-clamp-1">{property.name}</h3>
+        <p class="text-gray-500 text-xs mb-6 flex items-center gap-1 font-bold uppercase tracking-wider">
+            <span class="material-symbols-outlined text-sm text-brand-action">location_on</span>
             {property.address}
         </p>
-        <div class="flex justify-between items-center pt-5 border-t border-gray-100">
-            <div>
-                <span class="text-2xl font-black text-indigo-600">${property.price.toLocaleString()}</span>
-                <span class="text-gray-400 text-sm font-medium">/mo</span>
-            </div>
-            <Button variant="outline" size="sm" onclick={() => onViewDetails(property)}>
-                View Details
+        
+        <div class="mt-auto pt-5 border-t border-gray-100 flex justify-between items-center">
+            <PriceDisplay price={property.price} size="md" />
+            <Button variant="outline" size="sm" onclick={() => onViewDetails(property)} class="font-bold text-xs uppercase tracking-widest">
+                Details
             </Button>
         </div>
     </div>
-</div>
+</Card>

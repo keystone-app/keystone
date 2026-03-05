@@ -11,10 +11,21 @@ describe("App Layout", () => {
 	});
 
 	it("does not render the sidebar when the user is unauthenticated", async () => {
-		// Mock unauthenticated response
-		fetch.mockResolvedValue({
-			ok: true,
-			json: () => Promise.resolve({ user: null })
+		// Mock responses for auth and properties
+		fetch.mockImplementation((url) => {
+			if (url === '/me') {
+				return Promise.resolve({
+					ok: true,
+					json: () => Promise.resolve({ user: null })
+				});
+			}
+			if (url === '/properties') {
+				return Promise.resolve({
+					ok: true,
+					json: () => Promise.resolve([])
+				});
+			}
+			return Promise.reject(new Error('Unknown URL'));
 		});
 
 		render(App);
@@ -26,14 +37,25 @@ describe("App Layout", () => {
 	});
 
 	it("renders the sidebar when the user is authenticated", async () => {
-		// Mock authenticated response
-		fetch.mockResolvedValue({
-			ok: true,
-			json: () => Promise.resolve({ 
-				user: { name: "Test User" },
-				role: "tenant",
-				identity_document: null
-			})
+		// Mock responses for auth and properties
+		fetch.mockImplementation((url) => {
+			if (url === '/me') {
+				return Promise.resolve({
+					ok: true,
+					json: () => Promise.resolve({ 
+						user: { name: "Test User" },
+						role: "tenant",
+						identity_document: null
+					})
+				});
+			}
+			if (url === '/properties') {
+				return Promise.resolve({
+					ok: true,
+					json: () => Promise.resolve([])
+				});
+			}
+			return Promise.resolve({ ok: true, json: () => Promise.resolve([]) });
 		});
 
 		render(App);

@@ -30,7 +30,7 @@ describe('PropertyCard', () => {
             onViewDetails: handleViewDetails
         });
 
-        await fireEvent.click(getByText('View Details'));
+        await fireEvent.click(getByText('Details'));
         expect(handleViewDetails).toHaveBeenCalledWith(mockProperty);
     });
 });

@@ -23,26 +23,7 @@
     let identityDoc = $state(null);
 
     // Data State
-    let properties = $state([
-        { 
-            id: 1, name: 'Modern Apartment 101', address: '123 Legal Lane, Suite 101', price: 2500, status: 'available', type: 'Apartment',
-            description: 'A stunning modern apartment featuring floor-to-ceiling windows, an open-concept kitchen, and premium finishes throughout.',
-            features: ['2 Bedrooms', '2 Bathrooms', 'Parking Included', 'Gym Access'],
-            compliance: { gas: 'Verified', fire: 'Verified', electric: 'Pending' }
-        },
-        { 
-            id: 2, name: 'Cozy Studio Downtown', address: '456 Urban Ave, #4B', price: 1800, status: 'rented', type: 'Studio',
-            description: 'Efficient and stylish studio apartment perfect for young professionals.',
-            features: ['Studio', '1 Bathroom', 'High Ceilings', 'Pet Friendly'],
-            compliance: { gas: 'Verified', fire: 'Verified', electric: 'Verified' }
-        },
-        { 
-            id: 3, name: 'Spacious Family Home', address: '789 Suburban Way', price: 3500, status: 'available', type: 'House',
-            description: 'Large family home with a beautiful garden, modern appliances, and a quiet neighborhood atmosphere.',
-            features: ['4 Bedrooms', '3 Bathrooms', 'Large Garden', 'Double Garage'],
-            compliance: { gas: 'Verified', fire: 'Verified', electric: 'Verified' }
-        }
-    ]);
+    let properties = $state([]);
     let landlordVisits = $state([]);
     let myVisits = $state([]);
     let offers = $state([]);
@@ -61,6 +42,7 @@
     // Lifecycle
     onMount(async () => {
         await checkAuth();
+        await fetchProperties();
     });
 
     // API Actions
@@ -79,6 +61,17 @@
             }
         } catch (e) {
             console.error('Auth check failed', e);
+        }
+    }
+
+    async function fetchProperties() {
+        try {
+            const res = await fetch('/properties');
+            if (res.ok) {
+                properties = await res.json();
+            }
+        } catch (e) {
+            console.error('Failed to fetch properties', e);
         }
     }
 
@@ -177,14 +170,36 @@
     async function storeProperty(data) {
         isSubmitting = true;
         try {
+            const formData = new FormData();
+            formData.append('name', data.name);
+            formData.append('address', data.address);
+            formData.append('price', data.price);
+            formData.append('type', data.type);
+            formData.append('description', data.description || '');
+            
+            if (data.images && data.images.length > 0) {
+                data.images.forEach(image => {
+                    formData.append('images[]', image);
+                });
+            }
+            
+            if (data.videos && data.videos.length > 0) {
+                data.videos.forEach(video => {
+                    formData.append('videos[]', video);
+                });
+            }
+
             const res = await fetch('/properties', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' },
-                body: JSON.stringify(data)
+                headers: { 
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 
+                    'Accept': 'application/json' 
+                },
+                body: formData
             });
             if (res.ok) {
                 const newProperty = await res.json();
-                properties.push({ ...newProperty, compliance: { gas: 'Pending', fire: 'Pending', electric: 'Pending' }, features: [] });
+                properties = [...properties, { ...newProperty, compliance: { gas: 'Pending', fire: 'Pending', electric: 'Pending' }, features: [] }];
                 return true;
             }
             return false;
@@ -383,7 +398,7 @@
                 {#if role === 'landlord'}
                     <LandlordDashboard 
                         {landlordView} 
-                        {properties} 
+                        properties={properties.filter(p => p.user_id === currentUser?.id)} 
                         {landlordVisits} 
                         {offers} 
                         onAddProperty={() => showPropertyModal = true}
