@@ -1,6 +1,9 @@
 <script>
     import Modal from '../ui/Modal.svelte';
     import Button from '../ui/Button.svelte';
+    import Input from '../ui/Input.svelte';
+    import TextArea from '../ui/TextArea.svelte';
+    import Select from '../ui/Select.svelte';
     import { Plus, X } from 'lucide-svelte';
 
     let { 
@@ -18,6 +21,10 @@
     let images = $state([]);
     let videos = $state([]);
     let imagePreviews = $state([]);
+
+    const propertyTypes = [
+        'Apartment', 'House', 'Studio', 'Loft', 'Penthouse'
+    ];
 
     function handleImageChange(e) {
         const files = Array.from(e.target.files);
@@ -46,7 +53,8 @@
         videos = videos.filter((_, i) => i !== index);
     }
 
-    async function handleSubmit() {
+    async function handleSubmit(e) {
+        e.preventDefault();
         const success = await onSubmit({
             name,
             address,
@@ -77,81 +85,60 @@
 
 <Modal {isOpen} {onClose} title="Add New Property" maxWidth="max-w-lg">
     <form class="space-y-6" onsubmit={handleSubmit}>
-        <div class="space-y-1">
-            <label for="prop-name" class="text-xs font-black uppercase tracking-widest text-gray-400">Property Name</label>
-            <input 
-                id="prop-name"
-                type="text" 
-                bind:value={name}
-                placeholder="Modern Apartment 101"
-                class="w-full px-4 py-3 bg-brand-primary/5 border border-brand-primary/10 rounded-xl focus:ring-2 focus:ring-brand-action outline-none font-bold"
-                required
-            />
-        </div>
+        <Input 
+            id="prop-name"
+            label="Property Name"
+            bind:value={name}
+            placeholder="Modern Apartment 101"
+            required
+        />
 
-        <div class="space-y-1">
-            <label for="prop-address" class="text-xs font-black uppercase tracking-widest text-gray-400">Address</label>
-            <input 
-                id="prop-address"
-                type="text" 
-                bind:value={address}
-                placeholder="123 Legal Lane, Suite 101"
-                class="w-full px-4 py-3 bg-brand-primary/5 border border-brand-primary/10 rounded-xl focus:ring-2 focus:ring-brand-action outline-none font-bold"
-                required
-            />
-        </div>
+        <Input 
+            id="prop-address"
+            label="Address"
+            bind:value={address}
+            placeholder="123 Legal Lane, Suite 101"
+            required
+        />
 
         <div class="grid grid-cols-2 gap-4">
-            <div class="space-y-1">
-                <label for="prop-price" class="text-xs font-black uppercase tracking-widest text-gray-400">Monthly Rent ($)</label>
-                <input 
-                    id="prop-price"
-                    type="number" 
-                    bind:value={price}
-                    placeholder="2500"
-                    class="w-full px-4 py-3 bg-brand-primary/5 border border-brand-primary/10 rounded-xl focus:ring-2 focus:ring-brand-action outline-none font-bold"
-                    required
-                />
-            </div>
-            <div class="space-y-1">
-                <label for="prop-type" class="text-xs font-black uppercase tracking-widest text-gray-400">Property Type</label>
-                <select 
-                    id="prop-type"
-                    bind:value={type}
-                    class="w-full px-4 py-3 bg-brand-primary/5 border border-brand-primary/10 rounded-xl focus:ring-2 focus:ring-brand-action outline-none font-bold"
-                >
-                    <option value="Apartment">Apartment</option>
-                    <option value="House">House</option>
-                    <option value="Studio">Studio</option>
-                    <option value="Loft">Loft</option>
-                    <option value="Penthouse">Penthouse</option>
-                </select>
-            </div>
+            <Input 
+                id="prop-price"
+                label="Monthly Rent ($)"
+                type="number"
+                bind:value={price}
+                placeholder="2500"
+                required
+            />
+            <Select 
+                id="prop-type"
+                label="Property Type"
+                options={propertyTypes}
+                bind:value={type}
+            />
         </div>
 
-        <div class="space-y-1">
-            <label for="prop-description" class="text-xs font-black uppercase tracking-widest text-gray-400">Description</label>
-            <textarea 
-                id="prop-description"
-                bind:value={description}
-                placeholder="Describe the property's key features..."
-                class="w-full px-4 py-3 bg-brand-primary/5 border border-brand-primary/10 rounded-xl focus:ring-2 focus:ring-brand-action outline-none font-medium h-32"
-            ></textarea>
-        </div>
+        <TextArea 
+            id="prop-description"
+            label="Description"
+            bind:value={description}
+            placeholder="Describe the property's key features..."
+            class="h-32"
+        />
 
         <div class="space-y-3">
             <label class="text-xs font-black uppercase tracking-widest text-gray-400">Media Assets</label>
             
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-2">
-                    <label class="block p-4 border-2 border-dashed border-brand-primary/10 rounded-xl hover:border-brand-action cursor-pointer transition-colors text-center">
-                        <input type="file" multiple accept="image/*" class="hidden" onchange={handleImageChange} />
+                    <input id="prop-images" type="file" multiple accept="image/*" class="hidden" onchange={handleImageChange} />
+                    <label for="prop-images" class="block p-4 border-2 border-dashed border-brand-primary/10 rounded-xl hover:border-brand-action cursor-pointer transition-colors text-center">
                         <span class="text-xs font-black uppercase text-brand-action">Add Images</span>
                     </label>
                 </div>
                 <div class="space-y-2">
-                    <label class="block p-4 border-2 border-dashed border-brand-primary/10 rounded-xl hover:border-brand-action cursor-pointer transition-colors text-center">
-                        <input type="file" multiple accept="video/*" class="hidden" onchange={handleVideoChange} />
+                    <input id="prop-videos" type="file" multiple accept="video/*" class="hidden" onchange={handleVideoChange} />
+                    <label for="prop-videos" class="block p-4 border-2 border-dashed border-brand-primary/10 rounded-xl hover:border-brand-action cursor-pointer transition-colors text-center">
                         <span class="text-xs font-black uppercase text-brand-action">Add Videos</span>
                     </label>
                 </div>

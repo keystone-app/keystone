@@ -23,6 +23,6 @@ class PropertyController extends Controller
 
     public function index(): JsonResponse
     {
-        return response()->json(\App\Domain\Property\Models\Property::all());
+        return response()->json(\App\Domain\Property\Models\Property::with('media')->get());
     }
 }
