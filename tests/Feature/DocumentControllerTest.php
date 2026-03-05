@@ -32,6 +32,26 @@ class DocumentControllerTest extends TestCase
         ]);
     }
 
+    public function test_identity_upload_requires_authentication(): void
+    {
+        $response = $this->postJson('/identity-upload', []);
+        $response->assertStatus(401);
+    }
+
+    public function test_compliance_upload_handles_invalid_file(): void
+    {
+        $user = User::factory()->tenant()->create();
+        $offer = Offer::factory()->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->postJson('/compliance-upload', [
+            'offer_id' => $offer->id,
+            'type' => 'income_proof',
+            'file' => 'not-a-file',
+        ]);
+
+        $response->assertStatus(422);
+    }
+
     public function test_user_can_upload_compliance_document(): void
     {
         Storage::fake('public');

@@ -83,4 +83,26 @@ class UpdateMaintenanceStatusActionTest extends TestCase
 
         $action->execute($request, $landlord, Resolved::class);
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_throws_exception_if_unauthorized(): void
+    {
+        $landlord = User::factory()->landlord()->create();
+        $otherUser = User::factory()->create();
+        $property = Property::factory()->create(['user_id' => $landlord->id]);
+        $lease = Lease::factory()->create(['property_id' => $property->id, 'landlord_id' => $landlord->id]);
+        $request = MaintenanceRequest::create([
+            'lease_id' => $lease->id,
+            'user_id' => User::factory()->tenant()->create()->id,
+            'title' => 'Test',
+            'status' => Reported::class,
+        ]);
+
+        $action = new UpdateMaintenanceStatusAction();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('You are not authorized to update this maintenance request.');
+
+        $action->execute($request, $otherUser, InProgress::class);
+    }
 }
