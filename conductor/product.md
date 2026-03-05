@@ -24,4 +24,5 @@ The **Negotiation & Offers** domain is a central part of the Keystone platform. 
 - **Offer Management:** Centralized system for submitting, reviewing, and counter-offering on properties.
 - **e-Signatures:** Legally-binding digital signatures for lease agreements and other legal documents.
 - **Document Verification:** Secure upload and verification of identity and compliance documents (e.g., ID cards, proof of income).
-- **Payment & Maintenance Scaffolding:** Core domain logic for rent collection and property issue reporting.
+- **Maintenance Management:** End-to-end flow for tenants to report property issues and landlords to track and resolve them.
+- **Payment Scaffolding:** Core domain logic for rent collection.

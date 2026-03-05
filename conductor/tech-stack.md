@@ -11,7 +11,7 @@
 - **Notifications:** Laravel Notifications (Mail and Database drivers).
 - **Frontend Components:** Bits UI, Lucide Svelte, tailwind-merge, clsx.
 - **Infrastructure:** Laravel Envoy (for zero-downtime deployments).
-- **Communication:** Axios (for HTTP requests in the frontend).
+- **Communication:** Native Fetch API (for HTTP requests in the frontend).
 
 ## Quality Assurance
 - **Backend Testing:** PHPUnit, Laravel Pail, nunomaduro/collision.
