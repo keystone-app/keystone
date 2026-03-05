@@ -29,4 +29,50 @@ describe("LandlordDashboard", () => {
         render(LandlordDashboard, { ...mockProps, landlordView: 'offers' });
         expect(screen.getByText("Offer Negotiations")).toBeTruthy();
     });
+
+    it("renders maintenance view when landlordView is maintenance", () => {
+        render(LandlordDashboard, { ...mockProps, landlordView: 'maintenance' });
+        expect(screen.getByText("Maintenance Management")).toBeTruthy();
+    });
+
+    it("renders a list of maintenance requests for landlords", () => {
+        const maintenanceRequests = [
+            {
+                id: 1,
+                title: "Broken window",
+                status: "reported",
+                created_at: "2026-03-05T10:00:00Z",
+                lease: { property: { name: "Test Villa" } }
+            }
+        ];
+        render(LandlordDashboard, { ...mockProps, landlordView: 'maintenance', maintenanceRequests });
+        expect(screen.getByText("Broken window")).toBeTruthy();
+        expect(screen.getByText("Test Villa")).toBeTruthy();
+        expect(screen.getByText(/reported/i)).toBeTruthy();
+    });
+
+    it("calls onUpdateMaintenanceStatus when status is changed", async () => {
+        const onUpdateMaintenanceStatus = vi.fn();
+        const maintenanceRequests = [
+            {
+                id: 1,
+                title: "Broken window",
+                status: "reported",
+                created_at: "2026-03-05T10:00:00Z",
+                lease: { property: { name: "Test Villa" } }
+            }
+        ];
+        const { fireEvent } = await import("@testing-library/svelte");
+        render(LandlordDashboard, { 
+            ...mockProps, 
+            landlordView: 'maintenance', 
+            maintenanceRequests,
+            onUpdateMaintenanceStatus
+        });
+
+        const startButton = screen.getByText("Start Work");
+        await fireEvent.click(startButton);
+
+        expect(onUpdateMaintenanceStatus).toHaveBeenCalledWith(1, 'in_progress');
+    });
 });

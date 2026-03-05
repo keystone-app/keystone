@@ -12,11 +12,13 @@
         currentUser,
         landlordVisits = [],
         myVisits = [],
-        offers = []
+        offers = [],
+        maintenanceRequests = []
     } = $props();
 
     const pendingLandlordVisits = $derived(landlordVisits.filter(v => v.status === 'pending').length);
     const pendingOffers = $derived(offers.filter(o => o.status === 'pending').length);
+    const pendingMaintenance = $derived(maintenanceRequests.filter(r => role === 'landlord' ? r.status === 'reported' : r.status === 'resolved').length);
 </script>
 
 <aside class="w-64 text-white flex-shrink-0 sticky top-0 h-screen hidden lg:flex flex-col border-r border-white/10 bg-brand-primary">
@@ -90,6 +92,18 @@
                                 <span class="bg-brand-action text-white text-[8px] px-1.5 py-0.5 rounded-full">{pendingOffers}</span>
                             {/if}
                         </button>
+                        <button 
+                            onclick={() => onLandlordViewChange('maintenance')}
+                            class={cn(
+                                "w-full flex items-center justify-between px-4 py-2 text-xs font-bold transition-all hover:text-white",
+                                landlordView === 'maintenance' ? "text-brand-action" : "text-gray-500"
+                            )}
+                        >
+                            <span>Maintenance</span>
+                            {#if pendingMaintenance > 0}
+                                <span class="bg-orange-500 text-white text-[8px] px-1.5 py-0.5 rounded-full">{pendingMaintenance}</span>
+                            {/if}
+                        </button>
                     </div>
                 {/if}
 
@@ -122,6 +136,18 @@
                             )}
                         >
                             <span>My Leases</span>
+                        </button>
+                        <button 
+                            onclick={() => onTenantViewChange('maintenance')}
+                            class={cn(
+                                "w-full flex items-center justify-between px-4 py-2 text-xs font-bold transition-all hover:text-white",
+                                tenantView === 'maintenance' ? "text-brand-action" : "text-gray-500"
+                            )}
+                        >
+                            <span>Maintenance</span>
+                            {#if role === 'tenant' && pendingMaintenance > 0}
+                                <span class="bg-brand-success text-white text-[8px] px-1.5 py-0.5 rounded-full">{pendingMaintenance}</span>
+                            {/if}
                         </button>
                     </div>
                 {/if}
