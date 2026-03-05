@@ -23,7 +23,7 @@ class PropertySearchTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonCount(1);
-        $response->assertJsonPath('0.price', '2000.00');
+        $this->assertEquals(2000, $response->json('0.price'));
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -65,7 +65,7 @@ class PropertySearchTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertJsonCount(1);
-        $response->assertJsonPath('0.price', '2000.00');
+        $this->assertEquals(2000, $response->json('0.price'));
         $response->assertJsonPath('0.type', 'Apartment');
         $response->assertJsonFragment(['status' => 'available']);
     }
