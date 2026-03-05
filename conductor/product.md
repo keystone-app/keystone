@@ -11,7 +11,7 @@ Keystone is a comprehensive property management and real estate platform designe
 - **Tenants:** For property search, application, and digital lease signing.
 
 ## Core Domain: Negotiation & Offers
-The current development priority is the **Negotiation & Offers** domain. This includes managing property offers, counter-offers, and the transition from a successful offer to a formal lease agreement.
+The **Negotiation & Offers** domain is a central part of the Keystone platform. It handles the complete lifecycle of an offer, from initial submission and counter-offers to final acceptance, tenant document verification, and income validation via external providers. A successful verification automatically initiates the transition to the **Legal** domain by generating a formal lease draft.
 
 ## Strategic Goals
 - **Launch MVP:** Get the core platform functionality into the hands of real users.
