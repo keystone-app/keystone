@@ -117,4 +117,28 @@ class VisitControllerTest extends TestCase
         $refreshedVisit = $visit->fresh();
         $this->assertEquals('pending', $refreshedVisit->status);
     }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function index_requires_authentication(): void
+    {
+        $response = $this->getJson('/visits');
+        $response->assertStatus(401);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function store_handles_exceptions(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        // This will trigger an exception in the action because no document is provided and user has none
+        $property = Property::factory()->create();
+        
+        $response = $this->postJson('/visits', [
+            'property_id' => $property->id,
+            'visit_at' => now()->addDay()->toDateTimeString(),
+        ]);
+
+        $response->assertStatus(422);
+    }
 }
