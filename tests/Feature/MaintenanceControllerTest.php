@@ -124,4 +124,31 @@ class MaintenanceControllerTest extends TestCase
 
         $response->assertStatus(403);
     }
+
+    public function test_index_requires_authentication(): void
+    {
+        $response = $this->getJson('/maintenance');
+        $response->assertStatus(401);
+    }
+
+    public function test_update_handles_invalid_transitions(): void
+    {
+        $landlord = User::factory()->landlord()->create();
+        $property = Property::factory()->create(['user_id' => $landlord->id]);
+        $lease = Lease::factory()->create(['property_id' => $property->id, 'landlord_id' => $landlord->id, 'status' => Active::class]);
+
+        $request = MaintenanceRequest::create([
+            'lease_id' => $lease->id,
+            'user_id' => User::factory()->tenant()->create()->id,
+            'title' => 'Leaking tap',
+            'status' => Reported::class,
+        ]);
+
+        // Reported -> Resolved is invalid
+        $response = $this->actingAs($landlord)->patchJson("/maintenance/{$request->id}", [
+            'status' => 'resolved',
+        ]);
+
+        $response->assertStatus(422);
+    }
 }
