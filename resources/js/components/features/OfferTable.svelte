@@ -54,19 +54,19 @@
                             </div>
                         </td>
                         <td class="px-6 py-5">
-                            {#if offer.compliance_status === 'none'}
+                            {#if offer.compliance_status_label === 'none'}
                                 <span class="text-[10px] text-gray-300 font-black uppercase">N/A</span>
-                            {:else if offer.compliance_status === 'awaiting_documents'}
+                            {:else if offer.compliance_status_label === 'awaiting_documents'}
                                 <div class="flex items-center gap-2 text-[10px] font-black uppercase text-amber-600">
                                     <div class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></div>
                                     Uploading Docs
                                 </div>
-                            {:else if offer.compliance_status === 'pending_verification'}
+                            {:else if offer.compliance_status_label === 'pending_verification'}
                                 <div class="flex items-center gap-2 text-[10px] font-black uppercase text-indigo-600">
                                     <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></div>
                                     In Verification
                                 </div>
-                            {:else if offer.compliance_status === 'verified'}
+                            {:else if offer.compliance_status_label === 'verified'}
                                 <div class="flex flex-col gap-1">
                                     <div class="flex items-center gap-1.5 text-[10px] font-black uppercase text-green-600">
                                         <CheckCircle2 size={12} />
@@ -93,7 +93,7 @@
                                 {/if}
                             {:else}
                                 {#if offer.status === 'accepted'}
-                                    {#if offer.compliance_status === 'awaiting_documents'}
+                                    {#if offer.compliance_status_label === 'awaiting_documents'}
                                         <div class="flex justify-end gap-2">
                                             <Button variant="outline" size="sm" class="text-[10px] font-black uppercase relative">
                                                 Income
@@ -104,11 +104,11 @@
                                                 <input type="file" class="absolute inset-0 opacity-0 cursor-pointer" onchange={(e) => onUploadCompliance(offer.id, 'residency_proof', e)} />
                                             </Button>
                                         </div>
-                                    {:else if offer.compliance_status === 'pending_verification'}
+                                    {:else if offer.compliance_status_label === 'pending_verification'}
                                         <Button variant="primary" size="sm" onclick={() => onVerifyIncome(offer.id)} class="text-[10px] font-black uppercase">
                                             Verify Identity
                                         </Button>
-                                    {:else if offer.compliance_status === 'verified'}
+                                    {:else if offer.compliance_status_label === 'verified'}
                                         <span class="text-[10px] text-brand-action font-black uppercase tracking-widest flex items-center justify-end gap-1">
                                             <FileText size={14} />
                                             Ready for Lease
