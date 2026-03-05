@@ -44,4 +44,10 @@ describe("Select Component", () => {
         expect(screen.getByText("A")).toBeTruthy();
         expect(screen.getByText("B")).toBeTruthy();
     });
+
+    it("renders with default empty options", () => {
+        const { container } = render(Select, { id: "test-select" });
+        const select = container.querySelector("select");
+        expect(select.children.length).toBe(0);
+    });
 });

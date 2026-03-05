@@ -20,4 +20,13 @@ describe("PriceDisplay Component", () => {
         const priceElement = screen.getByText("$100");
         expect(priceElement.className).toContain("text-5xl");
     });
+
+    it("supports various size variants", () => {
+        const { unmount } = render(PriceDisplay, { price: 100, size: "sm" });
+        expect(screen.getByText("$100").className).toContain("text-lg");
+        unmount();
+
+        render(PriceDisplay, { price: 100, size: "lg" });
+        expect(screen.getByText("$100").className).toContain("text-3xl");
+    });
 });
