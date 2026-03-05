@@ -27,9 +27,16 @@ class UploadComplianceDocumentAction
             'type' => $type,
         ]);
 
-        // Check if both docs are now present to update offer status
-        $hasIncome = Document::where('user_id', Auth::id())->where('type', 'income_proof')->exists();
-        $hasResidency = Document::where('user_id', Auth::id())->where('type', 'residency_proof')->exists();
+        // Check if both docs are now present for this specific offer to update offer status
+        $hasIncome = Document::where('documentable_type', Offer::class)
+            ->where('documentable_id', $offer->id)
+            ->where('type', 'income_proof')
+            ->exists();
+            
+        $hasResidency = Document::where('documentable_type', Offer::class)
+            ->where('documentable_id', $offer->id)
+            ->where('type', 'residency_proof')
+            ->exists();
 
         if ($hasIncome && $hasResidency && ($offer->status instanceof \App\Domain\Negotiation\States\AwaitingDocuments)) {
             $offer->status->transitionTo(\App\Domain\Negotiation\States\PendingVerification::class);

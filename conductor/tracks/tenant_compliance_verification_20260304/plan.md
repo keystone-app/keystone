@@ -1,12 +1,9 @@
 # Implementation Plan: Tenant Compliance and Verification Flow
 
 ## Phase 1: Compliance Document Management
-- [ ] **Task: Write tests for `UploadComplianceDocumentAction` enhancement**
-  - [ ] Create/Update `ComplianceFlowTest.php` to include multi-document upload and status check.
-- [ ] **Task: Refine `UploadComplianceDocumentAction` implementation**
-  - [ ] Ensure that uploading all required documents triggers transition to `PendingVerification`.
-- [ ] **Task: Write tests for automated status transition on upload**
-  - [ ] Verify that uploading only some documents keeps the status as `AwaitingDocuments`.
+- [x] **Task: Write tests for `UploadComplianceDocumentAction` enhancement** (0d3fd35)
+- [x] **Task: Refine `UploadComplianceDocumentAction` implementation** (0d3fd35)
+- [x] **Task: Write tests for automated status transition on upload** (0d3fd35)
 - [ ] **Task: Conductor - User Manual Verification 'Phase 1: Compliance Document Management' (Protocol in workflow.md)**
 
 ## Phase 2: Income Verification & Status Transitions
