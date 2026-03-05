@@ -7,13 +7,13 @@
   - [x] Build the UI for price inputs and type/status dropdowns using Bits UI. 2283ddf
   - [x] Ensure mobile-friendly layout. 2283ddf
 
-## Phase 2: Integration and Data Flow
-- [ ] **Task: Update `App.svelte` state management**
-  - [ ] Add `filters` state object.
-  - [ ] Modify `fetchProperties` to accept and apply filter parameters.
-- [ ] **Task: Connect Filters to ListingsView**
-  - [ ] Integrate `PropertyFilters` into the `ListingsView`.
-  - [ ] Wire the `onFilterChange` event to trigger property re-fetching.
+## Phase 2: Integration and Data Flow [checkpoint: d9756b9]
+- [x] **Task: Update `App.svelte` state management** 0a01f6b
+  - [x] Add `filters` state object. 0a01f6b
+  - [x] Modify `fetchProperties` to accept and apply filter parameters. 0a01f6b
+- [x] **Task: Connect Filters to ListingsView** a81c0bd
+  - [x] Integrate `PropertyFilters` into the `ListingsView`. a81c0bd
+  - [x] Wire the `onFilterChange` event to trigger property re-fetching. a81c0bd
 
 ## Phase 3: UX Refinement and Validation
 - [ ] **Task: Implement Debouncing and Loading States**
