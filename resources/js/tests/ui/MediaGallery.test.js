@@ -28,12 +28,27 @@ describe("MediaGallery Component", () => {
         expect(img.src).toContain("img2.jpg");
     });
 
-    it("switches image when thumbnail clicked", async () => {
+    it("switches image when prev button clicked", async () => {
         render(MediaGallery, { media });
-        const thumb2 = screen.getByLabelText("Select thumbnail 2");
-        await fireEvent.click(thumb2);
+        const prevBtn = screen.getByLabelText("Previous image");
+        await fireEvent.click(prevBtn);
+        
+        // Wrap around to the last image
+        const img = screen.getByAltText("Property View");
+        expect(img.src).toContain("img2.jpg");
+    });
+
+    it("switches image when dot indicator clicked", async () => {
+        render(MediaGallery, { media });
+        const dot2 = screen.getByLabelText("View image 2");
+        await fireEvent.click(dot2);
         
         const img = screen.getByAltText("Property View");
         expect(img.src).toContain("img2.jpg");
+    });
+
+    it("applies custom class name", () => {
+        const { container } = render(MediaGallery, { media: [], class: "custom-gallery" });
+        expect(container.firstChild.className).toContain("custom-gallery");
     });
 });
