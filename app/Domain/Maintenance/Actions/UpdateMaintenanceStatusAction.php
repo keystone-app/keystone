@@ -18,6 +18,8 @@ class UpdateMaintenanceStatusAction
      */
     public function execute(MaintenanceRequest $request, User $user, string|MaintenanceStatus $newStatus): MaintenanceRequest
     {
+        $request->loadMissing('lease');
+
         // Only the landlord of the property associated with the lease can update the status
         if ($request->lease->landlord_id !== $user->id) {
             throw new \InvalidArgumentException('You are not authorized to update this maintenance request.');

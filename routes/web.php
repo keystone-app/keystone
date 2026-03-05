@@ -37,4 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/leases', [LeaseController::class, 'index']);
     Route::post('/leases/{lease}/upload', [LeaseController::class, 'uploadDocument']);
     Route::post('/leases/{lease}/sign', [LeaseController::class, 'sign']);
+
+    Route::get('/maintenance', [\App\Http\Controllers\MaintenanceController::class, 'index']);
+    Route::post('/maintenance', [\App\Http\Controllers\MaintenanceController::class, 'store']);
+    Route::patch('/maintenance/{maintenanceRequest}', [\App\Http\Controllers\MaintenanceController::class, 'update']);
 });
