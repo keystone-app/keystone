@@ -11,10 +11,8 @@
 - [x] **Task: Conductor - User Manual Verification 'Phase 2: Messaging & Notification Domain' (Protocol in workflow.md)**
 
 ## Phase 3: Payments & Maintenance Domain Scaffolding
-- [ ] **Task: Write tests for `Payment` and `MaintenanceRequest` domain models**
-  - [ ] Implement tests for initial states and domain relationships.
-- [ ] **Task: Implement Domain Models and State Machines**
-  - [ ] Scaffold `Payment` and `MaintenanceRequest` models with Spatie Model States.
+- [x] **Task: Write tests for `Payment` and `MaintenanceRequest` domain models** (5df81c5)
+- [x] **Task: Implement Domain Models and State Machines** (5df81c5)
 - [ ] **Task: Conductor - User Manual Verification 'Phase 3: Payments & Maintenance Domain Scaffolding' (Protocol in workflow.md)**
 
 ## Phase 4: Frontend Scaffolding & Mobile-First UI
