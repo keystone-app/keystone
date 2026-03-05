@@ -11,16 +11,16 @@
 - [x] **Task: Implement tests for `UploadIdentityDocumentAction`** c3fab17
   - [x] Unit tests for document storage and relationship linking. c3fab17
 
-## Phase 2: Documents and Leases
-- [ ] **Task: Implement tests for `DocumentController`**
-  - [ ] Test compliance document uploads for offers.
-  - [ ] Test identity document uploads.
-- [ ] **Task: Increase coverage for `LeaseController`**
-  - [ ] Test `uploadDocument` route.
-  - [ ] Test `sign` route including edge cases.
-- [ ] **Task: Complete unit tests for `Document` model**
-  - [ ] Test polymorphic relationships (`documentable`).
-  - [ ] Test scopes and custom methods.
+## Phase 2: Documents and Leases [checkpoint: dd12b0e]
+- [x] **Task: Implement tests for `DocumentController`** dd12b0e
+  - [x] Test compliance document uploads for offers. dd12b0e
+  - [x] Test identity document uploads. dd12b0e
+- [x] **Task: Increase coverage for `LeaseController`** dd12b0e
+  - [x] Test `uploadDocument` route. dd12b0e
+  - [x] Test `sign` route including edge cases. dd12b0e
+- [x] **Task: Complete unit tests for `Document` model** dd12b0e
+  - [x] Test polymorphic relationships (`documentable`). dd12b0e
+  - [x] Test scopes and custom methods. dd12b0e
 
 ## Phase 3: Models and Controllers Refinement
 - [ ] **Task: Complete coverage for `User`, `Property`, and `Offer` models**
