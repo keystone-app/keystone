@@ -1,11 +1,9 @@
 # Implementation Plan: Advanced Feature Discovery and Scaffolding
 
-## Phase 1: Advanced Search Domain Logic
-- [ ] **Task: Write tests for Server-Side Property Search**
-  - [ ] Implement unit and integration tests for filtering by price, type, and status.
-- [ ] **Task: Implement Advanced Search in `PropertyController`**
-  - [ ] Create/Update search logic to support multi-parameter filtering.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 1: Advanced Search Domain Logic' (Protocol in workflow.md)**
+## Phase 1: Advanced Search Domain Logic [checkpoint: d1d31b7]
+- [x] **Task: Write tests for Server-Side Property Search** (31896a3)
+- [x] **Task: Implement Advanced Search in `PropertyController`** (31896a3)
+- [x] **Task: Conductor - User Manual Verification 'Phase 1: Advanced Search Domain Logic' (Protocol in workflow.md)**
 
 ## Phase 2: Messaging & Notification Domain
 - [ ] **Task: Write tests for Landlord Alerts**
