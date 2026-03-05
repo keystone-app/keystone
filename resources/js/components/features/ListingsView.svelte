@@ -5,7 +5,7 @@
     import Button from '../ui/Button.svelte';
     import EmptyState from '../ui/EmptyState.svelte';
 
-    let { properties, filters, onFilterChange, onPropertySelect } = $props();
+    let { properties, filters, isLoading = false, onFilterChange, onPropertySelect } = $props();
 
     let searchQuery = $state('');
 
@@ -52,7 +52,23 @@
         <PropertyFilters {filters} {onFilterChange} />
     </div>
 
-    {#if filteredProperties.length > 0}
+    {#if isLoading}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 opacity-50 pointer-events-none transition-opacity">
+            {#each Array(6) as _}
+                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden h-[400px] animate-pulse">
+                    <div class="h-48 bg-gray-100"></div>
+                    <div class="p-6 space-y-4">
+                        <div class="h-6 bg-gray-100 rounded-full w-3/4"></div>
+                        <div class="h-4 bg-gray-100 rounded-full w-1/2"></div>
+                        <div class="pt-4 border-t border-gray-50 flex justify-between">
+                            <div class="h-8 bg-gray-100 rounded-full w-24"></div>
+                            <div class="h-8 bg-gray-100 rounded-full w-20"></div>
+                        </div>
+                    </div>
+                </div>
+            {/each}
+        </div>
+    {:else if filteredProperties.length > 0}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {#each filteredProperties as property}
                 <PropertyCard {property} onViewDetails={onPropertySelect} />

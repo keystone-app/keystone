@@ -13,6 +13,7 @@
     import LoginModal from './components/features/LoginModal.svelte';
     import RegisterModal from './components/features/RegisterModal.svelte';
     import MaintenanceRequestModal from './components/features/MaintenanceRequestModal.svelte';
+    import { debounce } from './lib/utils';
 
     // Global State
     let role = $state('guest');
@@ -34,6 +35,7 @@
 
     // UI State
     let selectedProperty = $state(null);
+    let isLoadingProperties = $state(false);
     let isScheduling = $state(false);
     let showPropertyModal = $state(false);
     let showLoginModal = $state(false);
@@ -73,6 +75,7 @@
     }
 
     async function fetchProperties() {
+        isLoadingProperties = true;
         try {
             const params = new URLSearchParams();
             if (filters.min_price) params.append('min_price', filters.min_price);
@@ -86,8 +89,12 @@
             }
         } catch (e) {
             console.error('Failed to fetch properties', e);
+        } finally {
+            isLoadingProperties = false;
         }
     }
+
+    const debouncedFetchProperties = debounce(fetchProperties, 300);
 
     async function fetchMyVisits() {
         try {
@@ -463,7 +470,18 @@
                     <ListingsView 
                         {properties} 
                         {filters}
-                        onFilterChange={(newFilters) => { filters = newFilters; fetchProperties(); }}
+                        isLoading={isLoadingProperties}
+                        onFilterChange={(newFilters) => { 
+                            const oldFilters = { ...filters };
+                            filters = newFilters; 
+                            
+                            // Debounce if price changed, otherwise fetch immediately
+                            if (oldFilters.min_price !== newFilters.min_price || oldFilters.max_price !== newFilters.max_price) {
+                                debouncedFetchProperties();
+                            } else {
+                                fetchProperties();
+                            }
+                        }}
                         onPropertySelect={(p) => { selectedProperty = p; window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
                     />
                 {/if}
