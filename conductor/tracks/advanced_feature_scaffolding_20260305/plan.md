@@ -16,6 +16,6 @@
 - [x] **Task: Conductor - User Manual Verification 'Phase 3: Payments & Maintenance Domain Scaffolding' (Protocol in workflow.md)**
 
 ## Phase 4: Frontend Scaffolding & Mobile-First UI
-- [x] **Task: Write tests for `TenantDashboard` and `PropertySearch` UI components** (9ff4300)
-- [x] **Task: Update UI with Mobile-First Components** (9ff4300)
+- [x] **Task: Write tests for `TenantDashboard` and `PropertySearch` UI components** (3170a7e)
+- [x] **Task: Update UI with Mobile-First Components** (3170a7e)
 - [ ] **Task: Conductor - User Manual Verification 'Phase 4: Frontend Scaffolding & Mobile-First UI' (Protocol in workflow.md)**
