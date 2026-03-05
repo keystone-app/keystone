@@ -1,10 +1,10 @@
 # Implementation Plan: Tenant Compliance and Verification Flow
 
-## Phase 1: Compliance Document Management
+## Phase 1: Compliance Document Management [checkpoint: e9f1b54]
 - [x] **Task: Write tests for `UploadComplianceDocumentAction` enhancement** (c6383e2)
 - [x] **Task: Refine `UploadComplianceDocumentAction` implementation** (c6383e2)
 - [x] **Task: Write tests for automated status transition on upload** (c6383e2)
-- [ ] **Task: Conductor - User Manual Verification 'Phase 1: Compliance Document Management' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 1: Compliance Document Management' (Protocol in workflow.md)**
 
 ## Phase 2: Income Verification & Status Transitions
 - [ ] **Task: Write tests for `VerifyIncomeAction` refinement**
