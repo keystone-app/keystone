@@ -30,9 +30,9 @@
 - [x] **Task: Increase coverage for Domain Actions** 1d2f037
   - [x] Target remaining red lines in `SignLeaseAction`, `UploadComplianceDocumentAction`, etc. 1d2f037
 
-## Phase 4: Final Validation
-- [ ] **Task: Final Coverage Audit**
-  - [ ] Run `./vendor/bin/sail artisan test --coverage`.
-  - [ ] Identify and fix any remaining "pockets" of missing coverage.
-- [ ] **Task: Conductor - User Manual Verification (Protocol in workflow.md)**
-  - [ ] Ensure all tests provide meaningful validation beyond just "hitting the line".
+## Phase 4: Final Validation [checkpoint: 7a1a841]
+- [x] **Task: Final Coverage Audit** 7a1a841
+  - [x] Run `./vendor/bin/sail artisan test --coverage`. 7a1a841
+  - [x] Identify and fix any remaining "pockets" of missing coverage. 7a1a841
+- [x] **Task: Conductor - User Manual Verification (Protocol in workflow.md)** 7a1a841
+  - [x] Ensure all tests provide meaningful validation beyond just "hitting the line". 7a1a841
