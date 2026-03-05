@@ -27,7 +27,7 @@ describe("ListingsView", () => {
     it("filters properties by status", async () => {
         render(ListingsView, { properties: mockProperties, onPropertySelect: () => {} });
         
-        const statusSelect = screen.getByRole("combobox");
+        const statusSelect = screen.getByLabelText("Filter by status");
         await fireEvent.change(statusSelect, { target: { value: "available" } });
 
         expect(screen.queryByText("Modern Loft")).toBeTruthy();

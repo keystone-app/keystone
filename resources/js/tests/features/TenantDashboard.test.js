@@ -28,4 +28,14 @@ describe("TenantDashboard", () => {
         render(TenantDashboard, { ...mockProps, tenantView: 'offers' });
         expect(screen.getByText("Negotiations")).toBeTruthy();
     });
+
+    it("renders payments view when tenantView is payments", () => {
+        render(TenantDashboard, { ...mockProps, tenantView: 'payments' });
+        expect(screen.getByText("Payments")).toBeTruthy();
+    });
+
+    it("renders maintenance view when tenantView is maintenance", () => {
+        render(TenantDashboard, { ...mockProps, tenantView: 'maintenance' });
+        expect(screen.getByText("Maintenance Requests")).toBeTruthy();
+    });
 });
