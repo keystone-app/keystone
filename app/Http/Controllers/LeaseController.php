@@ -39,15 +39,23 @@ class LeaseController extends Controller
             return response()->json(['message' => 'Invalid file.'], 400);
         }
 
-        $document = $action->execute($lease, (string) $request->string('type'), $file);
+        try {
+            $document = $action->execute($lease, (string) $request->string('type'), $file);
 
-        return response()->json($document);
+            return response()->json($document);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
+        }
     }
 
     public function sign(Request $request, Lease $lease, SignLeaseAction $action): JsonResponse
     {
-        $lease = $action->execute($lease);
+        try {
+            $lease = $action->execute($lease);
 
-        return response()->json($lease->load(['property', 'landlord', 'tenant', 'documents']));
+            return response()->json($lease->load(['property', 'landlord', 'tenant', 'documents']));
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
+        }
     }
 }
