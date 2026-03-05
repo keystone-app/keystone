@@ -54,4 +54,37 @@ describe("TenantDashboard", () => {
         expect(screen.getByText("Test Loft")).toBeTruthy();
         expect(screen.getByText(/reported/i)).toBeTruthy();
     });
+
+    it("renders leases view with data and report action", async () => {
+        const myLeases = [{ id: 1, rent_amount: 1000, property: { name: "Lease Prop", address: "Addr" }, landlord: { name: "L" } }];
+        const onReportMaintenance = vi.fn();
+        const { fireEvent } = await import("@testing-library/svelte");
+        
+        render(TenantDashboard, { ...mockProps, myLeases, onReportMaintenance });
+        expect(screen.getByText(/Active Lease: Lease Prop/i)).toBeTruthy();
+        
+        await fireEvent.click(screen.getByText(/Report Issue/i));
+        expect(onReportMaintenance).toHaveBeenCalledWith(myLeases[0]);
+    });
+
+    it("renders empty leases view", () => {
+        render(TenantDashboard, { ...mockProps, myLeases: [] });
+        expect(screen.getByText(/No Active Leases/i)).toBeTruthy();
+    });
+
+    it("renders visits and offers tables with various statuses", () => {
+        const myVisits = [{ id: 1, visit_at: new Date(), status: 'pending', property: { name: 'P' } }];
+        render(TenantDashboard, { ...mockProps, tenantView: 'visits', myVisits });
+        expect(screen.getAllByRole("table").length).toBeGreaterThan(0);
+
+        const offers = [
+            { id: 1, amount: 1000, status: 'accepted', compliance_status_label: 'verified', property: { name: 'P' }, user: { name: 'U' } },
+            { id: 2, amount: 2000, status: 'accepted', compliance_status_label: 'pending_verification', property: { name: 'P' }, user: { name: 'U' } },
+            { id: 3, amount: 3000, status: 'pending', compliance_status_label: 'none', property: { name: 'P' }, user: { name: 'U' } }
+        ];
+        render(TenantDashboard, { ...mockProps, tenantView: 'offers', offers });
+        expect(screen.getByText(/Income Verified/i)).toBeTruthy();
+        expect(screen.getByText(/In Verification/i)).toBeTruthy();
+        expect(screen.getByText(/N\/A/i)).toBeTruthy();
+    });
 });

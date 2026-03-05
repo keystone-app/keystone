@@ -36,4 +36,9 @@ describe("EmptyState Component", () => {
         await fireEvent.click(button);
         expect(onAction).toHaveBeenCalled();
     });
+
+    it("renders without action button if no label", () => {
+        render(EmptyState, { title: "Empty", message: "Msg" });
+        expect(screen.queryByRole("button")).toBeNull();
+    });
 });
