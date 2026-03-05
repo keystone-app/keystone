@@ -44,6 +44,27 @@ class Offer extends Model
         'status' => OfferStatus::class,
     ];
 
+    protected $appends = [
+        'compliance_status_label',
+    ];
+
+    public function getComplianceStatusLabelAttribute(): string
+    {
+        if ($this->status instanceof \App\Domain\Negotiation\States\AwaitingDocuments) {
+            return 'awaiting_documents';
+        }
+
+        if ($this->status instanceof \App\Domain\Negotiation\States\PendingVerification) {
+            return 'pending_verification';
+        }
+
+        if ($this->status instanceof \App\Domain\Negotiation\States\Verified) {
+            return 'verified';
+        }
+
+        return 'none';
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<Document, $this>
      */

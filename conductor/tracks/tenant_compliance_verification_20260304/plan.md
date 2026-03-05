@@ -17,11 +17,9 @@
 - [x] **Task: Implement automated Lease Draft creation trigger** (b63b1d5)
 - [x] **Task: Conductor - User Manual Verification 'Phase 3: Automated Lease Creation' (Protocol in workflow.md)**
 
-## Phase 4: UI/UX Enhancements
-- [ ] **Task: Write tests for `TenantDashboard` UI updates**
-  - [ ] Test showing correct document status (Pending/Uploaded/Verified).
-- [ ] **Task: Update `TenantDashboard` frontend**
-  - [ ] Add document upload progress and verification buttons.
-- [ ] **Task: Add notifications for Offer status changes**
-  - [ ] Implement flash messages or toast notifications in the UI.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 4: UI/UX Enhancements' (Protocol in workflow.md)**
+## Phase 4: UI/UX Enhancements [checkpoint: 910b37d]
+- [x] **Task: Write tests for `TenantDashboard` UI updates** (8452208)
+- [x] **Task: Update `TenantDashboard` frontend** (8452208)
+- [x] **Task: Add notifications for Offer status changes** (8452208)
+- [x] **Task: Conductor - User Manual Verification 'Phase 4: UI/UX Enhancements' (Protocol in workflow.md)**
+
