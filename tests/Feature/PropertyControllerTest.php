@@ -104,4 +104,22 @@ class PropertyControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['name', 'address', 'price', 'type']);
     }
+
+    public function test_index_filters_properties(): void
+    {
+        \App\Domain\Property\Models\Property::factory()->create(['price' => 1000, 'type' => 'Apartment', 'status' => 'available']);
+        \App\Domain\Property\Models\Property::factory()->create(['price' => 2000, 'type' => 'House', 'status' => 'rented']);
+
+        $response = $this->getJson('/properties?min_price=1500&max_price=2500&type=House&status=rented');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.price', '2000.00');
+    }
+
+    public function test_store_requires_authentication(): void
+    {
+        $response = $this->postJson('/properties', []);
+        $response->assertStatus(401);
+    }
 }

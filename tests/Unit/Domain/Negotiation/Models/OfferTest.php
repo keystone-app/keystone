@@ -56,7 +56,21 @@ class OfferTest extends TestCase
             'type' => 'income_proof',
         ]);
 
-        $this->assertCount(1, $offer->complianceDocuments);
+        Document::factory()->create([
+            'user_id' => $user->id,
+            'type' => 'residency_proof',
+        ]);
+
+        $this->assertCount(2, $offer->complianceDocuments);
+    }
+
+    public function test_offer_can_have_visit_relationship(): void
+    {
+        $visit = Visit::factory()->create();
+        $offer = Offer::factory()->create(['visit_id' => $visit->id]);
+
+        $this->assertInstanceOf(Visit::class, $offer->visit);
+        $this->assertEquals($visit->id, $offer->visit->id);
     }
 
     public function test_offer_compliance_status_label_attribute(): void

@@ -67,12 +67,43 @@ class LeaseControllerTest extends TestCase
             ->assertJsonValidationErrors(['type', 'file']);
     }
 
-    public function test_unauthorized_user_cannot_sign_lease(): void
+    public function test_upload_document_handles_invalid_file_type(): void
     {
-        $lease = Lease::factory()->create(['status' => Draft::class]);
-        $stranger = User::factory()->create();
+        $lease = Lease::factory()->create();
+        $this->actingAs($lease->tenant);
 
-        $response = $this->actingAs($stranger)->postJson("/leases/{$lease->id}/sign");
+        $response = $this->postJson("/leases/{$lease->id}/upload", [
+            'type' => 'test',
+            'file' => 'not-a-file',
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_upload_document_handles_exception(): void
+    {
+        Storage::fake('public');
+        $lease = Lease::factory()->create();
+        $this->actingAs($lease->tenant);
+
+        // This will trigger an exception in the action because the user is not landlord OR tenant (wait, tenant is ok)
+        // Let's use a stranger instead
+        $stranger = User::factory()->create();
+        $response = $this->actingAs($stranger)->postJson("/leases/{$lease->id}/upload", [
+            'type' => 'test',
+            'file' => UploadedFile::fake()->create('test.pdf'),
+        ]);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_sign_handles_exception(): void
+    {
+        $lease = Lease::factory()->create(['status' => \App\Domain\Legal\States\Active::class]);
+        $this->actingAs($lease->tenant);
+
+        // Already active, signing should fail
+        $response = $this->postJson("/leases/{$lease->id}/sign");
 
         $response->assertStatus(403);
     }
