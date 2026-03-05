@@ -131,6 +131,25 @@ class MaintenanceControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
+    public function test_store_requires_authentication(): void
+    {
+        $response = $this->postJson('/maintenance', []);
+        $response->assertStatus(401);
+    }
+
+    public function test_update_requires_authentication(): void
+    {
+        $lease = \App\Domain\Legal\Models\Lease::factory()->create();
+        $request = \App\Domain\Maintenance\Models\MaintenanceRequest::create([
+            'lease_id' => $lease->id,
+            'user_id' => $lease->tenant_id,
+            'title' => 'Test',
+            'status' => Reported::class,
+        ]);
+        $response = $this->patchJson("/maintenance/{$request->id}", []);
+        $response->assertStatus(401);
+    }
+
     public function test_update_handles_invalid_transitions(): void
     {
         $landlord = User::factory()->landlord()->create();
