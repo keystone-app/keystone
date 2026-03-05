@@ -11,14 +11,14 @@
   - [x] Create the domain action logic enforcing state transitions. 020e9fe
 - [x] **Task: Conductor - User Manual Verification 'Phase 1: Maintenance Request Domain Actions' (Protocol in workflow.md)** 24be417
 
-## Phase 2: API Endpoints (Controllers)
-- [ ] **Task: Write tests for `MaintenanceController` endpoints**
-  - [ ] Implement feature tests for `index` (list), `store` (create), and `update` (change status) routes.
-- [ ] **Task: Implement `MaintenanceController`**
-  - [ ] Create the controller and wire it to the domain actions.
-- [ ] **Task: Define API Routes**
-  - [ ] Add the new routes to `routes/web.php` under the `auth` middleware.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 2: API Endpoints (Controllers)' (Protocol in workflow.md)**
+## Phase 2: API Endpoints (Controllers) [checkpoint: 00f4b94]
+- [x] **Task: Write tests for `MaintenanceController` endpoints** 24d109d
+  - [x] Implement feature tests for `index` (list), `store` (create), and `update` (change status) routes. 24d109d
+- [x] **Task: Implement `MaintenanceController`** 24d109d
+  - [x] Create the controller and wire it to the domain actions. 24d109d
+- [x] **Task: Define API Routes** 24d109d
+  - [x] Add the new routes to `routes/web.php` under the `auth` middleware. 24d109d
+- [x] **Task: Conductor - User Manual Verification 'Phase 2: API Endpoints (Controllers)' (Protocol in workflow.md)** 00f4b94
 
 ## Phase 3: Tenant UI Implementation
 - [ ] **Task: Write tests for `MaintenanceRequestModal`**
