@@ -6,8 +6,8 @@
 - [x] **Task: Conductor - User Manual Verification 'Phase 1: Advanced Search Domain Logic' (Protocol in workflow.md)**
 
 ## Phase 2: Messaging & Notification Domain
-- [x] **Task: Write tests for Landlord Alerts** (850e880)
-- [x] **Task: Implement Notification Logic** (850e880)
+- [x] **Task: Write tests for Landlord Alerts** (0ebda6e)
+- [x] **Task: Implement Notification Logic** (0ebda6e)
 - [ ] **Task: Conductor - User Manual Verification 'Phase 2: Messaging & Notification Domain' (Protocol in workflow.md)**
 
 ## Phase 3: Payments & Maintenance Domain Scaffolding
