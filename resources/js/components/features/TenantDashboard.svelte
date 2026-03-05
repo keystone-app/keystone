@@ -2,6 +2,7 @@
     import { CheckCircle2, FileText, Plus } from 'lucide-svelte';
     import Button from '../ui/Button.svelte';
     import Badge from '../ui/Badge.svelte';
+    import EmptyState from '../ui/EmptyState.svelte';
     import VisitTable from './VisitTable.svelte';
     import OfferTable from './OfferTable.svelte';
 
@@ -22,12 +23,16 @@
             <h1 class="text-3xl font-black text-brand-primary">
                 {#if tenantView === 'visits'}My Scheduled Visits
                 {:else if tenantView === 'offers'}Negotiations
+                {:else if tenantView === 'payments'}Payments
+                {:else if tenantView === 'maintenance'}Maintenance Requests
                 {:else}My Leases
                 {/if}
             </h1>
             <p class="text-gray-500 mt-1">
                 {#if tenantView === 'visits'}Track and manage your upcoming property visits
                 {:else if tenantView === 'offers'}Negotiate and track your property offers
+                {:else if tenantView === 'payments'}View your payment history and upcoming rent
+                {:else if tenantView === 'maintenance'}Report and track issues with your property
                 {:else}Manage your active lease agreements
                 {/if}
             </p>
@@ -112,6 +117,20 @@
             offers={offers} 
             onUploadCompliance={onUploadCompliance} 
             onVerifyIncome={onVerifyIncome} 
+        />
+    {:else if tenantView === 'payments'}
+        <EmptyState 
+            icon="payments"
+            title="No payments found"
+            message="Your payment history will appear here once you have an active lease."
+        />
+    {:else if tenantView === 'maintenance'}
+        <EmptyState 
+            icon="handyman"
+            title="No maintenance requests"
+            message="Report and track property issues here."
+            actionLabel="Report an Issue"
+            onAction={() => alert('Maintenance reporting coming soon!')}
         />
     {/if}
 </div>
