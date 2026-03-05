@@ -7,7 +7,8 @@
 - **Database:** Standard SQL (supporting MySQL, PostgreSQL, SQLite)
 
 ## Key Libraries & Components
-- **Domain Logic:** Spatie Model States (for complex state machines in Property, Legal, and Negotiation domains).
+- **Domain Logic:** Spatie Model States (for complex state machines in Property, Legal, Negotiation, Financial, and Maintenance domains).
+- **Notifications:** Laravel Notifications (Mail and Database drivers).
 - **Frontend Components:** Bits UI, Lucide Svelte, tailwind-merge, clsx.
 - **Infrastructure:** Laravel Envoy (for zero-downtime deployments).
 - **Communication:** Axios (for HTTP requests in the frontend).
