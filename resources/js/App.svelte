@@ -12,6 +12,7 @@
     import PropertyModal from './components/features/PropertyModal.svelte';
     import LoginModal from './components/features/LoginModal.svelte';
     import RegisterModal from './components/features/RegisterModal.svelte';
+    import MaintenanceRequestModal from './components/features/MaintenanceRequestModal.svelte';
 
     // Global State
     let role = $state('guest');
@@ -27,6 +28,8 @@
     let landlordVisits = $state([]);
     let myVisits = $state([]);
     let offers = $state([]);
+    let maintenanceRequests = $state([]);
+    let myLeases = $state([]);
 
     // UI State
     let selectedProperty = $state(null);
@@ -35,6 +38,8 @@
     let showLoginModal = $state(false);
     let showRegisterModal = $state(false);
     let showOfferModal = $state(false);
+    let showMaintenanceModal = $state(false);
+    let selectedLeaseForMaintenance = $state(null);
     let selectedVisitForOffer = $state(null);
     let loginError = $state('');
     let isSubmitting = $state(false);
@@ -57,6 +62,8 @@
                 identityDoc = data.identity_document;
                 fetchOffers();
                 fetchMyVisits();
+                fetchMaintenanceRequests();
+                fetchMyLeases();
                 if (role === 'landlord') fetchLandlordVisits();
             }
         } catch (e) {
@@ -96,6 +103,20 @@
         } catch (e) {}
     }
 
+    async function fetchMaintenanceRequests() {
+        try {
+            const res = await fetch('/maintenance');
+            if (res.ok) maintenanceRequests = await res.json();
+        } catch (e) {}
+    }
+
+    async function fetchMyLeases() {
+        try {
+            const res = await fetch('/leases');
+            if (res.ok) myLeases = await res.json();
+        } catch (e) {}
+    }
+
     async function logout() {
         try {
             await fetch('/logout', {
@@ -126,6 +147,8 @@
                 showLoginModal = false;
                 fetchOffers();
                 fetchMyVisits();
+                fetchMaintenanceRequests();
+                fetchMyLeases();
                 if (role === 'landlord') fetchLandlordVisits();
             } else {
                 const data = await res.json();
@@ -156,6 +179,8 @@
                 showRegisterModal = false;
                 fetchOffers();
                 fetchMyVisits();
+                fetchMaintenanceRequests();
+                fetchMyLeases();
             } else {
                 const data = await res.json();
                 loginError = data.message || 'Registration failed.';
@@ -265,6 +290,41 @@
         }
     }
 
+    async function submitMaintenanceRequest({ lease_id, title, description }) {
+        isSubmitting = true;
+        try {
+            const res = await fetch('/maintenance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' },
+                body: JSON.stringify({ lease_id, title, description })
+            });
+            if (res.ok) {
+                const newRequest = await res.json();
+                maintenanceRequests = [newRequest, ...maintenanceRequests];
+                return true;
+            }
+            return false;
+        } catch (e) {
+            return false;
+        } finally {
+            isSubmitting = false;
+        }
+    }
+
+    async function updateMaintenanceStatus(requestId, status) {
+        try {
+            const res = await fetch(`/maintenance/${requestId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+            if (res.ok) {
+                const updated = await res.json();
+                maintenanceRequests = maintenanceRequests.map(r => r.id === requestId ? updated : r);
+            }
+        } catch (e) {}
+    }
+
     async function updateOfferStatus(offerId, status, amount = null, terms = null) {
         try {
             const res = await fetch(`/offers/${offerId}`, {
@@ -346,6 +406,7 @@
             {currentUser}
             {landlordVisits}
             {offers}
+            {maintenanceRequests}
             onViewChange={(newView) => { view = newView; selectedProperty = null; }} 
             onLandlordViewChange={(v) => landlordView = v}
             onTenantViewChange={(v) => tenantView = v}
@@ -401,10 +462,12 @@
                         properties={properties.filter(p => p.user_id === currentUser?.id)} 
                         {landlordVisits} 
                         {offers} 
+                        {maintenanceRequests}
                         onAddProperty={() => showPropertyModal = true}
                         onApproveVisit={(id) => updateVisitStatus(id, 'scheduled')}
                         onRejectVisit={(id) => updateVisitStatus(id, 'rejected')}
                         onUpdateOfferStatus={updateOfferStatus}
+                        onUpdateMaintenanceStatus={updateMaintenanceStatus}
                     />
                 {:else}
                     <TenantDashboard 
@@ -412,7 +475,10 @@
                         {myVisits} 
                         {offers} 
                         {identityDoc}
+                        {maintenanceRequests}
+                        {myLeases}
                         onMakeOffer={(v) => { selectedVisitForOffer = v; showOfferModal = true; }}
+                        onReportMaintenance={(l) => { selectedLeaseForMaintenance = l; showMaintenanceModal = true; }}
                         onUploadCompliance={handleComplianceUpload}
                         onVerifyIncome={handleIncomeVerification}
                     />
@@ -437,6 +503,7 @@
     <RegisterModal isOpen={showRegisterModal} onClose={() => showRegisterModal = false} onRegister={register} onToggleLogin={() => { showRegisterModal = false; showLoginModal = true; }} {isSubmitting} error={loginError} />
     <OfferModal isOpen={showOfferModal} onClose={() => showOfferModal = false} property={selectedVisitForOffer?.property} onSubmit={(amt, trms) => submitOffer(selectedVisitForOffer.id, amt, trms)} {isSubmitting} />
     <PropertyModal isOpen={showPropertyModal} onClose={() => showPropertyModal = false} onSubmit={storeProperty} {isSubmitting} />
+    <MaintenanceRequestModal isOpen={showMaintenanceModal} onClose={() => showMaintenanceModal = false} lease={selectedLeaseForMaintenance} onSubmit={submitMaintenanceRequest} {isSubmitting} />
 </div>
 
 <style>

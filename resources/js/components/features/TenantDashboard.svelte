@@ -11,7 +11,10 @@
         myVisits, 
         offers, 
         identityDoc,
+        maintenanceRequests = [],
+        myLeases = [],
         onMakeOffer,
+        onReportMaintenance,
         onUploadCompliance,
         onVerifyIncome
     } = $props();
@@ -40,37 +43,62 @@
     </header>
 
     {#if tenantView === 'leases'}
-        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-brand-action/10 rounded-lg flex items-center justify-center text-brand-action">
-                        <span class="material-symbols-outlined">description</span>
+        {#if myLeases.length > 0}
+            <div class="space-y-6">
+                {#each myLeases as lease}
+                    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-brand-action/10 rounded-lg flex items-center justify-center text-brand-action">
+                                    <span class="material-symbols-outlined">description</span>
+                                </div>
+                                <div>
+                                    <h2 class="font-bold text-lg text-brand-primary">Active Lease: {lease.property?.name}</h2>
+                                    <p class="text-gray-500 text-sm font-medium">Rent: ${lease.rent_amount}</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <Button variant="secondary" size="sm" onclick={() => onReportMaintenance(lease)}>
+                                    <span class="material-symbols-outlined mr-2">handyman</span>
+                                    Report Issue
+                                </Button>
+                            </div>
+                        </div>
+                        <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div>
+                                <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Status</p>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2.5 h-2.5 bg-brand-success rounded-full animate-pulse"></div>
+                                    <span class="font-bold capitalize">{lease.status_name || 'Active'}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Property Address</p>
+                                <span class="font-bold text-sm">{lease.property?.address}</span>
+                            </div>
+                            <div>
+                                <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Landlord</p>
+                                <span class="font-bold">{lease.landlord?.name}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h2 class="font-bold text-lg text-brand-primary">Active Lease: Modern Loft A</h2>
-                        <p class="text-gray-500 text-sm font-medium">Expires: Dec 31, 2026</p>
-                    </div>
-                </div>
-                <Button variant="secondary" size="sm">Download PDF</Button>
+                {/each}
             </div>
-            <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Rent Status</p>
-                    <div class="flex items-center gap-2">
-                        <div class="w-2.5 h-2.5 bg-brand-success rounded-full animate-pulse"></div>
-                        <span class="font-bold">Paid for March</span>
+        {:else}
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-brand-action/10 rounded-lg flex items-center justify-center text-brand-action">
+                            <span class="material-symbols-outlined">description</span>
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-lg text-brand-primary">No Active Leases</h2>
+                            <p class="text-gray-500 text-sm font-medium">Search for properties to start a lease.</p>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Next Payment</p>
-                    <span class="font-bold">$1,850 due on April 1st</span>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2">Landlord</p>
-                    <span class="font-bold">Apex Realty Group</span>
-                </div>
             </div>
-        </div>
+        {/if}
 
         <section class="space-y-4">
             <h2 class="text-xl font-bold text-brand-primary">Documents</h2>
@@ -125,12 +153,56 @@
             message="Your payment history will appear here once you have an active lease."
         />
     {:else if tenantView === 'maintenance'}
-        <EmptyState 
-            icon="handyman"
-            title="No maintenance requests"
-            message="Report and track property issues here."
-            actionLabel="Report an Issue"
-            onAction={() => alert('Maintenance reporting coming soon!')}
-        />
+        {#if maintenanceRequests.length > 0}
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50/50 border-b border-gray-100">
+                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Date</th>
+                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Property</th>
+                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Issue</th>
+                            <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-400 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        {#each maintenanceRequests as request}
+                            <tr class="hover:bg-gray-50/50 transition-colors">
+                                <td class="px-6 py-4 whitespace-nowrap text-xs font-bold text-gray-500">
+                                    {new Date(request.created_at).toLocaleDateString()}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <p class="text-sm font-bold text-brand-primary">{request.lease?.property?.name}</p>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <p class="text-sm font-bold text-brand-primary">{request.title}</p>
+                                    {#if request.description}
+                                        <p class="text-xs text-gray-400 line-clamp-1">{request.description}</p>
+                                    {/if}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                    <Badge type={
+                                        request.status === 'reported' ? 'warning' :
+                                        request.status === 'in_progress' ? 'info' :
+                                        request.status === 'resolved' ? 'success' : 'neutral'
+                                    }>
+                                        <span class="capitalize">{request.status.replace('_', ' ')}</span>
+                                    </Badge>
+                                </td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            </div>
+        {:else}
+            <EmptyState 
+                icon="handyman"
+                title="No maintenance requests"
+                message="Report and track property issues here."
+                actionLabel={myLeases.length > 0 ? "Report an Issue" : null}
+                onAction={() => {
+                    if (myLeases.length > 0) onReportMaintenance(myLeases[0]);
+                }}
+            />
+        {/if}
     {/if}
 </div>

@@ -38,4 +38,20 @@ describe("TenantDashboard", () => {
         render(TenantDashboard, { ...mockProps, tenantView: 'maintenance' });
         expect(screen.getByText("Maintenance Requests")).toBeTruthy();
     });
+
+    it("renders a list of maintenance requests", () => {
+        const maintenanceRequests = [
+            {
+                id: 1,
+                title: "Leaking tap",
+                status: "reported",
+                created_at: "2026-03-05T10:00:00Z",
+                lease: { property: { name: "Test Loft" } }
+            }
+        ];
+        render(TenantDashboard, { ...mockProps, tenantView: 'maintenance', maintenanceRequests });
+        expect(screen.getByText("Leaking tap")).toBeTruthy();
+        expect(screen.getByText("Test Loft")).toBeTruthy();
+        expect(screen.getByText(/reported/i)).toBeTruthy();
+    });
 });
