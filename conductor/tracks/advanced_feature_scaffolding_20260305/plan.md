@@ -6,10 +6,8 @@
 - [x] **Task: Conductor - User Manual Verification 'Phase 1: Advanced Search Domain Logic' (Protocol in workflow.md)**
 
 ## Phase 2: Messaging & Notification Domain
-- [ ] **Task: Write tests for Landlord Alerts**
-  - [ ] Verify that a `Verified` offer status triggers a notification for the property owner.
-- [ ] **Task: Implement Notification Logic**
-  - [ ] Create domain actions or listeners for compliance status updates.
+- [x] **Task: Write tests for Landlord Alerts** (850e880)
+- [x] **Task: Implement Notification Logic** (850e880)
 - [ ] **Task: Conductor - User Manual Verification 'Phase 2: Messaging & Notification Domain' (Protocol in workflow.md)**
 
 ## Phase 3: Payments & Maintenance Domain Scaffolding
