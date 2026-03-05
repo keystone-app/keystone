@@ -14,10 +14,23 @@ describe("LandlordDashboard", () => {
         onUpdateOfferStatus: () => {}
     };
 
-    it("renders portfolio view when landlordView is properties", () => {
-        render(LandlordDashboard, mockProps);
-        expect(screen.getByText("Properties")).toBeTruthy();
-        expect(screen.getByText("Prop 1")).toBeTruthy();
+    it("renders portfolio view with thumbnails", () => {
+        const properties = [{ 
+            id: 1, name: "Prop 1", address: "Addr 1", price: 1000, status: "available",
+            media: [{ type: 'property_image', path: 'thumb.jpg' }]
+        }];
+        render(LandlordDashboard, { ...mockProps, properties });
+        expect(screen.getByAltText("Prop 1")).toBeTruthy();
+    });
+
+    it("renders maintenance view with data", () => {
+        const maintenanceRequests = [{
+            id: 1, title: "Issue 1", description: "Desc 1", status: "reported", created_at: new Date(),
+            lease: { property: { name: "Prop 1" } }
+        }];
+        render(LandlordDashboard, { ...mockProps, landlordView: 'maintenance', maintenanceRequests });
+        expect(screen.getByText("Issue 1")).toBeTruthy();
+        expect(screen.getByText("Desc 1")).toBeTruthy();
     });
 
     it("renders visits view when landlordView is visits", () => {
@@ -74,5 +87,38 @@ describe("LandlordDashboard", () => {
         await fireEvent.click(startButton);
 
         expect(onUpdateMaintenanceStatus).toHaveBeenCalledWith(1, 'in_progress');
+    });
+
+    it("calls onAddProperty when button clicked", async () => {
+        const onAddProperty = vi.fn();
+        const { fireEvent } = await import("@testing-library/svelte");
+        render(LandlordDashboard, { ...mockProps, onAddProperty });
+        await fireEvent.click(screen.getByText(/Add Property/i));
+        expect(onAddProperty).toHaveBeenCalled();
+    });
+
+    it("renders empty states for all views", () => {
+        render(LandlordDashboard, { ...mockProps, properties: [], landlordView: 'properties' });
+        // Empty state title is "No properties found"
+        expect(screen.getByRole("heading", { name: /No properties found/i })).toBeTruthy();
+
+        render(LandlordDashboard, { ...mockProps, landlordVisits: [], landlordView: 'visits' });
+        expect(screen.getByRole("heading", { name: /No visits found/i })).toBeTruthy();
+
+        render(LandlordDashboard, { ...mockProps, offers: [], landlordView: 'offers' });
+        expect(screen.getByRole("heading", { name: /No offers found/i })).toBeTruthy();
+
+        render(LandlordDashboard, { ...mockProps, maintenanceRequests: [], landlordView: 'maintenance' });
+        expect(screen.getByRole("heading", { name: /No maintenance requests/i })).toBeTruthy();
+    });
+
+    it("renders data tables for visits and offers", () => {
+        const landlordVisits = [{ id: 1, visit_at: new Date(), status: 'pending', user: { name: 'T' }, property: { name: 'P' } }];
+        render(LandlordDashboard, { ...mockProps, landlordView: 'visits', landlordVisits });
+        expect(screen.getAllByRole("table").length).toBeGreaterThan(0);
+
+        const offers = [{ id: 1, amount: 1000, status: 'pending', user: { name: 'T' }, property: { name: 'P' } }];
+        render(LandlordDashboard, { ...mockProps, landlordView: 'offers', offers });
+        expect(screen.getAllByRole("table").length).toBeGreaterThan(0);
     });
 });

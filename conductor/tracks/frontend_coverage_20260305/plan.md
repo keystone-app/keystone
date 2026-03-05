@@ -16,10 +16,10 @@
   - [ ] `VisitModal.svelte`: Scheduling flow.
 
 ## Phase 3: Tables, Dashboards, and Sidebar
-- [ ] **Task: Implement tests for Table components**
+- [~] **Task: Implement tests for Table components**
   - [ ] `OfferTable.svelte`: Render offers and handle actions.
   - [ ] `VisitTable.svelte`: Render visits and handle actions.
-- [ ] **Task: Increase coverage for Dashboards**
+- [~] **Task: Increase coverage for Dashboards**
   - [ ] `TenantDashboard.svelte`: Cover all sub-views.
   - [ ] `LandlordDashboard.svelte`: Cover all sub-views.
 - [ ] **Task: Implement tests for `Sidebar.svelte`**
