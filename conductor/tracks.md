@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: End-to-End Maintenance Request Flow**
+- [x] **Track: End-to-End Maintenance Request Flow**
 *Link: [./tracks/maintenance_flow_20260305/](./tracks/maintenance_flow_20260305/)*
