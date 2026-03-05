@@ -20,20 +20,20 @@
   - [x] Add the new routes to `routes/web.php` under the `auth` middleware. 24d109d
 - [x] **Task: Conductor - User Manual Verification 'Phase 2: API Endpoints (Controllers)' (Protocol in workflow.md)** 00f4b94
 
-## Phase 3: Tenant UI Implementation
-- [ ] **Task: Write tests for `MaintenanceRequestModal`**
-  - [ ] Ensure Vitest coverage for the form submission.
-- [ ] **Task: Create `MaintenanceRequestModal` component**
-  - [ ] Implement the UI for tenants to submit a new request.
-- [ ] **Task: Update `TenantDashboard`**
-  - [ ] Integrate the modal and display a table/list of submitted requests.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 3: Tenant UI Implementation' (Protocol in workflow.md)**
+## Phase 3: Tenant UI Implementation [checkpoint: d46d6e8]
+- [x] **Task: Write tests for `MaintenanceRequestModal`** 1d31469
+  - [x] Ensure Vitest coverage for the form submission. 1d31469
+- [x] **Task: Create `MaintenanceRequestModal` component** 1d31469
+  - [x] Implement the UI for tenants to submit a new request. 1d31469
+- [x] **Task: Update `TenantDashboard`** 1d31469
+  - [x] Integrate the modal and display a table/list of submitted requests. 1d31469
+- [x] **Task: Conductor - User Manual Verification 'Phase 3: Tenant UI Implementation' (Protocol in workflow.md)** d46d6e8
 
-## Phase 4: Landlord UI Implementation
-- [ ] **Task: Write tests for Landlord Maintenance View**
-  - [ ] Ensure Vitest coverage for viewing and updating requests.
-- [ ] **Task: Update `LandlordDashboard`**
-  - [ ] Add a new section/table to display maintenance requests for their properties.
-- [ ] **Task: Implement Status Update UI**
-  - [ ] Add controls for the landlord to transition request states.
-- [ ] **Task: Conductor - User Manual Verification 'Phase 4: Landlord UI Implementation' (Protocol in workflow.md)**
+## Phase 4: Landlord UI Implementation [checkpoint: d46d6e8]
+- [x] **Task: Write tests for Landlord Maintenance View** 1d31469
+  - [x] Ensure Vitest coverage for viewing and updating requests. 1d31469
+- [x] **Task: Update `LandlordDashboard`** 1d31469
+  - [x] Add a new section/table to display maintenance requests for their properties. 1d31469
+- [x] **Task: Implement Status Update UI** 1d31469
+  - [x] Add controls for the landlord to transition request states. 1d31469
+- [x] **Task: Conductor - User Manual Verification 'Phase 4: Landlord UI Implementation' (Protocol in workflow.md)** d46d6e8
