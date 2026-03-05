@@ -89,15 +89,34 @@ class DocumentControllerTest extends TestCase
     {
         $user = User::factory()->tenant()->create();
         $offer = Offer::factory()->create(['user_id' => $user->id]);
+        $this->actingAs($user);
+
+        // Delete offer to trigger exception in action (unauthorized)
+        $offer->delete();
+
+        $response = $this->postJson('/compliance-upload', [
+            'offer_id' => 999, // exists validation will fail here
+            'type' => 'income_proof',
+            'file' => UploadedFile::fake()->create('doc.pdf'),
+        ]);
         
-        $response = $this->actingAs($user)->postJson('/compliance-upload', [
+        $response->assertStatus(422);
+    }
+
+    public function test_compliance_upload_handles_unauthorized_exception(): void
+    {
+        $user = User::factory()->tenant()->create();
+        $otherUser = User::factory()->tenant()->create();
+        $offer = Offer::factory()->create(['user_id' => $user->id]);
+        $this->actingAs($otherUser);
+
+        $response = $this->postJson('/compliance-upload', [
             'offer_id' => $offer->id,
             'type' => 'income_proof',
             'file' => UploadedFile::fake()->create('doc.pdf'),
         ]);
         
-        $offer->delete();
-        $response->assertStatus(200); // Actually it succeeds before we delete
+        $response->assertStatus(403);
     }
 
     public function test_user_can_upload_compliance_document(): void

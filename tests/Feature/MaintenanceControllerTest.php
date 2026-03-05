@@ -155,7 +155,7 @@ class MaintenanceControllerTest extends TestCase
         $landlord = User::factory()->landlord()->create();
         $property = Property::factory()->create(['user_id' => $landlord->id]);
         $lease = Lease::factory()->create(['property_id' => $property->id, 'landlord_id' => $landlord->id, 'status' => Active::class]);
-
+        
         $request = MaintenanceRequest::create([
             'lease_id' => $lease->id,
             'user_id' => User::factory()->tenant()->create()->id,
@@ -168,6 +168,6 @@ class MaintenanceControllerTest extends TestCase
             'status' => 'resolved',
         ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(403);
     }
 }
