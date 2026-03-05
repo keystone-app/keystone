@@ -19,7 +19,9 @@ The **Negotiation & Offers** domain is a central part of the Keystone platform. 
 - **Enhance Capabilities:** Continuously build out advanced features like automated scheduling and notifications.
 
 ## Key Features
+- **Advanced Property Search:** Server-side filtering by price, type, and status with a mobile-first interface.
+- **Messaging & Alerts:** Real-time notifications for landlords and tenants regarding offer status and verification.
 - **Offer Management:** Centralized system for submitting, reviewing, and counter-offering on properties.
 - **e-Signatures:** Legally-binding digital signatures for lease agreements and other legal documents.
 - **Document Verification:** Secure upload and verification of identity and compliance documents (e.g., ID cards, proof of income).
-- **Property Listings:** Rich property descriptions with status tracking.
+- **Payment & Maintenance Scaffolding:** Core domain logic for rent collection and property issue reporting.
