@@ -2,6 +2,7 @@
 
 namespace App\Domain\Negotiation\Actions;
 
+use App\Domain\Legal\Actions\CreateLeaseFromOfferAction;
 use App\Domain\Negotiation\Models\Offer;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,6 +19,9 @@ class VerifyIncomeAction
         }
 
         $offer->status->transitionTo(\App\Domain\Negotiation\States\Verified::class);
+
+        // Automate lease creation
+        app(CreateLeaseFromOfferAction::class)->execute($offer);
 
         return [
             'offer' => $offer->load(['user', 'property']),
