@@ -1,36 +1,31 @@
 <script>
     import { Search, Filter } from 'lucide-svelte';
     import PropertyCard from './PropertyCard.svelte';
+    import PropertyFilters from './PropertyFilters.svelte';
     import Button from '../ui/Button.svelte';
     import EmptyState from '../ui/EmptyState.svelte';
 
-    let { properties, onPropertySelect } = $props();
+    let { properties, filters, isLoading = false, onFilterChange, onPropertySelect } = $props();
 
     let searchQuery = $state('');
-    let statusFilter = $state('all');
-    let typeFilter = $state('all');
-    let minPrice = $state('');
-    let maxPrice = $state('');
 
     const filteredProperties = $derived(
         properties.filter(p => {
             const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                                 p.address.toLowerCase().includes(searchQuery.toLowerCase());
-            const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
-            const matchesType = typeFilter === 'all' || p.type === typeFilter;
-            const matchesMinPrice = minPrice === '' || p.price >= parseFloat(minPrice);
-            const matchesMaxPrice = maxPrice === '' || p.price <= parseFloat(maxPrice);
             
-            return matchesSearch && matchesStatus && matchesType && matchesMinPrice && matchesMaxPrice;
+            return matchesSearch;
         })
     );
 
     function clearFilters() {
         searchQuery = '';
-        statusFilter = 'all';
-        typeFilter = 'all';
-        minPrice = '';
-        maxPrice = '';
+        onFilterChange({
+            min_price: '',
+            max_price: '',
+            type: '',
+            status: ''
+        });
     }
 </script>
 
@@ -41,68 +36,39 @@
     </header>
 
     <!-- Search and Filters -->
-    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-        <div class="relative flex-1 w-full">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-            <input 
-                type="text" 
-                bind:value={searchQuery}
-                placeholder="Search by property name or address..."
-                class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-action focus:border-brand-action transition-all outline-none font-bold"
-            />
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-gray-400 text-sm">home</span>
-                <select 
-                    bind:value={typeFilter}
-                    aria-label="Filter by type"
-                    class="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-action outline-none font-black text-[10px] uppercase tracking-widest"
-                >
-                    <option value="all">All Types</option>
-                    <option value="Apartment">Apartment</option>
-                    <option value="House">House</option>
-                    <option value="Studio">Studio</option>
-                </select>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-gray-400 text-sm">payments</span>
+    <div class="space-y-4">
+        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <div class="relative flex-1 w-full">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
                 <input 
-                    type="number" 
-                    bind:value={minPrice}
-                    placeholder="Min Price"
-                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-action outline-none text-xs font-bold"
+                    type="text" 
+                    bind:value={searchQuery}
+                    placeholder="Search by property name or address..."
+                    class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-action focus:border-brand-action transition-all outline-none font-bold"
                 />
             </div>
-
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-gray-400 text-sm">payments</span>
-                <input 
-                    type="number" 
-                    bind:value={maxPrice}
-                    placeholder="Max Price"
-                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-action outline-none text-xs font-bold"
-                />
-            </div>
-
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-gray-400 text-sm">filter_list</span>
-                <select 
-                    bind:value={statusFilter}
-                    aria-label="Filter by status"
-                    class="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-brand-action outline-none font-black text-[10px] uppercase tracking-widest"
-                >
-                    <option value="all">All Statuses</option>
-                    <option value="available">Available</option>
-                    <option value="rented">Rented</option>
-                </select>
-            </div>
         </div>
+
+        <PropertyFilters {filters} {onFilterChange} />
     </div>
 
-    {#if filteredProperties.length > 0}
+    {#if isLoading}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 opacity-50 pointer-events-none transition-opacity">
+            {#each Array(6) as _}
+                <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden h-[400px] animate-pulse">
+                    <div class="h-48 bg-gray-100"></div>
+                    <div class="p-6 space-y-4">
+                        <div class="h-6 bg-gray-100 rounded-full w-3/4"></div>
+                        <div class="h-4 bg-gray-100 rounded-full w-1/2"></div>
+                        <div class="pt-4 border-t border-gray-50 flex justify-between">
+                            <div class="h-8 bg-gray-100 rounded-full w-24"></div>
+                            <div class="h-8 bg-gray-100 rounded-full w-20"></div>
+                        </div>
+                    </div>
+                </div>
+            {/each}
+        </div>
+    {:else if filteredProperties.length > 0}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {#each filteredProperties as property}
                 <PropertyCard {property} onViewDetails={onPropertySelect} />

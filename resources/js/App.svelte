@@ -13,6 +13,7 @@
     import LoginModal from './components/features/LoginModal.svelte';
     import RegisterModal from './components/features/RegisterModal.svelte';
     import MaintenanceRequestModal from './components/features/MaintenanceRequestModal.svelte';
+    import { debounce } from './lib/utils';
 
     // Global State
     let role = $state('guest');
@@ -25,6 +26,7 @@
 
     // Data State
     let properties = $state([]);
+    let filters = $state({ min_price: '', max_price: '', type: '', status: '' });
     let landlordVisits = $state([]);
     let myVisits = $state([]);
     let offers = $state([]);
@@ -33,6 +35,7 @@
 
     // UI State
     let selectedProperty = $state(null);
+    let isLoadingProperties = $state(false);
     let isScheduling = $state(false);
     let showPropertyModal = $state(false);
     let showLoginModal = $state(false);
@@ -72,15 +75,26 @@
     }
 
     async function fetchProperties() {
+        isLoadingProperties = true;
         try {
-            const res = await fetch('/properties');
+            const params = new URLSearchParams();
+            if (filters.min_price) params.append('min_price', filters.min_price);
+            if (filters.max_price) params.append('max_price', filters.max_price);
+            if (filters.type) params.append('type', filters.type);
+            if (filters.status) params.append('status', filters.status);
+
+            const res = await fetch(`/properties?${params.toString()}`);
             if (res.ok) {
                 properties = await res.json();
             }
         } catch (e) {
             console.error('Failed to fetch properties', e);
+        } finally {
+            isLoadingProperties = false;
         }
     }
+
+    const debouncedFetchProperties = debounce(fetchProperties, 300);
 
     async function fetchMyVisits() {
         try {
@@ -453,7 +467,23 @@
                         onScheduleVisit={startScheduling} 
                     />
                 {:else}
-                    <ListingsView {properties} onPropertySelect={(p) => { selectedProperty = p; window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
+                    <ListingsView 
+                        {properties} 
+                        {filters}
+                        isLoading={isLoadingProperties}
+                        onFilterChange={(newFilters) => { 
+                            const oldFilters = { ...filters };
+                            filters = newFilters; 
+                            
+                            // Debounce if price changed, otherwise fetch immediately
+                            if (oldFilters.min_price !== newFilters.min_price || oldFilters.max_price !== newFilters.max_price) {
+                                debouncedFetchProperties();
+                            } else {
+                                fetchProperties();
+                            }
+                        }}
+                        onPropertySelect={(p) => { selectedProperty = p; window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+                    />
                 {/if}
             {:else if isLoggedIn}
                 {#if role === 'landlord'}
