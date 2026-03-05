@@ -4,7 +4,9 @@ namespace App\Domain\Negotiation\Actions;
 
 use App\Domain\Legal\Actions\CreateLeaseFromOfferAction;
 use App\Domain\Negotiation\Models\Offer;
+use App\Domain\Negotiation\Notifications\TenantVerifiedNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class VerifyIncomeAction
 {
@@ -22,6 +24,9 @@ class VerifyIncomeAction
 
         // Automate lease creation
         app(CreateLeaseFromOfferAction::class)->execute($offer);
+
+        // Notify Landlord
+        Notification::send($offer->property->user, new TenantVerifiedNotification($offer));
 
         return [
             'offer' => $offer->load(['user', 'property']),
