@@ -13,9 +13,95 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
+use App\Domain\Negotiation\Actions\VerifyIncomeAction;
+use App\Domain\Negotiation\States\Verified;
+
+use App\Domain\Legal\Models\Lease;
+use App\Domain\Legal\States\Draft;
+
 class ComplianceFlowTest extends TestCase
 {
     use RefreshDatabase;
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_automatically_creates_a_lease_draft_when_offer_is_verified(): void
+    {
+        $user = User::factory()->create(['role' => 'tenant']);
+        $this->actingAs($user);
+
+        $offer = Offer::factory()->create([
+            'user_id' => $user->id,
+            'status' => PendingVerification::class,
+            'amount' => 3000,
+        ]);
+
+        $action = app(VerifyIncomeAction::class);
+        $action->execute($offer);
+
+        $this->assertDatabaseHas('leases', [
+            'tenant_id' => $user->id,
+            'property_id' => $offer->property_id,
+            'rent_amount' => 3000,
+            'status' => 'draft',
+        ]);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function a_tenant_can_verify_their_income_when_offer_is_pending_verification(): void
+    {
+        $user = User::factory()->create(['role' => 'tenant']);
+        $this->actingAs($user);
+
+        $offer = Offer::factory()->create([
+            'user_id' => $user->id,
+            'status' => PendingVerification::class,
+            'amount' => 3000,
+        ]);
+
+        $action = app(VerifyIncomeAction::class);
+        $result = $action->execute($offer);
+
+        $offer->refresh();
+        $this->assertInstanceOf(Verified::class, $offer->status);
+        $this->assertEquals('success', $result['verification']['status']);
+        $this->assertEquals(3000 * 3.5, $result['verification']['monthly_income_verified']);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_fails_to_verify_income_if_unauthorized(): void
+    {
+        $user = User::factory()->create(['role' => 'tenant']);
+        $otherUser = User::factory()->create(['role' => 'tenant']);
+        $this->actingAs($otherUser);
+
+        $offer = Offer::factory()->create([
+            'user_id' => $user->id,
+            'status' => PendingVerification::class,
+        ]);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Unauthorized');
+
+        $action = app(VerifyIncomeAction::class);
+        $action->execute($offer);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function it_fails_to_verify_income_if_not_in_pending_verification_status(): void
+    {
+        $user = User::factory()->create(['role' => 'tenant']);
+        $this->actingAs($user);
+
+        $offer = Offer::factory()->create([
+            'user_id' => $user->id,
+            'status' => AwaitingDocuments::class,
+        ]);
+
+        $this->expectException(\Spatie\ModelStates\Exceptions\TransitionNotFound::class);
+
+        $action = app(VerifyIncomeAction::class);
+        $action->execute($offer);
+    }
 
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_transitions_offer_to_pending_verification_when_all_documents_are_uploaded(): void
