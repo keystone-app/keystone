@@ -7,7 +7,7 @@
   - [ ] Target remaining red lines in `MediaGallery`, `Modal`, `Select`, and `PriceDisplay`.
 
 ## Phase 2: Forms and Feature Modals
-- [ ] **Task: Implement tests for Authentication Modals**
+- [~] **Task: Implement tests for Authentication Modals**
   - [ ] `LoginModal.svelte`: Form submission and errors.
   - [ ] `RegisterModal.svelte`: Form submission and role selection.
 - [ ] **Task: Increase coverage for Feature Modals**
