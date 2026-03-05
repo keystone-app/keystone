@@ -460,7 +460,12 @@
                         onScheduleVisit={startScheduling} 
                     />
                 {:else}
-                    <ListingsView {properties} onPropertySelect={(p) => { selectedProperty = p; window.scrollTo({ top: 0, behavior: 'smooth' }); }} />
+                    <ListingsView 
+                        {properties} 
+                        {filters}
+                        onFilterChange={(newFilters) => { filters = newFilters; fetchProperties(); }}
+                        onPropertySelect={(p) => { selectedProperty = p; window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+                    />
                 {/if}
             {:else if isLoggedIn}
                 {#if role === 'landlord'}
