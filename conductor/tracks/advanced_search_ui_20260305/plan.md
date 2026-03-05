@@ -15,9 +15,9 @@
   - [x] Integrate `PropertyFilters` into the `ListingsView`. a81c0bd
   - [x] Wire the `onFilterChange` event to trigger property re-fetching. a81c0bd
 
-## Phase 3: UX Refinement and Validation
-- [ ] **Task: Implement Debouncing and Loading States**
-  - [ ] Ensure price inputs don't trigger rapid-fire API calls.
-  - [ ] Add visual feedback during data fetching.
-- [ ] **Task: Conductor - User Manual Verification (Protocol in workflow.md)**
-  - [ ] Verify search accuracy and mobile responsiveness manually.
+## Phase 3: UX Refinement and Validation [checkpoint: 97e79ab]
+- [x] **Task: Implement Debouncing and Loading States** ddb6df3
+  - [x] Ensure price inputs don't trigger rapid-fire API calls. ddb6df3
+  - [x] Add visual feedback during data fetching. ddb6df3
+- [x] **Task: Conductor - User Manual Verification (Protocol in workflow.md)** 97e79ab
+  - [x] Verify search accuracy and mobile responsiveness manually. 97e79ab
