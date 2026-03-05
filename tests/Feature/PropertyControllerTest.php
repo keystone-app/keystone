@@ -119,7 +119,14 @@ class PropertyControllerTest extends TestCase
 
     public function test_store_requires_authentication(): void
     {
-        $response = $this->postJson('/properties', []);
+        // Explicitly NOT actingAs
+        $response = $this->postJson('/properties', [
+            'name' => 'Test',
+            'address' => 'Test',
+            'price' => 1000,
+            'type' => 'Apartment',
+        ]);
+        
         $response->assertStatus(401);
     }
 }

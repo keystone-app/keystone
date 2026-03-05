@@ -102,7 +102,7 @@ class LeaseControllerTest extends TestCase
         $lease = Lease::factory()->create(['status' => \App\Domain\Legal\States\Active::class]);
         $this->actingAs($lease->tenant);
 
-        // Already active, signing should fail
+        // Already active, signing should fail in the action
         $response = $this->postJson("/leases/{$lease->id}/sign");
 
         $response->assertStatus(403);

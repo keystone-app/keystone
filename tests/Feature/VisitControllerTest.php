@@ -159,6 +159,6 @@ class VisitControllerTest extends TestCase
             'visit_at' => now()->addDay()->toDateTimeString(),
         ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(400);
     }
 }

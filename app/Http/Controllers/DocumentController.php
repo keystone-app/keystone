@@ -16,13 +16,9 @@ class DocumentController extends Controller
             'file' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
         ]);
 
-        try {
-            $document = $action->execute($request->file('file'));
+        $document = $action->execute($request->file('file'));
 
-            return response()->json($document);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 400);
-        }
+        return response()->json($document);
     }
 
     public function uploadCompliance(Request $request, UploadComplianceDocumentAction $action): JsonResponse
@@ -34,9 +30,6 @@ class DocumentController extends Controller
         ]);
 
         $file = $request->file('file');
-        if (! $file instanceof \Illuminate\Http\UploadedFile) {
-            return response()->json(['message' => 'Invalid file.'], 400);
-        }
 
         try {
             /** @var Offer $offer */
@@ -45,7 +38,7 @@ class DocumentController extends Controller
 
             return response()->json($document);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
+            return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 403);
         }
     }
 }

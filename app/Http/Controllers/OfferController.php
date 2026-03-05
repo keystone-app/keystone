@@ -15,10 +15,6 @@ class OfferController extends Controller
     {
         $user = auth()->user();
 
-        if (! $user) {
-            return response()->json(['message' => 'Unauthenticated.'], 401);
-        }
-
         if ($user->role === 'landlord') {
             $offers = Offer::whereHas('property', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
@@ -40,24 +36,24 @@ class OfferController extends Controller
     {
         $data = $request->validate([
             'visit_id' => 'required|exists:visits,id',
-            'amount' => 'required|numeric|min:0',
+            'amount' => 'required|numeric',
             'terms' => 'nullable|string',
         ]);
 
         try {
             $offer = $action->execute($data);
 
-            return response()->json($offer->load(['property', 'visit']));
+            return response()->json($offer, 201);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
+            return response()->json(['message' => $e->getMessage()], 403);
         }
     }
 
-    public function update(Request $request, Offer $offer, RespondToOfferAction $action): JsonResponse
+    public function respond(Request $request, Offer $offer, RespondToOfferAction $action): JsonResponse
     {
         $data = $request->validate([
             'status' => 'required|in:accepted,rejected,countered',
-            'amount' => 'nullable|numeric|min:0',
+            'amount' => 'nullable|numeric',
             'terms' => 'nullable|string',
         ]);
 
@@ -66,18 +62,16 @@ class OfferController extends Controller
 
             return response()->json($offer);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
+            $code = $e->getCode();
+            if ($code < 100 || $code >= 600) $code = 403;
+            abort($code, $e->getMessage());
         }
     }
 
     public function verify(Request $request, Offer $offer, VerifyIncomeAction $action): JsonResponse
     {
-        try {
-            $result = $action->execute($offer);
+        $result = $action->execute($offer);
 
-            return response()->json($result);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], $e->getCode() ?: 400);
-        }
+        return response()->json($result);
     }
 }

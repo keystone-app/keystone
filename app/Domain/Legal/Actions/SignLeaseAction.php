@@ -16,7 +16,7 @@ class SignLeaseAction
         $user = Auth::user();
 
         if (! $user instanceof User) {
-            throw new \Exception('Unauthenticated.', 401);
+            abort(401, 'Unauthenticated.');
         }
 
         if ($user->id === $lease->landlord_id && ($lease->status instanceof WaitingLandlordSignature)) {
@@ -24,7 +24,7 @@ class SignLeaseAction
         } elseif ($user->id === $lease->tenant_id && ($lease->status instanceof WaitingTenantSignature)) {
             $lease->status->transitionTo(Active::class);
         } else {
-            throw new \Exception('Unauthorized or invalid lease state for signing.', 403);
+            abort(403, 'Unauthorized or invalid lease state for signing.');
         }
 
         return $lease;

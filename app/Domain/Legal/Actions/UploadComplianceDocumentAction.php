@@ -13,7 +13,7 @@ class UploadComplianceDocumentAction
     {
         // Authorization: Ensure the offer belongs to the authenticated user
         if ($offer->user_id !== Auth::id()) {
-            throw new \Exception('Unauthorized', 403);
+            abort(403, 'Unauthorized');
         }
 
         $path = $file->store('compliance_docs', 'public');

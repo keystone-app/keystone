@@ -5,6 +5,7 @@ namespace App\Domain\Maintenance\Models;
 use App\Domain\Identity\Models\User;
 use App\Domain\Legal\Models\Lease;
 use App\Domain\Maintenance\States\MaintenanceStatus;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\ModelStates\HasStates;
 
@@ -20,7 +21,7 @@ use Spatie\ModelStates\HasStates;
  */
 class MaintenanceRequest extends Model
 {
-    use HasStates;
+    use HasStates, HasFactory;
 
     protected $fillable = [
         'lease_id',
@@ -48,5 +49,10 @@ class MaintenanceRequest extends Model
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected static function newFactory(): \Database\Factories\MaintenanceRequestFactory
+    {
+        return \Database\Factories\MaintenanceRequestFactory::new();
     }
 }

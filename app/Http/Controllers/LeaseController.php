@@ -12,11 +12,8 @@ class LeaseController extends Controller
 {
     public function index(): JsonResponse
     {
+        /** @var \App\Domain\Identity\Models\User $user */
         $user = auth()->user();
-
-        if (! $user) {
-            return response()->json(['message' => 'Unauthenticated.'], 401);
-        }
 
         $leases = Lease::where('landlord_id', $user->id)
             ->orWhere('tenant_id', $user->id)
@@ -35,9 +32,6 @@ class LeaseController extends Controller
         ]);
 
         $file = $request->file('file');
-        if (! $file instanceof \Illuminate\Http\UploadedFile) {
-            return response()->json(['message' => 'Invalid file.'], 400);
-        }
 
         try {
             $document = $action->execute($lease, (string) $request->string('type'), $file);

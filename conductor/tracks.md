@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [x] **Track: 100% Backend Test Coverage**
+- [~] **Track: 100% Backend Test Coverage**
 *Link: [./tracks/full_test_coverage_20260305/](./tracks/full_test_coverage_20260305/)*

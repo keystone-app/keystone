@@ -14,7 +14,7 @@ class UploadLeaseDocumentAction
     {
         // Authorization: Ensure the user is either the landlord or the tenant of this lease
         if (Auth::id() !== $lease->landlord_id && Auth::id() !== $lease->tenant_id) {
-            throw new \Exception('Unauthorized', 403);
+            abort(403, 'Unauthorized');
         }
 
         $path = $file->store('lease_docs', 'public');
