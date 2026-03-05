@@ -9,7 +9,11 @@
         onViewChange, 
         onLandlordViewChange,
         onTenantViewChange,
+        onLogin,
+        onRegister,
+        onLogout,
         currentUser,
+        isLoggedIn = false,
         landlordVisits = [],
         myVisits = [],
         offers = [],
@@ -156,18 +160,41 @@
     </div>
 
     <div class="mt-auto p-6 border-t border-white/10">
-        {#if currentUser}
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-brand-action/20 flex items-center justify-center border border-brand-action/40">
-                    <span class="material-symbols-outlined text-brand-action">person</span>
+        {#if isLoggedIn && currentUser}
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-full bg-brand-action/20 flex items-center justify-center border border-brand-action/40">
+                        <span class="material-symbols-outlined text-brand-action">person</span>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold truncate">{currentUser.name}</p>
+                        <p class="text-xs text-gray-400 tracking-tight uppercase">{role}</p>
+                    </div>
                 </div>
-                <div class="min-w-0">
-                    <p class="text-sm font-semibold truncate">{currentUser.name}</p>
-                    <p class="text-xs text-gray-400 tracking-tight uppercase">{role}</p>
-                </div>
+                <button 
+                    onclick={onLogout}
+                    class="p-2 text-gray-400 hover:text-white transition-colors"
+                    aria-label="Logout"
+                >
+                    <span class="material-symbols-outlined text-sm">logout</span>
+                </button>
             </div>
         {:else}
-            <p class="text-xs text-gray-500 italic">Sign in to access your portal</p>
+            <div class="space-y-3">
+                <p class="text-xs text-gray-500 italic mb-4">Sign in to access your portal</p>
+                <button 
+                    onclick={onLogin}
+                    class="w-full py-2 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-bold transition-all"
+                >
+                    Sign In
+                </button>
+                <button 
+                    onclick={onRegister}
+                    class="w-full py-2 px-4 bg-brand-action text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-brand-action/20"
+                >
+                    Create Account
+                </button>
+            </div>
         {/if}
     </div>
 </aside>
