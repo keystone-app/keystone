@@ -25,6 +25,7 @@
 
     // Data State
     let properties = $state([]);
+    let filters = $state({ min_price: '', max_price: '', type: '', status: '' });
     let landlordVisits = $state([]);
     let myVisits = $state([]);
     let offers = $state([]);
@@ -73,7 +74,13 @@
 
     async function fetchProperties() {
         try {
-            const res = await fetch('/properties');
+            const params = new URLSearchParams();
+            if (filters.min_price) params.append('min_price', filters.min_price);
+            if (filters.max_price) params.append('max_price', filters.max_price);
+            if (filters.type) params.append('type', filters.type);
+            if (filters.status) params.append('status', filters.status);
+
+            const res = await fetch(`/properties?${params.toString()}`);
             if (res.ok) {
                 properties = await res.json();
             }
