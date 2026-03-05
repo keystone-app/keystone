@@ -10,10 +10,10 @@
 - [x] **Task: Implement Notification Logic** (0ebda6e)
 - [x] **Task: Conductor - User Manual Verification 'Phase 2: Messaging & Notification Domain' (Protocol in workflow.md)**
 
-## Phase 3: Payments & Maintenance Domain Scaffolding
+## Phase 3: Payments & Maintenance Domain Scaffolding [checkpoint: 63f28e0]
 - [x] **Task: Write tests for `Payment` and `MaintenanceRequest` domain models** (61b3877)
 - [x] **Task: Implement Domain Models and State Machines** (61b3877)
-- [ ] **Task: Conductor - User Manual Verification 'Phase 3: Payments & Maintenance Domain Scaffolding' (Protocol in workflow.md)**
+- [x] **Task: Conductor - User Manual Verification 'Phase 3: Payments & Maintenance Domain Scaffolding' (Protocol in workflow.md)**
 
 ## Phase 4: Frontend Scaffolding & Mobile-First UI
 - [ ] **Task: Write tests for `TenantDashboard` and `PropertySearch` UI components**
