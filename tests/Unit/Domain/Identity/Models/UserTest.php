@@ -15,72 +15,49 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_user_role_checks(): void
+    public function test_user_model_functionality(): void
     {
-        $landlord = User::factory()->landlord()->make();
-        $tenant = User::factory()->tenant()->make();
+        $landlord = User::factory()->landlord()->create();
+        $tenant = User::factory()->tenant()->create();
 
+        // Role checks
         $this->assertTrue($landlord->isLandlord());
         $this->assertFalse($landlord->isTenant());
         $this->assertTrue($tenant->isTenant());
         $this->assertFalse($tenant->isLandlord());
-    }
 
-    public function test_user_has_properties(): void
-    {
-        $user = User::factory()->landlord()->create();
-        Property::factory()->count(2)->create(['user_id' => $user->id]);
+        $guest = User::factory()->create(['role' => 'guest']);
+        $this->assertFalse($guest->isLandlord());
+        $this->assertFalse($guest->isTenant());
 
-        $this->assertCount(2, $user->properties);
-        $this->assertInstanceOf(Property::class, $user->properties->first());
-    }
+        // Relationships
+        Property::factory()->create(['user_id' => $landlord->id]);
+        $this->assertCount(1, $landlord->properties);
 
-    public function test_user_has_leases(): void
-    {
-        $landlord = User::factory()->landlord()->create();
-        $tenant = User::factory()->tenant()->create();
-        
         Lease::factory()->create(['landlord_id' => $landlord->id, 'tenant_id' => $tenant->id]);
-
         $this->assertCount(1, $landlord->landlordLeases);
         $this->assertCount(1, $tenant->tenantLeases);
-    }
 
-    public function test_user_has_visits(): void
-    {
-        $user = User::factory()->create();
-        Visit::factory()->count(2)->create(['user_id' => $user->id]);
+        Visit::factory()->create(['user_id' => $tenant->id]);
+        $this->assertCount(1, $tenant->visits);
 
-        $this->assertCount(2, $user->visits);
-    }
+        $doc = Document::factory()->create(['user_id' => $tenant->id]);
+        $this->assertCount(1, $tenant->documents);
+        $this->assertInstanceOf(Document::class, $tenant->documents->first());
 
-    public function test_user_has_documents(): void
-    {
-        $user = User::factory()->create();
-        Document::factory()->count(2)->create(['user_id' => $user->id]);
+        Offer::factory()->create(['user_id' => $tenant->id]);
+        $this->assertCount(1, $tenant->offers);
+        $this->assertInstanceOf(Offer::class, $tenant->offers->first());
 
-        $this->assertCount(2, $user->documents);
-    }
+        // Identity Document methods
+        $this->assertFalse($tenant->hasIdentityDocument());
+        $this->assertNull($tenant->getIdentityDocument());
 
-    public function test_user_has_offers(): void
-    {
-        $user = User::factory()->tenant()->create();
-        Offer::factory()->count(2)->create(['user_id' => $user->id]);
+        $idDoc = Document::factory()->create(['user_id' => $tenant->id]);
+        $tenant->update(['identity_document_id' => $idDoc->id]);
 
-        $this->assertCount(2, $user->offers);
-    }
-
-    public function test_user_identity_document_methods(): void
-    {
-        $user = User::factory()->create();
-        $this->assertFalse($user->hasIdentityDocument());
-        $this->assertNull($user->getIdentityDocument());
-
-        $doc = Document::factory()->create(['user_id' => $user->id]);
-        $user->update(['identity_document_id' => $doc->id]);
-
-        $this->assertTrue($user->fresh()->hasIdentityDocument());
-        $this->assertInstanceOf(Document::class, $user->fresh()->getIdentityDocument());
-        $this->assertEquals($doc->id, $user->fresh()->getIdentityDocument()->id);
+        $this->assertTrue($tenant->fresh()->hasIdentityDocument());
+        $this->assertInstanceOf(Document::class, $tenant->fresh()->getIdentityDocument());
+        $this->assertEquals($idDoc->id, $tenant->fresh()->getIdentityDocument()->id);
     }
 }

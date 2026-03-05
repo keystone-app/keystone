@@ -14,41 +14,27 @@ class PropertyTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_property_belongs_to_a_user(): void
+    public function test_property_model_relationships(): void
     {
         $user = User::factory()->create();
         $property = Property::factory()->create(['user_id' => $user->id]);
 
         $this->assertInstanceOf(User::class, $property->user);
         $this->assertEquals($user->id, $property->user->id);
-    }
 
-    public function test_property_has_media_relationship(): void
-    {
-        $property = Property::factory()->create();
-        Document::factory()->create([
+        $doc = Document::factory()->create([
             'documentable_id' => $property->id,
-            'documentable_type' => Property::class,
-            'type' => 'image',
+            'documentable_type' => Property::class
         ]);
-
         $this->assertCount(1, $property->media);
         $this->assertInstanceOf(Document::class, $property->media->first());
-    }
 
-    public function test_property_has_leases(): void
-    {
-        $property = Property::factory()->create();
-        Lease::factory()->create(['property_id' => $property->id]);
-
+        $lease = Lease::factory()->create(['property_id' => $property->id]);
         $this->assertCount(1, $property->leases);
-    }
+        $this->assertInstanceOf(Lease::class, $property->leases->first());
 
-    public function test_property_has_offers(): void
-    {
-        $property = Property::factory()->create();
-        Offer::factory()->create(['property_id' => $property->id]);
-
+        $offer = Offer::factory()->create(['property_id' => $property->id]);
         $this->assertCount(1, $property->offers);
+        $this->assertInstanceOf(Offer::class, $property->offers->first());
     }
 }
