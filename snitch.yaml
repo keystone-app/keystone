@@ -1,0 +1,24 @@
+# Snitch Configuration Example
+
+# List of directories or file patterns to exclude from analysis
+# .git and vendor are excluded by default
+exclude:
+  - config/
+  - database/
+  - tests/fixtures
+  - storage/
+  - public/assets
+  - node_modules
+
+k_depth: 10
+
+# Customize thresholds for specific rules
+rules:
+  # Maximum number of parameters allowed for functions and methods (default: 2)
+  too_many_params: 3
+  
+  # Maximum number of lines allowed for a single function or method (default: 50)
+  long_method: 100
+  
+  # Maximum number of lines allowed for a single class (default: 500)
+  god_class: 800

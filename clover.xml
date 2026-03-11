@@ -1,0 +1,990 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1773192315">
+  <project timestamp="1773192315" name="Clover Coverage">
+    <package name="App\Domain\Financial\Models">
+      <file name="/home/catz/dev/keystone/app/Domain/Financial/Models/Payment.php">
+        <class name="App\Domain\Financial\Models\Payment" namespace="App\Domain\Financial\Models">
+          <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
+        </class>
+        <line num="36" type="method" name="lease" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="38" type="stmt" count="1"/>
+        <metrics loc="41" ncloc="30" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
+      </file>
+    </package>
+    <package name="App\Domain\Financial\States">
+      <file name="/home/catz/dev/keystone/app/Domain/Financial/States/Completed.php">
+        <class name="App\Domain\Financial\States\Completed" namespace="App\Domain\Financial\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Financial/States/Failed.php">
+        <class name="App\Domain\Financial\States\Failed" namespace="App\Domain\Financial\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Financial/States/PaymentStatus.php">
+        <class name="App\Domain\Financial\States\PaymentStatus" namespace="App\Domain\Financial\States">
+          <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" elements="5" coveredelements="5"/>
+        </class>
+        <line num="14" type="method" name="config" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="16" type="stmt" count="1"/>
+        <line num="17" type="stmt" count="1"/>
+        <line num="18" type="stmt" count="1"/>
+        <line num="19" type="stmt" count="1"/>
+        <metrics loc="22" ncloc="19" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" elements="5" coveredelements="5"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Financial/States/Pending.php">
+        <class name="App\Domain\Financial\States\Pending" namespace="App\Domain\Financial\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+    </package>
+    <package name="App\Domain\Identity\Actions">
+      <file name="/home/catz/dev/keystone/app/Domain/Identity/Actions/RegisterGuestAction.php">
+        <class name="App\Domain\Identity\Actions\RegisterGuestAction" namespace="App\Domain\Identity\Actions">
+          <metrics complexity="2" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="11" coveredstatements="10" elements="12" coveredelements="10"/>
+        </class>
+        <line num="14" type="method" name="execute" visibility="public" complexity="2" crap="2.00" count="1"/>
+        <line num="16" type="stmt" count="1"/>
+        <line num="17" type="stmt" count="1"/>
+        <line num="18" type="stmt" count="0"/>
+        <line num="21" type="stmt" count="1"/>
+        <line num="22" type="stmt" count="1"/>
+        <line num="23" type="stmt" count="1"/>
+        <line num="24" type="stmt" count="1"/>
+        <line num="25" type="stmt" count="1"/>
+        <line num="26" type="stmt" count="1"/>
+        <line num="28" type="stmt" count="1"/>
+        <line num="30" type="stmt" count="1"/>
+        <metrics loc="33" ncloc="30" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="11" coveredstatements="10" elements="12" coveredelements="10"/>
+      </file>
+    </package>
+    <package name="App\Domain\Identity\Models">
+      <file name="/home/catz/dev/keystone/app/Domain/Identity/Models/User.php">
+        <class name="App\Domain\Identity\Models\User" namespace="App\Domain\Identity\Models">
+          <metrics complexity="13" methods="13" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="11" elements="29" coveredelements="19"/>
+        </class>
+        <line num="47" type="method" name="isLandlord" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="49" type="stmt" count="1"/>
+        <line num="52" type="method" name="isTenant" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="54" type="stmt" count="0"/>
+        <line num="60" type="method" name="properties" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="62" type="stmt" count="1"/>
+        <line num="68" type="method" name="landlordLeases" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="70" type="stmt" count="1"/>
+        <line num="76" type="method" name="tenantLeases" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="78" type="stmt" count="1"/>
+        <line num="84" type="method" name="visits" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="86" type="stmt" count="0"/>
+        <line num="92" type="method" name="documents" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="94" type="stmt" count="0"/>
+        <line num="100" type="method" name="offers" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="102" type="stmt" count="0"/>
+        <line num="108" type="method" name="identityDocument" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="110" type="stmt" count="1"/>
+        <line num="113" type="method" name="newFactory" visibility="protected" complexity="1" crap="1" count="60"/>
+        <line num="115" type="stmt" count="60"/>
+        <line num="118" type="method" name="hasIdentityDocument" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="120" type="stmt" count="0"/>
+        <line num="123" type="method" name="getIdentityDocument" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="125" type="stmt" count="1"/>
+        <line num="143" type="method" name="casts" visibility="protected" complexity="1" crap="1" count="64"/>
+        <line num="145" type="stmt" count="64"/>
+        <line num="146" type="stmt" count="64"/>
+        <line num="147" type="stmt" count="64"/>
+        <line num="148" type="stmt" count="64"/>
+        <metrics loc="151" ncloc="99" classes="1" methods="13" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="11" elements="29" coveredelements="19"/>
+      </file>
+    </package>
+    <package name="App\Domain\Legal\Actions">
+      <file name="/home/catz/dev/keystone/app/Domain/Legal/Actions/CreateLeaseFromOfferAction.php">
+        <class name="App\Domain\Legal\Actions\CreateLeaseFromOfferAction" namespace="App\Domain\Legal\Actions">
+          <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" elements="9" coveredelements="9"/>
+        </class>
+        <line num="11" type="method" name="execute" visibility="public" complexity="1" crap="1" count="5"/>
+        <line num="13" type="stmt" count="5"/>
+        <line num="14" type="stmt" count="5"/>
+        <line num="15" type="stmt" count="5"/>
+        <line num="16" type="stmt" count="5"/>
+        <line num="17" type="stmt" count="5"/>
+        <line num="18" type="stmt" count="5"/>
+        <line num="19" type="stmt" count="5"/>
+        <line num="20" type="stmt" count="5"/>
+        <metrics loc="23" ncloc="22" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" elements="9" coveredelements="9"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Legal/Actions/SignLeaseAction.php">
+        <class name="App\Domain\Legal\Actions\SignLeaseAction" namespace="App\Domain\Legal\Actions">
+          <metrics complexity="6" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="8" elements="10" coveredelements="8"/>
+        </class>
+        <line num="14" type="method" name="execute" visibility="public" complexity="6" crap="6.05" count="2"/>
+        <line num="16" type="stmt" count="2"/>
+        <line num="18" type="stmt" count="2"/>
+        <line num="19" type="stmt" count="0"/>
+        <line num="22" type="stmt" count="2"/>
+        <line num="23" type="stmt" count="1"/>
+        <line num="24" type="stmt" count="2"/>
+        <line num="25" type="stmt" count="1"/>
+        <line num="27" type="stmt" count="1"/>
+        <line num="30" type="stmt" count="1"/>
+        <metrics loc="33" ncloc="33" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="8" elements="10" coveredelements="8"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Legal/Actions/UploadComplianceDocumentAction.php">
+        <class name="App\Domain\Legal\Actions\UploadComplianceDocumentAction" namespace="App\Domain\Legal\Actions">
+          <metrics complexity="5" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="23" coveredelements="23"/>
+        </class>
+        <line num="12" type="method" name="execute" visibility="public" complexity="5" crap="5" count="6"/>
+        <line num="15" type="stmt" count="6"/>
+        <line num="16" type="stmt" count="2"/>
+        <line num="19" type="stmt" count="4"/>
+        <line num="21" type="stmt" count="4"/>
+        <line num="22" type="stmt" count="4"/>
+        <line num="23" type="stmt" count="4"/>
+        <line num="24" type="stmt" count="4"/>
+        <line num="25" type="stmt" count="4"/>
+        <line num="26" type="stmt" count="4"/>
+        <line num="27" type="stmt" count="4"/>
+        <line num="28" type="stmt" count="4"/>
+        <line num="31" type="stmt" count="4"/>
+        <line num="32" type="stmt" count="4"/>
+        <line num="33" type="stmt" count="4"/>
+        <line num="34" type="stmt" count="4"/>
+        <line num="36" type="stmt" count="4"/>
+        <line num="37" type="stmt" count="4"/>
+        <line num="38" type="stmt" count="4"/>
+        <line num="39" type="stmt" count="4"/>
+        <line num="41" type="stmt" count="4"/>
+        <line num="42" type="stmt" count="1"/>
+        <line num="45" type="stmt" count="4"/>
+        <metrics loc="48" ncloc="46" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="23" coveredelements="23"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Legal/Actions/UploadIdentityDocumentAction.php">
+        <class name="App\Domain\Legal\Actions\UploadIdentityDocumentAction" namespace="App\Domain\Legal\Actions">
+          <metrics complexity="2" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="13" elements="15" coveredelements="13"/>
+        </class>
+        <line num="12" type="method" name="execute" visibility="public" complexity="2" crap="2.00" count="1"/>
+        <line num="14" type="stmt" count="1"/>
+        <line num="16" type="stmt" count="1"/>
+        <line num="17" type="stmt" count="0"/>
+        <line num="20" type="stmt" count="1"/>
+        <line num="22" type="stmt" count="1"/>
+        <line num="23" type="stmt" count="1"/>
+        <line num="24" type="stmt" count="1"/>
+        <line num="25" type="stmt" count="1"/>
+        <line num="26" type="stmt" count="1"/>
+        <line num="27" type="stmt" count="1"/>
+        <line num="29" type="stmt" count="1"/>
+        <line num="30" type="stmt" count="1"/>
+        <line num="31" type="stmt" count="1"/>
+        <line num="33" type="stmt" count="1"/>
+        <metrics loc="36" ncloc="36" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="13" elements="15" coveredelements="13"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Legal/Actions/UploadLeaseDocumentAction.php">
+        <class name="App\Domain\Legal\Actions\UploadLeaseDocumentAction" namespace="App\Domain\Legal\Actions">
+          <metrics complexity="6" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="23" coveredelements="23"/>
+        </class>
+        <line num="13" type="method" name="execute" visibility="public" complexity="6" crap="6" count="3"/>
+        <line num="16" type="stmt" count="3"/>
+        <line num="17" type="stmt" count="2"/>
+        <line num="20" type="stmt" count="1"/>
+        <line num="22" type="stmt" count="1"/>
+        <line num="23" type="stmt" count="1"/>
+        <line num="24" type="stmt" count="1"/>
+        <line num="25" type="stmt" count="1"/>
+        <line num="26" type="stmt" count="1"/>
+        <line num="27" type="stmt" count="1"/>
+        <line num="28" type="stmt" count="1"/>
+        <line num="31" type="stmt" count="1"/>
+        <line num="32" type="stmt" count="1"/>
+        <line num="34" type="stmt" count="1"/>
+        <line num="35" type="stmt" count="1"/>
+        <line num="38" type="stmt" count="1"/>
+        <line num="39" type="stmt" count="1"/>
+        <line num="40" type="stmt" count="1"/>
+        <line num="41" type="stmt" count="1"/>
+        <line num="42" type="stmt" count="1"/>
+        <line num="43" type="stmt" count="1"/>
+        <line num="44" type="stmt" count="1"/>
+        <line num="47" type="stmt" count="1"/>
+        <metrics loc="50" ncloc="47" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="23" coveredelements="23"/>
+      </file>
+    </package>
+    <package name="App\Domain\Legal\Models">
+      <file name="/home/catz/dev/keystone/app/Domain/Legal/Models/Document.php">
+        <class name="App\Domain\Legal\Models\Document" namespace="App\Domain\Legal\Models">
+          <metrics complexity="4" methods="4" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="1" elements="8" coveredelements="2"/>
+        </class>
+        <line num="40" type="method" name="documentable" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="42" type="stmt" count="0"/>
+        <line num="48" type="method" name="user" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="50" type="stmt" count="0"/>
+        <line num="56" type="method" name="lease" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="58" type="stmt" count="0"/>
+        <line num="61" type="method" name="newFactory" visibility="protected" complexity="1" crap="1" count="27"/>
+        <line num="63" type="stmt" count="27"/>
+        <metrics loc="66" ncloc="43" classes="1" methods="4" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="1" elements="8" coveredelements="2"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Legal/Models/Lease.php">
+        <class name="App\Domain\Legal\Models\Lease" namespace="App\Domain\Legal\Models">
+          <metrics complexity="5" methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" elements="10" coveredelements="10"/>
+        </class>
+        <line num="50" type="method" name="property" visibility="public" complexity="1" crap="1" count="5"/>
+        <line num="52" type="stmt" count="5"/>
+        <line num="58" type="method" name="landlord" visibility="public" complexity="1" crap="1" count="3"/>
+        <line num="60" type="stmt" count="3"/>
+        <line num="66" type="method" name="tenant" visibility="public" complexity="1" crap="1" count="8"/>
+        <line num="68" type="stmt" count="8"/>
+        <line num="74" type="method" name="documents" visibility="public" complexity="1" crap="1" count="3"/>
+        <line num="76" type="stmt" count="3"/>
+        <line num="79" type="method" name="newFactory" visibility="protected" complexity="1" crap="1" count="17"/>
+        <line num="81" type="stmt" count="17"/>
+        <metrics loc="84" ncloc="57" classes="1" methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" elements="10" coveredelements="10"/>
+      </file>
+    </package>
+    <package name="App\Domain\Legal\States">
+      <file name="/home/catz/dev/keystone/app/Domain/Legal/States/Active.php">
+        <class name="App\Domain\Legal\States\Active" namespace="App\Domain\Legal\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Legal/States/Draft.php">
+        <class name="App\Domain\Legal\States\Draft" namespace="App\Domain\Legal\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Legal/States/LeaseStatus.php">
+        <class name="App\Domain\Legal\States\LeaseStatus" namespace="App\Domain\Legal\States">
+          <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" elements="6" coveredelements="6"/>
+        </class>
+        <line num="14" type="method" name="config" visibility="public" complexity="1" crap="1" count="24"/>
+        <line num="16" type="stmt" count="24"/>
+        <line num="17" type="stmt" count="24"/>
+        <line num="18" type="stmt" count="24"/>
+        <line num="19" type="stmt" count="24"/>
+        <line num="20" type="stmt" count="24"/>
+        <metrics loc="23" ncloc="20" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" elements="6" coveredelements="6"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Legal/States/WaitingLandlordSignature.php">
+        <class name="App\Domain\Legal\States\WaitingLandlordSignature" namespace="App\Domain\Legal\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Legal/States/WaitingTenantSignature.php">
+        <class name="App\Domain\Legal\States\WaitingTenantSignature" namespace="App\Domain\Legal\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+    </package>
+    <package name="App\Domain\Maintenance\Actions">
+      <file name="/home/catz/dev/keystone/app/Domain/Maintenance/Actions/SubmitMaintenanceRequestAction.php">
+        <class name="App\Domain\Maintenance\Actions\SubmitMaintenanceRequestAction" namespace="App\Domain\Maintenance\Actions">
+          <metrics complexity="3" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="11" coveredstatements="10" elements="12" coveredelements="10"/>
+        </class>
+        <line num="21" type="method" name="execute" visibility="public" complexity="3" crap="3.01" count="2"/>
+        <line num="23" type="stmt" count="2"/>
+        <line num="24" type="stmt" count="0"/>
+        <line num="27" type="stmt" count="2"/>
+        <line num="28" type="stmt" count="1"/>
+        <line num="31" type="stmt" count="1"/>
+        <line num="32" type="stmt" count="1"/>
+        <line num="33" type="stmt" count="1"/>
+        <line num="34" type="stmt" count="1"/>
+        <line num="35" type="stmt" count="1"/>
+        <line num="36" type="stmt" count="1"/>
+        <line num="37" type="stmt" count="1"/>
+        <metrics loc="40" ncloc="32" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="11" coveredstatements="10" elements="12" coveredelements="10"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Maintenance/Actions/UpdateMaintenanceStatusAction.php">
+        <class name="App\Domain\Maintenance\Actions\UpdateMaintenanceStatusAction" namespace="App\Domain\Maintenance\Actions">
+          <metrics complexity="2" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="4" elements="6" coveredelements="4"/>
+        </class>
+        <line num="19" type="method" name="execute" visibility="public" complexity="2" crap="2.03" count="2"/>
+        <line num="21" type="stmt" count="2"/>
+        <line num="24" type="stmt" count="2"/>
+        <line num="25" type="stmt" count="0"/>
+        <line num="28" type="stmt" count="2"/>
+        <line num="30" type="stmt" count="1"/>
+        <metrics loc="33" ncloc="24" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="4" elements="6" coveredelements="4"/>
+      </file>
+    </package>
+    <package name="App\Domain\Maintenance\Models">
+      <file name="/home/catz/dev/keystone/app/Domain/Maintenance/Models/MaintenanceRequest.php">
+        <class name="App\Domain\Maintenance\Models\MaintenanceRequest" namespace="App\Domain\Maintenance\Models">
+          <metrics complexity="3" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="2" elements="6" coveredelements="4"/>
+        </class>
+        <line num="41" type="method" name="lease" visibility="public" complexity="1" crap="1" count="4"/>
+        <line num="43" type="stmt" count="4"/>
+        <line num="49" type="method" name="user" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="51" type="stmt" count="1"/>
+        <line num="54" type="method" name="newFactory" visibility="protected" complexity="1" crap="2" count="0"/>
+        <line num="56" type="stmt" count="0"/>
+        <metrics loc="59" ncloc="43" classes="1" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="2" elements="6" coveredelements="4"/>
+      </file>
+    </package>
+    <package name="App\Domain\Maintenance\States">
+      <file name="/home/catz/dev/keystone/app/Domain/Maintenance/States/InProgress.php">
+        <class name="App\Domain\Maintenance\States\InProgress" namespace="App\Domain\Maintenance\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Maintenance/States/MaintenanceStatus.php">
+        <class name="App\Domain\Maintenance\States\MaintenanceStatus" namespace="App\Domain\Maintenance\States">
+          <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" elements="5" coveredelements="5"/>
+        </class>
+        <line num="14" type="method" name="config" visibility="public" complexity="1" crap="1" count="7"/>
+        <line num="16" type="stmt" count="7"/>
+        <line num="17" type="stmt" count="7"/>
+        <line num="18" type="stmt" count="7"/>
+        <line num="19" type="stmt" count="7"/>
+        <metrics loc="22" ncloc="19" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" elements="5" coveredelements="5"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Maintenance/States/Reported.php">
+        <class name="App\Domain\Maintenance\States\Reported" namespace="App\Domain\Maintenance\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Maintenance/States/Resolved.php">
+        <class name="App\Domain\Maintenance\States\Resolved" namespace="App\Domain\Maintenance\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+    </package>
+    <package name="App\Domain\Negotiation\Actions">
+      <file name="/home/catz/dev/keystone/app/Domain/Negotiation/Actions/RespondToOfferAction.php">
+        <class name="App\Domain\Negotiation\Actions\RespondToOfferAction" namespace="App\Domain\Negotiation\Actions">
+          <metrics complexity="4" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="9" elements="11" coveredelements="9"/>
+        </class>
+        <line num="14" type="method" name="execute" visibility="public" complexity="4" crap="4.02" count="4"/>
+        <line num="17" type="stmt" count="4"/>
+        <line num="18" type="stmt" count="1"/>
+        <line num="21" type="stmt" count="3"/>
+        <line num="22" type="stmt" count="3"/>
+        <line num="23" type="stmt" count="0"/>
+        <line num="26" type="stmt" count="3"/>
+        <line num="29" type="stmt" count="3"/>
+        <line num="30" type="stmt" count="2"/>
+        <line num="32" type="stmt" count="2"/>
+        <line num="35" type="stmt" count="3"/>
+        <metrics loc="38" ncloc="33" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="9" elements="11" coveredelements="9"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Negotiation/Actions/SubmitOfferAction.php">
+        <class name="App\Domain\Negotiation\Actions\SubmitOfferAction" namespace="App\Domain\Negotiation\Actions">
+          <metrics complexity="3" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="11" coveredstatements="11" elements="12" coveredelements="12"/>
+        </class>
+        <line num="14" type="method" name="execute" visibility="public" complexity="3" crap="3" count="2"/>
+        <line num="17" type="stmt" count="2"/>
+        <line num="20" type="stmt" count="2"/>
+        <line num="21" type="stmt" count="1"/>
+        <line num="24" type="stmt" count="1"/>
+        <line num="25" type="stmt" count="1"/>
+        <line num="26" type="stmt" count="1"/>
+        <line num="27" type="stmt" count="1"/>
+        <line num="28" type="stmt" count="1"/>
+        <line num="29" type="stmt" count="1"/>
+        <line num="30" type="stmt" count="1"/>
+        <line num="31" type="stmt" count="1"/>
+        <metrics loc="34" ncloc="29" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="11" coveredstatements="11" elements="12" coveredelements="12"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Negotiation/Actions/VerifyIncomeAction.php">
+        <class name="App\Domain\Negotiation\Actions\VerifyIncomeAction" namespace="App\Domain\Negotiation\Actions">
+          <metrics complexity="2" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="15" elements="16" coveredelements="16"/>
+        </class>
+        <line num="16" type="method" name="execute" visibility="public" complexity="2" crap="2" count="5"/>
+        <line num="19" type="stmt" count="5"/>
+        <line num="20" type="stmt" count="1"/>
+        <line num="23" type="stmt" count="4"/>
+        <line num="26" type="stmt" count="3"/>
+        <line num="29" type="stmt" count="3"/>
+        <line num="31" type="stmt" count="3"/>
+        <line num="32" type="stmt" count="3"/>
+        <line num="33" type="stmt" count="3"/>
+        <line num="34" type="stmt" count="3"/>
+        <line num="35" type="stmt" count="3"/>
+        <line num="36" type="stmt" count="3"/>
+        <line num="37" type="stmt" count="3"/>
+        <line num="38" type="stmt" count="3"/>
+        <line num="39" type="stmt" count="3"/>
+        <line num="40" type="stmt" count="3"/>
+        <metrics loc="43" ncloc="37" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="15" elements="16" coveredelements="16"/>
+      </file>
+    </package>
+    <package name="App\Domain\Negotiation\Models">
+      <file name="/home/catz/dev/keystone/app/Domain/Negotiation/Models/Offer.php">
+        <class name="App\Domain\Negotiation\Models\Offer" namespace="App\Domain\Negotiation\Models">
+          <metrics complexity="9" methods="6" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="11" elements="19" coveredelements="16"/>
+        </class>
+        <line num="51" type="method" name="getComplianceStatusLabelAttribute" visibility="public" complexity="4" crap="4.37" count="6"/>
+        <line num="53" type="stmt" count="6"/>
+        <line num="54" type="stmt" count="2"/>
+        <line num="57" type="stmt" count="4"/>
+        <line num="58" type="stmt" count="0"/>
+        <line num="61" type="stmt" count="4"/>
+        <line num="62" type="stmt" count="0"/>
+        <line num="65" type="stmt" count="4"/>
+        <line num="71" type="method" name="complianceDocuments" visibility="public" complexity="1" crap="1" count="2"/>
+        <line num="73" type="stmt" count="2"/>
+        <line num="74" type="stmt" count="2"/>
+        <line num="80" type="method" name="user" visibility="public" complexity="1" crap="1" count="7"/>
+        <line num="82" type="stmt" count="7"/>
+        <line num="88" type="method" name="property" visibility="public" complexity="1" crap="1" count="9"/>
+        <line num="90" type="stmt" count="9"/>
+        <line num="96" type="method" name="visit" visibility="public" complexity="1" crap="1" count="5"/>
+        <line num="98" type="stmt" count="5"/>
+        <line num="101" type="method" name="newFactory" visibility="protected" complexity="1" crap="1" count="19"/>
+        <line num="103" type="stmt" count="19"/>
+        <metrics loc="106" ncloc="79" classes="1" methods="6" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="11" elements="19" coveredelements="16"/>
+      </file>
+    </package>
+    <package name="App\Domain\Negotiation\Notifications">
+      <file name="/home/catz/dev/keystone/app/Domain/Negotiation/Notifications/TenantVerifiedNotification.php">
+        <class name="App\Domain\Negotiation\Notifications\TenantVerifiedNotification" namespace="App\Domain\Negotiation\Notifications">
+          <metrics complexity="4" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="14" elements="18" coveredelements="18"/>
+        </class>
+        <line num="15" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="3"/>
+        <line num="17" type="stmt" count="3"/>
+        <line num="19" type="method" name="via" visibility="public" complexity="1" crap="1" count="3"/>
+        <line num="21" type="stmt" count="3"/>
+        <line num="24" type="method" name="toMail" visibility="public" complexity="1" crap="1" count="2"/>
+        <line num="26" type="stmt" count="2"/>
+        <line num="27" type="stmt" count="2"/>
+        <line num="28" type="stmt" count="2"/>
+        <line num="29" type="stmt" count="2"/>
+        <line num="30" type="stmt" count="2"/>
+        <line num="31" type="stmt" count="2"/>
+        <line num="34" type="method" name="toArray" visibility="public" complexity="1" crap="1" count="2"/>
+        <line num="36" type="stmt" count="2"/>
+        <line num="37" type="stmt" count="2"/>
+        <line num="38" type="stmt" count="2"/>
+        <line num="39" type="stmt" count="2"/>
+        <line num="40" type="stmt" count="2"/>
+        <line num="41" type="stmt" count="2"/>
+        <metrics loc="44" ncloc="44" classes="1" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="14" coveredstatements="14" elements="18" coveredelements="18"/>
+      </file>
+    </package>
+    <package name="App\Domain\Negotiation\States">
+      <file name="/home/catz/dev/keystone/app/Domain/Negotiation/States/Accepted.php">
+        <class name="App\Domain\Negotiation\States\Accepted" namespace="App\Domain\Negotiation\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Negotiation/States/AwaitingDocuments.php">
+        <class name="App\Domain\Negotiation\States\AwaitingDocuments" namespace="App\Domain\Negotiation\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Negotiation/States/Countered.php">
+        <class name="App\Domain\Negotiation\States\Countered" namespace="App\Domain\Negotiation\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Negotiation/States/OfferStatus.php">
+        <class name="App\Domain\Negotiation\States\OfferStatus" namespace="App\Domain\Negotiation\States">
+          <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="10" elements="11" coveredelements="11"/>
+        </class>
+        <line num="14" type="method" name="config" visibility="public" complexity="1" crap="1" count="20"/>
+        <line num="16" type="stmt" count="20"/>
+        <line num="17" type="stmt" count="20"/>
+        <line num="18" type="stmt" count="20"/>
+        <line num="19" type="stmt" count="20"/>
+        <line num="20" type="stmt" count="20"/>
+        <line num="21" type="stmt" count="20"/>
+        <line num="22" type="stmt" count="20"/>
+        <line num="23" type="stmt" count="20"/>
+        <line num="24" type="stmt" count="20"/>
+        <line num="25" type="stmt" count="20"/>
+        <metrics loc="28" ncloc="25" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="10" elements="11" coveredelements="11"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Negotiation/States/Pending.php">
+        <class name="App\Domain\Negotiation\States\Pending" namespace="App\Domain\Negotiation\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Negotiation/States/PendingVerification.php">
+        <class name="App\Domain\Negotiation\States\PendingVerification" namespace="App\Domain\Negotiation\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Negotiation/States/Rejected.php">
+        <class name="App\Domain\Negotiation\States\Rejected" namespace="App\Domain\Negotiation\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Negotiation/States/Verified.php">
+        <class name="App\Domain\Negotiation\States\Verified" namespace="App\Domain\Negotiation\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+    </package>
+    <package name="App\Domain\Property\Actions">
+      <file name="/home/catz/dev/keystone/app/Domain/Property/Actions/StoreProperty.php">
+        <class name="App\Domain\Property\Actions\StoreProperty" namespace="App\Domain\Property\Actions">
+          <metrics complexity="10" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="45" coveredstatements="45" elements="46" coveredelements="46"/>
+        </class>
+        <line num="16" type="method" name="execute" visibility="public" complexity="10" crap="10" count="3"/>
+        <line num="18" type="stmt" count="3"/>
+        <line num="19" type="stmt" count="3"/>
+        <line num="20" type="stmt" count="3"/>
+        <line num="21" type="stmt" count="3"/>
+        <line num="22" type="stmt" count="3"/>
+        <line num="23" type="stmt" count="3"/>
+        <line num="24" type="stmt" count="3"/>
+        <line num="25" type="stmt" count="3"/>
+        <line num="26" type="stmt" count="3"/>
+        <line num="28" type="stmt" count="3"/>
+        <line num="29" type="stmt" count="1"/>
+        <line num="32" type="stmt" count="2"/>
+        <line num="33" type="stmt" count="2"/>
+        <line num="34" type="stmt" count="2"/>
+        <line num="35" type="stmt" count="2"/>
+        <line num="36" type="stmt" count="2"/>
+        <line num="37" type="stmt" count="2"/>
+        <line num="38" type="stmt" count="2"/>
+        <line num="39" type="stmt" count="2"/>
+        <line num="40" type="stmt" count="2"/>
+        <line num="42" type="stmt" count="2"/>
+        <line num="43" type="stmt" count="1"/>
+        <line num="44" type="stmt" count="1"/>
+        <line num="45" type="stmt" count="1"/>
+        <line num="46" type="stmt" count="1"/>
+        <line num="47" type="stmt" count="1"/>
+        <line num="48" type="stmt" count="1"/>
+        <line num="49" type="stmt" count="1"/>
+        <line num="50" type="stmt" count="1"/>
+        <line num="51" type="stmt" count="1"/>
+        <line num="52" type="stmt" count="1"/>
+        <line num="53" type="stmt" count="1"/>
+        <line num="58" type="stmt" count="2"/>
+        <line num="59" type="stmt" count="1"/>
+        <line num="60" type="stmt" count="1"/>
+        <line num="61" type="stmt" count="1"/>
+        <line num="62" type="stmt" count="1"/>
+        <line num="63" type="stmt" count="1"/>
+        <line num="64" type="stmt" count="1"/>
+        <line num="65" type="stmt" count="1"/>
+        <line num="66" type="stmt" count="1"/>
+        <line num="67" type="stmt" count="1"/>
+        <line num="68" type="stmt" count="1"/>
+        <line num="69" type="stmt" count="1"/>
+        <line num="74" type="stmt" count="2"/>
+        <metrics loc="77" ncloc="74" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="45" coveredstatements="45" elements="46" coveredelements="46"/>
+      </file>
+    </package>
+    <package name="App\Domain\Property\Models">
+      <file name="/home/catz/dev/keystone/app/Domain/Property/Models/Property.php">
+        <class name="App\Domain\Property\Models\Property" namespace="App\Domain\Property\Models">
+          <metrics complexity="5" methods="5" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="3" elements="10" coveredelements="6"/>
+        </class>
+        <line num="50" type="method" name="user" visibility="public" complexity="1" crap="1" count="3"/>
+        <line num="52" type="stmt" count="3"/>
+        <line num="58" type="method" name="media" visibility="public" complexity="1" crap="1" count="7"/>
+        <line num="60" type="stmt" count="7"/>
+        <line num="66" type="method" name="leases" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="68" type="stmt" count="0"/>
+        <line num="74" type="method" name="offers" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="76" type="stmt" count="0"/>
+        <line num="79" type="method" name="newFactory" visibility="protected" complexity="1" crap="1" count="50"/>
+        <line num="81" type="stmt" count="50"/>
+        <metrics loc="84" ncloc="57" classes="1" methods="5" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="3" elements="10" coveredelements="6"/>
+      </file>
+    </package>
+    <package name="App\Domain\Property\States">
+      <file name="/home/catz/dev/keystone/app/Domain/Property/States/Available.php">
+        <class name="App\Domain\Property\States\Available" namespace="App\Domain\Property\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Property/States/Maintenance.php">
+        <class name="App\Domain\Property\States\Maintenance" namespace="App\Domain\Property\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Property/States/PropertyStatus.php">
+        <class name="App\Domain\Property\States\PropertyStatus" namespace="App\Domain\Property\States">
+          <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" elements="7" coveredelements="7"/>
+        </class>
+        <line num="14" type="method" name="config" visibility="public" complexity="1" crap="1" count="55"/>
+        <line num="16" type="stmt" count="55"/>
+        <line num="17" type="stmt" count="55"/>
+        <line num="18" type="stmt" count="55"/>
+        <line num="19" type="stmt" count="55"/>
+        <line num="20" type="stmt" count="55"/>
+        <line num="21" type="stmt" count="55"/>
+        <metrics loc="24" ncloc="21" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="6" coveredstatements="6" elements="7" coveredelements="7"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Property/States/Rented.php">
+        <class name="App\Domain\Property\States\Rented" namespace="App\Domain\Property\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+    </package>
+    <package name="App\Domain\Scheduling\Actions">
+      <file name="/home/catz/dev/keystone/app/Domain/Scheduling/Actions/ScheduleVisitAction.php">
+        <class name="App\Domain\Scheduling\Actions\ScheduleVisitAction" namespace="App\Domain\Scheduling\Actions">
+          <metrics complexity="3" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="12" elements="14" coveredelements="12"/>
+        </class>
+        <line num="14" type="method" name="execute" visibility="public" complexity="3" crap="3.00" count="3"/>
+        <line num="16" type="stmt" count="3"/>
+        <line num="18" type="stmt" count="3"/>
+        <line num="19" type="stmt" count="0"/>
+        <line num="22" type="stmt" count="3"/>
+        <line num="24" type="stmt" count="3"/>
+        <line num="25" type="stmt" count="1"/>
+        <line num="28" type="stmt" count="2"/>
+        <line num="29" type="stmt" count="2"/>
+        <line num="30" type="stmt" count="2"/>
+        <line num="31" type="stmt" count="2"/>
+        <line num="32" type="stmt" count="2"/>
+        <line num="33" type="stmt" count="2"/>
+        <line num="34" type="stmt" count="2"/>
+        <metrics loc="37" ncloc="34" classes="1" methods="1" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="12" elements="14" coveredelements="12"/>
+      </file>
+    </package>
+    <package name="App\Domain\Scheduling\Models">
+      <file name="/home/catz/dev/keystone/app/Domain/Scheduling/Models/Visit.php">
+        <class name="App\Domain\Scheduling\Models\Visit" namespace="App\Domain\Scheduling\Models">
+          <metrics complexity="5" methods="5" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="4" elements="10" coveredelements="8"/>
+        </class>
+        <line num="47" type="method" name="user" visibility="public" complexity="1" crap="1" count="4"/>
+        <line num="49" type="stmt" count="4"/>
+        <line num="55" type="method" name="property" visibility="public" complexity="1" crap="1" count="6"/>
+        <line num="57" type="stmt" count="6"/>
+        <line num="63" type="method" name="document" visibility="public" complexity="1" crap="1" count="5"/>
+        <line num="65" type="stmt" count="5"/>
+        <line num="71" type="method" name="offer" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="73" type="stmt" count="0"/>
+        <line num="76" type="method" name="newFactory" visibility="protected" complexity="1" crap="1" count="25"/>
+        <line num="78" type="stmt" count="25"/>
+        <metrics loc="81" ncloc="56" classes="1" methods="5" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="4" elements="10" coveredelements="8"/>
+      </file>
+    </package>
+    <package name="App\Domain\Scheduling\States">
+      <file name="/home/catz/dev/keystone/app/Domain/Scheduling/States/Pending.php">
+        <class name="App\Domain\Scheduling\States\Pending" namespace="App\Domain\Scheduling\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Scheduling/States/Rejected.php">
+        <class name="App\Domain\Scheduling\States\Rejected" namespace="App\Domain\Scheduling\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Scheduling/States/Scheduled.php">
+        <class name="App\Domain\Scheduling\States\Scheduled" namespace="App\Domain\Scheduling\States">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="9" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Domain/Scheduling/States/VisitStatus.php">
+        <class name="App\Domain\Scheduling\States\VisitStatus" namespace="App\Domain\Scheduling\States">
+          <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" elements="5" coveredelements="5"/>
+        </class>
+        <line num="14" type="method" name="config" visibility="public" complexity="1" crap="1" count="27"/>
+        <line num="16" type="stmt" count="27"/>
+        <line num="17" type="stmt" count="27"/>
+        <line num="18" type="stmt" count="27"/>
+        <line num="19" type="stmt" count="27"/>
+        <metrics loc="22" ncloc="19" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="4" coveredstatements="4" elements="5" coveredelements="5"/>
+      </file>
+    </package>
+    <package name="App\Http\Controllers">
+      <file name="/home/catz/dev/keystone/app/Http/Controllers/AuthController.php">
+        <class name="App\Http\Controllers\AuthController" namespace="App\Http\Controllers">
+          <metrics complexity="5" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="41" coveredstatements="41" elements="45" coveredelements="45"/>
+        </class>
+        <line num="13" type="method" name="register" visibility="public" complexity="1" crap="1" count="2"/>
+        <line num="15" type="stmt" count="2"/>
+        <line num="16" type="stmt" count="2"/>
+        <line num="17" type="stmt" count="2"/>
+        <line num="18" type="stmt" count="2"/>
+        <line num="19" type="stmt" count="2"/>
+        <line num="21" type="stmt" count="1"/>
+        <line num="22" type="stmt" count="1"/>
+        <line num="23" type="stmt" count="1"/>
+        <line num="24" type="stmt" count="1"/>
+        <line num="25" type="stmt" count="1"/>
+        <line num="26" type="stmt" count="1"/>
+        <line num="28" type="stmt" count="1"/>
+        <line num="29" type="stmt" count="1"/>
+        <line num="30" type="stmt" count="1"/>
+        <line num="31" type="stmt" count="1"/>
+        <line num="32" type="stmt" count="1"/>
+        <line num="35" type="method" name="login" visibility="public" complexity="2" crap="2" count="2"/>
+        <line num="37" type="stmt" count="2"/>
+        <line num="38" type="stmt" count="2"/>
+        <line num="39" type="stmt" count="2"/>
+        <line num="40" type="stmt" count="2"/>
+        <line num="42" type="stmt" count="2"/>
+        <line num="43" type="stmt" count="1"/>
+        <line num="45" type="stmt" count="1"/>
+        <line num="47" type="stmt" count="1"/>
+        <line num="48" type="stmt" count="1"/>
+        <line num="49" type="stmt" count="1"/>
+        <line num="50" type="stmt" count="1"/>
+        <line num="51" type="stmt" count="1"/>
+        <line num="54" type="stmt" count="1"/>
+        <line num="55" type="stmt" count="1"/>
+        <line num="56" type="stmt" count="1"/>
+        <line num="59" type="method" name="logout" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="61" type="stmt" count="1"/>
+        <line num="63" type="stmt" count="1"/>
+        <line num="64" type="stmt" count="1"/>
+        <line num="66" type="stmt" count="1"/>
+        <line num="69" type="method" name="me" visibility="public" complexity="1" crap="1" count="2"/>
+        <line num="71" type="stmt" count="2"/>
+        <line num="73" type="stmt" count="2"/>
+        <line num="74" type="stmt" count="2"/>
+        <line num="75" type="stmt" count="2"/>
+        <line num="76" type="stmt" count="2"/>
+        <line num="77" type="stmt" count="2"/>
+        <metrics loc="80" ncloc="79" classes="1" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="41" coveredstatements="41" elements="45" coveredelements="45"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Http/Controllers/Controller.php">
+        <class name="App\Http\Controllers\Controller" namespace="App\Http\Controllers">
+          <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+        </class>
+        <metrics loc="9" ncloc="8" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Http/Controllers/DocumentController.php">
+        <class name="App\Http\Controllers\DocumentController" namespace="App\Http\Controllers">
+          <metrics complexity="4" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="16" elements="18" coveredelements="18"/>
+        </class>
+        <line num="13" type="method" name="uploadIdentity" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="15" type="stmt" count="1"/>
+        <line num="16" type="stmt" count="1"/>
+        <line num="17" type="stmt" count="1"/>
+        <line num="19" type="stmt" count="1"/>
+        <line num="21" type="stmt" count="1"/>
+        <line num="24" type="method" name="uploadCompliance" visibility="public" complexity="3" crap="3" count="5"/>
+        <line num="26" type="stmt" count="5"/>
+        <line num="27" type="stmt" count="5"/>
+        <line num="28" type="stmt" count="5"/>
+        <line num="29" type="stmt" count="5"/>
+        <line num="30" type="stmt" count="5"/>
+        <line num="32" type="stmt" count="3"/>
+        <line num="36" type="stmt" count="3"/>
+        <line num="37" type="stmt" count="3"/>
+        <line num="39" type="stmt" count="1"/>
+        <line num="40" type="stmt" count="2"/>
+        <line num="41" type="stmt" count="2"/>
+        <metrics loc="45" ncloc="44" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="16" coveredstatements="16" elements="18" coveredelements="18"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Http/Controllers/LeaseController.php">
+        <class name="App\Http\Controllers\LeaseController" namespace="App\Http\Controllers">
+          <metrics complexity="5" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="20" coveredstatements="20" elements="23" coveredelements="23"/>
+        </class>
+        <line num="13" type="method" name="index" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="16" type="stmt" count="1"/>
+        <line num="18" type="stmt" count="1"/>
+        <line num="19" type="stmt" count="1"/>
+        <line num="20" type="stmt" count="1"/>
+        <line num="21" type="stmt" count="1"/>
+        <line num="22" type="stmt" count="1"/>
+        <line num="24" type="stmt" count="1"/>
+        <line num="27" type="method" name="uploadDocument" visibility="public" complexity="2" crap="2" count="5"/>
+        <line num="29" type="stmt" count="5"/>
+        <line num="30" type="stmt" count="5"/>
+        <line num="31" type="stmt" count="5"/>
+        <line num="32" type="stmt" count="5"/>
+        <line num="34" type="stmt" count="3"/>
+        <line num="37" type="stmt" count="3"/>
+        <line num="39" type="stmt" count="1"/>
+        <line num="40" type="stmt" count="2"/>
+        <line num="41" type="stmt" count="2"/>
+        <line num="45" type="method" name="sign" visibility="public" complexity="2" crap="2" count="2"/>
+        <line num="48" type="stmt" count="2"/>
+        <line num="50" type="stmt" count="1"/>
+        <line num="51" type="stmt" count="1"/>
+        <line num="52" type="stmt" count="1"/>
+        <metrics loc="56" ncloc="55" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="20" coveredstatements="20" elements="23" coveredelements="23"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Http/Controllers/MaintenanceController.php">
+        <class name="App\Http\Controllers\MaintenanceController" namespace="App\Http\Controllers">
+          <metrics complexity="8" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="40" coveredstatements="40" elements="43" coveredelements="43"/>
+        </class>
+        <line num="14" type="method" name="index" visibility="public" complexity="2" crap="2" count="2"/>
+        <line num="17" type="stmt" count="2"/>
+        <line num="19" type="stmt" count="2"/>
+        <line num="20" type="stmt" count="1"/>
+        <line num="21" type="stmt" count="1"/>
+        <line num="22" type="stmt" count="1"/>
+        <line num="24" type="stmt" count="1"/>
+        <line num="25" type="stmt" count="1"/>
+        <line num="26" type="stmt" count="1"/>
+        <line num="27" type="stmt" count="1"/>
+        <line num="30" type="stmt" count="2"/>
+        <line num="33" type="method" name="store" visibility="public" complexity="2" crap="2" count="2"/>
+        <line num="35" type="stmt" count="2"/>
+        <line num="36" type="stmt" count="2"/>
+        <line num="37" type="stmt" count="2"/>
+        <line num="38" type="stmt" count="2"/>
+        <line num="39" type="stmt" count="2"/>
+        <line num="41" type="stmt" count="2"/>
+        <line num="43" type="stmt" count="2"/>
+        <line num="46" type="stmt" count="2"/>
+        <line num="47" type="stmt" count="2"/>
+        <line num="48" type="stmt" count="2"/>
+        <line num="49" type="stmt" count="2"/>
+        <line num="50" type="stmt" count="2"/>
+        <line num="51" type="stmt" count="2"/>
+        <line num="53" type="stmt" count="1"/>
+        <line num="54" type="stmt" count="1"/>
+        <line num="55" type="stmt" count="1"/>
+        <line num="59" type="method" name="update" visibility="public" complexity="4" crap="4" count="2"/>
+        <line num="61" type="stmt" count="2"/>
+        <line num="62" type="stmt" count="2"/>
+        <line num="63" type="stmt" count="2"/>
+        <line num="66" type="stmt" count="2"/>
+        <line num="69" type="stmt" count="2"/>
+        <line num="70" type="stmt" count="2"/>
+        <line num="71" type="stmt" count="2"/>
+        <line num="72" type="stmt" count="2"/>
+        <line num="73" type="stmt" count="2"/>
+        <line num="75" type="stmt" count="1"/>
+        <line num="76" type="stmt" count="1"/>
+        <line num="77" type="stmt" count="1"/>
+        <line num="78" type="stmt" count="1"/>
+        <line num="79" type="stmt" count="1"/>
+        <metrics loc="83" ncloc="80" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="40" coveredstatements="40" elements="43" coveredelements="43"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Http/Controllers/OfferController.php">
+        <class name="App\Http\Controllers\OfferController" namespace="App\Http\Controllers">
+          <metrics complexity="9" methods="4" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="35" coveredstatements="33" elements="39" coveredelements="36"/>
+        </class>
+        <line num="14" type="method" name="index" visibility="public" complexity="2" crap="2" count="2"/>
+        <line num="16" type="stmt" count="2"/>
+        <line num="18" type="stmt" count="2"/>
+        <line num="19" type="stmt" count="1"/>
+        <line num="20" type="stmt" count="1"/>
+        <line num="21" type="stmt" count="1"/>
+        <line num="22" type="stmt" count="1"/>
+        <line num="23" type="stmt" count="1"/>
+        <line num="24" type="stmt" count="1"/>
+        <line num="26" type="stmt" count="1"/>
+        <line num="27" type="stmt" count="1"/>
+        <line num="28" type="stmt" count="1"/>
+        <line num="29" type="stmt" count="1"/>
+        <line num="32" type="stmt" count="2"/>
+        <line num="35" type="method" name="store" visibility="public" complexity="2" crap="2" count="2"/>
+        <line num="37" type="stmt" count="2"/>
+        <line num="38" type="stmt" count="2"/>
+        <line num="39" type="stmt" count="2"/>
+        <line num="40" type="stmt" count="2"/>
+        <line num="41" type="stmt" count="2"/>
+        <line num="44" type="stmt" count="2"/>
+        <line num="46" type="stmt" count="1"/>
+        <line num="47" type="stmt" count="1"/>
+        <line num="48" type="stmt" count="1"/>
+        <line num="52" type="method" name="respond" visibility="public" complexity="4" crap="4" count="5"/>
+        <line num="54" type="stmt" count="5"/>
+        <line num="55" type="stmt" count="5"/>
+        <line num="56" type="stmt" count="5"/>
+        <line num="57" type="stmt" count="5"/>
+        <line num="58" type="stmt" count="5"/>
+        <line num="61" type="stmt" count="4"/>
+        <line num="63" type="stmt" count="3"/>
+        <line num="64" type="stmt" count="1"/>
+        <line num="65" type="stmt" count="1"/>
+        <line num="66" type="stmt" count="1"/>
+        <line num="67" type="stmt" count="1"/>
+        <line num="71" type="method" name="verify" visibility="public" complexity="1" crap="2" count="0"/>
+        <line num="73" type="stmt" count="0"/>
+        <line num="75" type="stmt" count="0"/>
+        <metrics loc="78" ncloc="78" classes="1" methods="4" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="35" coveredstatements="33" elements="39" coveredelements="36"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Http/Controllers/PropertyController.php">
+        <class name="App\Http\Controllers\PropertyController" namespace="App\Http\Controllers">
+          <metrics complexity="6" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="13" elements="15" coveredelements="15"/>
+        </class>
+        <line num="11" type="method" name="store" visibility="public" complexity="1" crap="1" count="3"/>
+        <line num="14" type="stmt" count="3"/>
+        <line num="16" type="stmt" count="3"/>
+        <line num="18" type="stmt" count="2"/>
+        <line num="21" type="method" name="index" visibility="public" complexity="5" crap="5" count="5"/>
+        <line num="23" type="stmt" count="5"/>
+        <line num="25" type="stmt" count="5"/>
+        <line num="26" type="stmt" count="3"/>
+        <line num="29" type="stmt" count="5"/>
+        <line num="30" type="stmt" count="2"/>
+        <line num="33" type="stmt" count="5"/>
+        <line num="34" type="stmt" count="3"/>
+        <line num="37" type="stmt" count="5"/>
+        <line num="38" type="stmt" count="3"/>
+        <line num="41" type="stmt" count="5"/>
+        <metrics loc="44" ncloc="43" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="13" coveredstatements="13" elements="15" coveredelements="15"/>
+      </file>
+      <file name="/home/catz/dev/keystone/app/Http/Controllers/VisitController.php">
+        <class name="App\Http\Controllers\VisitController" namespace="App\Http\Controllers">
+          <metrics complexity="7" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="29" coveredstatements="29" elements="33" coveredelements="33"/>
+        </class>
+        <line num="12" type="method" name="index" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="14" type="stmt" count="1"/>
+        <line num="17" type="stmt" count="1"/>
+        <line num="18" type="stmt" count="1"/>
+        <line num="19" type="stmt" count="1"/>
+        <line num="20" type="stmt" count="1"/>
+        <line num="21" type="stmt" count="1"/>
+        <line num="22" type="stmt" count="1"/>
+        <line num="24" type="stmt" count="1"/>
+        <line num="27" type="method" name="myVisits" visibility="public" complexity="1" crap="1" count="1"/>
+        <line num="29" type="stmt" count="1"/>
+        <line num="30" type="stmt" count="1"/>
+        <line num="31" type="stmt" count="1"/>
+        <line num="32" type="stmt" count="1"/>
+        <line num="34" type="stmt" count="1"/>
+        <line num="37" type="method" name="store" visibility="public" complexity="3" crap="3" count="3"/>
+        <line num="39" type="stmt" count="3"/>
+        <line num="40" type="stmt" count="3"/>
+        <line num="41" type="stmt" count="3"/>
+        <line num="42" type="stmt" count="3"/>
+        <line num="43" type="stmt" count="3"/>
+        <line num="46" type="stmt" count="3"/>
+        <line num="48" type="stmt" count="2"/>
+        <line num="49" type="stmt" count="1"/>
+        <line num="50" type="stmt" count="1"/>
+        <line num="54" type="method" name="update" visibility="public" complexity="2" crap="2" count="2"/>
+        <line num="57" type="stmt" count="2"/>
+        <line num="58" type="stmt" count="1"/>
+        <line num="61" type="stmt" count="1"/>
+        <line num="62" type="stmt" count="1"/>
+        <line num="63" type="stmt" count="1"/>
+        <line num="65" type="stmt" count="1"/>
+        <line num="67" type="stmt" count="1"/>
+        <metrics loc="70" ncloc="68" classes="1" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="29" coveredstatements="29" elements="33" coveredelements="33"/>
+      </file>
+    </package>
+    <package name="App\Providers">
+      <file name="/home/catz/dev/keystone/app/Providers/AppServiceProvider.php">
+        <class name="App\Providers\AppServiceProvider" namespace="App\Providers">
+          <metrics complexity="2" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" elements="4" coveredelements="4"/>
+        </class>
+        <line num="12" type="method" name="register" visibility="public" complexity="1" crap="1" count="75"/>
+        <line num="15" type="stmt" count="75"/>
+        <line num="20" type="method" name="boot" visibility="public" complexity="1" crap="1" count="75"/>
+        <line num="23" type="stmt" count="75"/>
+        <metrics loc="25" ncloc="17" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="2" coveredstatements="2" elements="4" coveredelements="4"/>
+      </file>
+    </package>
+    <metrics files="60" loc="2079" ncloc="1787" classes="36" methods="89" coveredmethods="68" conditionals="0" coveredconditionals="0" statements="491" coveredstatements="468" elements="580" coveredelements="536"/>
+  </project>
+</coverage>
